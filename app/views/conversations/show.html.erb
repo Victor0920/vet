@@ -1,0 +1,31 @@
+<h1>Conversation</h1>
+
+<%= @conversation.id %>
+
+<% @messages.each do |message| %>
+  <div>
+    <%= message.text %>
+    -
+    <%= message.sender %>
+  </div>
+<% end %>
+
+<%= form_with model: @message, local: true do |form| %>
+  <%= form.hidden_field :conversation_id, value: @conversation.id %>
+  <% if form.object.errors.any? %>
+    <p class="error"><%= form.object.errors.full_message.first %></p>
+  <% end %>
+  <div>
+    <%= form.label :text %>
+    <%= form.text_field :text %>
+  </div>
+
+  <div>
+    <%= form.label :sender %>
+    <%= form.select :sender, [["Bot", 1], ["Admin", 2]] %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
