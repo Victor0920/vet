@@ -1,0 +1,13 @@
+<% if @linked %>
+  <%= link_to message_path(@message), class: "message-container" do %>
+    <div class="message <%= "message-#{@message.sender}" %>">
+      <%= @message.text %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="message-container">
+    <div class="message <%= "message-#{@message.sender}" %>">
+      <%= @message.text %>
+    </div>
+  </div>
+<% end %>

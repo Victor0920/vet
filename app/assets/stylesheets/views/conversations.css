@@ -1,0 +1,33 @@
+.conversations-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--spacing-md);
+
+  .conversation-container {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    cursor: pointer;
+
+    .conversation {
+      transition: border 0.2s ease-out;
+      height: 300px;
+    }
+
+    &:hover .conversation {
+      border: var(--border-ink-60);
+    }
+  }
+}
+
+.conversations-show {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-xl);
+
+  .message-input {
+    display: flex;
+    flex-direction: column;
+  }
+}

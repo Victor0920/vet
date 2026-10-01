@@ -10,6 +10,8 @@ class MessagesController < ApplicationController
     Rails.logger.info(@message.errors)
 
     if @message.save
+
+
       respond_to do |format|
         format.json { render json: { success: true, message: @message } }
         format.html { redirect_to @conversation, notice: "Message created" }
@@ -20,6 +22,10 @@ class MessagesController < ApplicationController
         format.html { redirect_to @conversation, notice: "Message failed" }
       end
     end
+  end
+
+  def show
+    @message = Message.find_by(id: params[:id])
   end
 
   private

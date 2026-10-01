@@ -1,0 +1,28 @@
+.message-container {
+  width: 100%;
+  text-decoration: none;
+  cursor: pointer;
+
+  .message {
+    padding: var(--spacing-sm) var(--spacing-md);
+    width: max-content;
+  }
+
+  .message-bot {
+    background: var(--color-green-30);
+    border-radius: var(--radius-sm);
+    border-top-left-radius: 0;
+    color: var(--color-ink-70);
+    justify-self: flex-start;
+  }
+
+  .message-user,
+  .message-admin {
+    justify-self: flex-end;
+    border: var(--border-ink-40);
+    border-radius: var(--radius-sm);
+    border-top-right-radius: 0;
+    background: var(--color-aqua-20);
+    color: var(--color-ink-70);
+  }
+}

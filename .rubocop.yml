@@ -6,3 +6,15 @@ inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 # # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
 # Layout/SpaceInsideArrayLiteralBrackets:
 #   Enabled: false
+
+# Omakase leaves indentation alone (it trips over `private`-only concerns).
+# Re-enabled here so format-on-save actually re-indents.
+Layout/IndentationWidth:
+  Enabled: true
+
+Layout/IndentationConsistency:
+  Enabled: true
+  EnforcedStyle: normal
+
+Layout/ExtraSpacing:
+  Enabled: true

@@ -1,9 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
-  phone: MyString
+  name: Alice
+  phone: "34600000001"
 
 two:
-  name: MyString
-  phone: MyString
+  name: Bob
+  phone: "34600000002"

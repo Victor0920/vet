@@ -1,17 +1,28 @@
 <h1>All Conversations</h1>
 
-<div>
+<div class="conversations-grid">
   <% @conversations.each do |conversation| %>
-    <h2>Conversation:
-      <%= conversation.id %>
-    </h2>
 
+    <%= link_to conversation_path(conversation), class: "conversation-container" do %>
+      <div>
+        <%= render ConversationComponent.new(
+          conversation: conversation,
+          link_messages: false,
+        ) %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<div>
+  <h2>Create new conversation</h2>
+  <%= form_with model: @conversation, local: true do |form| %>
     <div>
-      <% conversation.messages.each do |message| %>
-        <div><%= message.text %></div>
-      <% end %>
+      <%= form.label :user_id %>
+      <%= form.collection_select :user_id, @users, :id, :name %>
     </div>
 
-    <%= link_to "Go to conversation", conversation_path(conversation) %>
+    <%= form.submit "Create conversation", class: "" %>
+
   <% end %>
 </div>

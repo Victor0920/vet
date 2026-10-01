@@ -1,0 +1,7 @@
+<div class="conversation">
+  <div class="messages">
+    <% @conversation.messages.each do |message| %>
+      <%= render MessageComponent.new(message: message, linked: @linkMessages) %>
+    <% end %>
+  </div>
+</div>

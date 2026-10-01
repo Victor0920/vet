@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -10,12 +12,22 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   root "pages#home"
-  get "/messages", to: "messages#index"
-  post "/messages", to: "messages#create"
-  get "/messages/:id", to: "messages#show"
+
+
+  resources :messages, only: [ :index, :show, :create ]
+  # get "/messages", to: "messages#index"
+  # post "/messages", to: "messages#create"
+  # get "/messages/:id", to: "messages#show"
 
   # get "/conversations", to: "conversations#index"
   # get "/conversations/:id", to: "conversations#show"
   resources :conversations
   post "/conversations/:id/messages", to: "conversations#create_message"
+
+  get "/auth", to: "auth#index"
+
+  namespace :webhooks do
+    get "whatsapp", to: "whatsapp#verify"
+    post "whatsapp", to: "whatsapp#receive"
+  end
 end

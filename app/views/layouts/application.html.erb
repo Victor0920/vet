@@ -24,9 +24,13 @@
   </head>
 
   <body>
-    <%= yield %>
-    <!--
-    <%= ENV["WHATSAPP_ACCESS_TOKEN"] %>
-    -->
+    <%= render TopNavComponent.new() %>
+
+    <main>
+      <%= yield %>
+      <!--
+      <%= ENV["WHATSAPP_ACCESS_TOKEN"] %>
+      -->
+    </main>
   </body>
 </html>
