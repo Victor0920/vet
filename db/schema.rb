@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_01_092349) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_01_094235) do
   create_table "conversations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -40,10 +40,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_092349) do
 
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "employee_agent"
     t.integer "employee_id", null: false
     t.string "ip_address"
     t.datetime "updated_at", null: false
+    t.string "user_agent"
     t.index ["employee_id"], name: "index_sessions_on_employee_id"
   end
 
