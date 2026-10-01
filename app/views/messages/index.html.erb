@@ -1,6 +1,40 @@
-<% @messages.each do |message| %>
+<% content_for :title, "All messages" %>
+
+<div class="page-header">
   <div>
-    message:
-    <%= message.text %>
+    <h1 class="page-header__title">All messages</h1>
+    <p class="page-header__subtitle"><%= pluralize(@messages.size, "message") %> across every conversation</p>
+  </div>
+</div>
+
+<% if @messages.any? %>
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Message</th>
+          <th>Sender</th>
+          <th>Status</th>
+          <th>Sent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @messages.each do |message| %>
+          <tr>
+            <td class="table__numeric">#<%= message.id %></td>
+            <td class="table__truncate"><%= link_to message.text, message_path(message) %></td>
+            <td><span class="badge <%= "badge--primary" unless message.user? %>"><%= message.sender&.humanize || "Unknown" %></span></td>
+            <td><%= message.delivery_status.presence&.humanize || "—" %></td>
+            <td class="table__numeric"><%= message.created_at.strftime("%b %-d, %H:%M") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <p class="empty-state__title">No messages yet</p>
+    <p>Messages will show up here once a conversation starts.</p>
   </div>
 <% end %>

@@ -1,34 +1,158 @@
-body {
-  font-family: sans-serif;
-  background-color: var(--color-body);
-  color: var(--color-ink-70);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--spacing-xl);
-}
+/*
+ * Base styles: a small reset plus sensible defaults for raw HTML elements.
+ * Design tokens live in variables.css; reusable UI pieces live in
+ * components/; page-specific layout lives in views/.
+ *
+ * Propshaft's `stylesheet_link_tag :app` loads every file in this folder,
+ * so new files are picked up automatically.
+ */
 
-* {
+/* ---------- Reset ---------- */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-main {
-  width: 100%;
-  background-color: var(--color-canvas);
-  max-width: var(--width-main);
-  padding: var(--spacing-md);
-  /* border: var(--border-ink-40); */
-  border-radius: var(--radius-sm);
+* {
+  margin: 0;
 }
 
-h1 {
-  font-size: 24px;
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-input[type="text"] {
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-md);
-  border: var(--border-ink-40);
-  background-color: var(--color-ink-10);
-  color: var(--color-ink-70);
+body {
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  font-feature-settings: "cv11", "ss01"; /* Inter: nicer 'a' and digits */
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ---------- Typography ---------- */
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-text);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  font-weight: var(--weight-semibold);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+h4 { font-size: var(--text-md); }
+
+p {
+  text-wrap: pretty;
+}
+
+small {
+  font-size: var(--text-xs);
+}
+
+code,
+kbd,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+a {
+  color: var(--color-primary-text);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+hr {
+  border: 0;
+  border-top: var(--border);
+}
+
+::selection {
+  background: var(--color-primary-subtle-hover);
+}
+
+/* ---------- Accessibility ---------- */
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Visually hidden but still read by screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Small utilities ---------- */
+
+.text-muted { color: var(--color-text-muted); }
+.text-subtle { color: var(--color-text-subtle); }
+.text-sm { font-size: var(--text-sm); }
+.text-xs { font-size: var(--text-xs); }
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }

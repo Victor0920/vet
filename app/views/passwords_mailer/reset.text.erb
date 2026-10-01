@@ -1,4 +1,13 @@
-You can reset your password on
+Reset your password
+===================
+
+We received a request to reset the password for <%= @employee.email_address %>.
+
+Choose a new password here:
 <%= edit_password_url(@employee.password_reset_token) %>
-This link will expire in
-<%= distance_of_time_in_words(0, @employee.password_reset_token_expires_in) %>.
+
+This link will expire in <%= distance_of_time_in_words(0, @employee.password_reset_token_expires_in) %>.
+
+If you didn't ask to reset your password, you can safely ignore this email.
+
+— Vet

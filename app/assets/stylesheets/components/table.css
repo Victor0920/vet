@@ -1,0 +1,60 @@
+/*
+ * Data table
+ * <div class="table-wrapper"><table class="table">…</table></div>
+ */
+.table-wrapper {
+  overflow-x: auto;
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+
+  th {
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface-sunken);
+    border-bottom: var(--border);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: var(--border);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody tr {
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  tbody tr:hover {
+    background: var(--color-surface-hover);
+  }
+
+  .table__truncate {
+    max-width: 28rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .table__numeric {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-subtle);
+  }
+}

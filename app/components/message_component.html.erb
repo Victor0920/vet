@@ -1,13 +1,22 @@
-<% if @linked %>
-  <%= link_to message_path(@message), class: "message-container" do %>
-    <div class="message <%= "message-#{@message.sender}" %>">
-      <%= @message.text %>
-    </div>
-  <% end %>
-<% else %>
-  <div class="message-container">
-    <div class="message <%= "message-#{@message.sender}" %>">
-      <%= @message.text %>
+<% bubble = capture do %>
+  <div class="message message--<%= @message.sender %>">
+    <div class="message__bubble"><%= @message.text %></div>
+    <div class="message__meta">
+      <span><%= @message.sender&.humanize %></span>
+      <% if @message.created_at %>
+        <span aria-hidden="true">·</span>
+        <time datetime="<%= @message.created_at.iso8601 %>"><%= @message.created_at.strftime("%H:%M") %></time>
+      <% end %>
+      <% if @message.delivery_status.present? %>
+        <span aria-hidden="true">·</span>
+        <span><%= @message.delivery_status.humanize %></span>
+      <% end %>
     </div>
   </div>
+<% end %>
+
+<% if @linked %>
+  <%= link_to bubble, message_path(@message), class: "message-link" %>
+<% else %>
+  <%= bubble %>
 <% end %>

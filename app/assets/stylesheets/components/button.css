@@ -1,0 +1,111 @@
+/*
+ * Buttons
+ * <button class="btn btn--primary">Save</button>
+ * Variants: --primary, --secondary, --ghost, --danger, --danger-ghost
+ * Sizes:    --sm, --lg     Modifiers: --block (full width)
+ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--control-height-md);
+  padding: 0 var(--space-4);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-none);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  svg {
+    width: var(--icon-sm);
+    height: var(--icon-sm);
+    flex-shrink: 0;
+  }
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-xs);
+
+  &:hover { background: var(--color-primary-hover); color: var(--color-on-primary); }
+  &:active { background: var(--color-primary-active); }
+}
+
+.btn--secondary {
+  background: var(--color-surface);
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+  box-shadow: var(--shadow-xs);
+
+  &:hover { background: var(--color-surface-hover); color: var(--color-text); }
+  &:active { background: var(--color-surface-active); }
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+
+  &:hover { background: var(--color-surface-hover); color: var(--color-text); }
+}
+
+.btn--danger {
+  background: var(--color-danger);
+  color: var(--white);
+
+  &:hover { background: var(--color-danger-hover); color: var(--white); }
+}
+
+.btn--danger-ghost {
+  background: transparent;
+  color: var(--color-danger-text);
+
+  &:hover { background: var(--color-danger-subtle); color: var(--color-danger-text); }
+}
+
+.btn--sm {
+  height: var(--control-height-sm);
+  padding: 0 var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.btn--lg {
+  height: var(--control-height-lg);
+  padding: 0 var(--space-5);
+  font-size: var(--text-md);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* button_to wraps the button in a <form>; keep it from breaking layouts */
+form.button_to {
+  display: inline-flex;
+}

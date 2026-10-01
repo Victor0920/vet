@@ -1,0 +1,116 @@
+/*
+ * Forms
+ * <div class="form-field">
+ *   <label class="label">Email</label>
+ *   <input class="input">
+ *   <p class="form-hint">We'll never share it.</p>
+ * </div>
+ */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1-5);
+}
+
+.form-inline {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+
+  .form-field {
+    flex: 1 1 14rem;
+  }
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.form-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+
+.form-error {
+  font-size: var(--text-xs);
+  color: var(--color-danger-text);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  height: var(--control-height-md);
+  padding: 0 var(--space-3);
+  background: var(--color-surface);
+  border: var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-xs);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+
+  &::placeholder {
+    color: var(--color-text-subtle);
+  }
+
+  &:hover {
+    border-color: var(--color-text-disabled);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-focus);
+    box-shadow: var(--focus-ring);
+  }
+
+  &:disabled {
+    background: var(--color-surface-sunken);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+
+  &[aria-invalid="true"] {
+    border-color: var(--color-danger);
+  }
+}
+
+.input--lg {
+  height: var(--control-height-lg);
+  font-size: var(--text-md);
+}
+
+.textarea {
+  height: auto;
+  min-height: 6rem;
+  padding: var(--space-2) var(--space-3);
+  resize: vertical;
+}
+
+/* Native select with a custom chevron */
+.select {
+  appearance: none;
+  padding-right: var(--space-8);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2364748b'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  background-size: 1.25rem;
+  cursor: pointer;
+}
+
+.select--sm {
+  width: auto;
+  height: var(--control-height-sm);
+  font-size: var(--text-xs);
+}

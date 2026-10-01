@@ -1,28 +1,76 @@
-.message-container {
-  width: 100%;
-  text-decoration: none;
-  cursor: pointer;
+/*
+ * Chat message bubble (MessageComponent)
+ *   .message--user   incoming from the pet owner  → left, neutral
+ *   .message--admin  sent by clinic staff         → right, solid teal
+ *   .message--bot    sent automatically           → right, light teal
+ */
+.message-link {
+  display: contents;
+  color: inherit;
 
-  .message {
-    padding: var(--spacing-sm) var(--spacing-md);
-    width: max-content;
+  &:hover {
+    color: inherit;
+    text-decoration: none;
   }
 
-  .message-bot {
-    background: var(--color-green-30);
-    border-radius: var(--radius-sm);
-    border-top-left-radius: 0;
-    color: var(--color-ink-70);
-    justify-self: flex-start;
+  &:hover .message__bubble {
+    filter: brightness(0.97);
   }
+}
 
-  .message-user,
-  .message-admin {
-    justify-self: flex-end;
-    border: var(--border-ink-40);
-    border-radius: var(--radius-sm);
-    border-top-right-radius: 0;
-    background: var(--color-aqua-20);
-    color: var(--color-ink-70);
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-width: min(75%, 34rem);
+  align-self: flex-start;
+}
+
+.message__bubble {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-2xl);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  box-shadow: var(--shadow-xs);
+  transition: filter var(--duration-fast) var(--ease-out);
+}
+
+.message__meta {
+  display: flex;
+  gap: var(--space-1-5);
+  padding: 0 var(--space-1);
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+}
+
+/* Incoming */
+.message--user {
+  .message__bubble {
+    background: var(--color-bubble-incoming);
+    color: var(--color-bubble-incoming-text);
+    border: var(--border);
+    border-bottom-left-radius: var(--radius-sm);
   }
+}
+
+/* Outgoing */
+.message--admin,
+.message--bot {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.message--admin .message__bubble {
+  background: var(--color-bubble-admin);
+  color: var(--color-bubble-admin-text);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.message--bot .message__bubble {
+  background: var(--color-bubble-bot);
+  color: var(--color-bubble-bot-text);
+  border: var(--border-width) solid var(--color-primary-border);
+  border-bottom-right-radius: var(--radius-sm);
 }

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= content_for(:title) || "Vet" %></title>
+    <meta charset="utf-8">
+    <title><%= content_for(:title) ? "#{content_for(:title)} · Vet" : "Vet" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Vet">
@@ -18,19 +19,37 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= render TopNavComponent.new() %>
+    <% if authenticated? %>
+      <div class="app-shell">
+        <%= render TopNavComponent.new %>
 
-    <main>
-      <%= yield %>
-      <!--
-      <%= ENV["WHATSAPP_ACCESS_TOKEN"] %>
-      -->
-    </main>
+        <main class="app-main">
+          <div class="app-content">
+            <%= render "shared/flash" %>
+            <%= yield %>
+          </div>
+        </main>
+      </div>
+    <% else %>
+      <main class="auth-shell">
+        <div class="auth-container">
+          <div class="auth-brand">
+            <span class="brand-mark"><%= render "shared/paw_icon" %></span>
+          </div>
+          <%= render "shared/flash" %>
+          <%= yield %>
+        </div>
+      </main>
+    <% end %>
   </body>
 </html>

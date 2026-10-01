@@ -1,33 +1,166 @@
+/* ---------- conversations#index ---------- */
+
 .conversations-grid {
-  width: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--space-4);
+}
 
-  .conversation-container {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    cursor: pointer;
+.conversation-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-    .conversation {
-      transition: border 0.2s ease-out;
-      height: 300px;
-    }
+.conversation-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: var(--border);
+}
 
-    &:hover .conversation {
-      border: var(--border-ink-60);
-    }
+.conversation-card__name {
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.conversation-card__meta {
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+}
+
+/*
+ * Message preview. justify-content: flex-end + overflow: hidden means the
+ * NEWEST messages (at the bottom) stay visible and older ones are clipped
+ * off the top. The ::after gradient fades the clipped edge.
+ */
+.conversation-card__preview {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 12rem;
+  padding: var(--space-3) var(--space-4);
+  overflow: hidden;
+  background: var(--color-chat-bg);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--space-10);
+    background: linear-gradient(var(--color-chat-bg), transparent);
+    pointer-events: none;
+  }
+
+  .conversation__messages {
+    gap: var(--space-1-5);
+  }
+
+  .message__bubble {
+    font-size: var(--text-xs);
+    padding: var(--space-1-5) var(--space-2);
+  }
+
+  .message__meta {
+    display: none;
   }
 }
 
-.conversations-show {
-  display: flex;
-  flex-direction: row;
-  gap: var(--spacing-xl);
+/* ---------- conversations#show (chat) ---------- */
 
-  .message-input {
-    display: flex;
-    flex-direction: column;
+.chat {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18rem;
+  gap: var(--space-6);
+  /* fill the viewport minus the .app-main padding */
+  height: calc(100dvh - 2 * var(--space-8));
+}
+
+.chat__main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chat__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border);
+}
+
+.chat__contact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.chat__title {
+  font-size: var(--text-md);
+}
+
+.chat__subtitle {
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+}
+
+/*
+ * column-reverse makes the scroll container start scrolled to the
+ * bottom, so the latest message is visible on page load — no JS needed.
+ */
+.chat__messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  padding: var(--space-5);
+  background: var(--color-chat-bg);
+}
+
+.chat__composer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-top: var(--border);
+  background: var(--color-surface);
+
+  .input {
+    flex: 1;
+  }
+}
+
+.chat__errors {
+  padding: var(--space-3) var(--space-3) 0;
+}
+
+.chat__sidebar {
+  align-self: start;
+}
+
+.chat__profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-5);
+  border-bottom: var(--border);
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .chat {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .chat__main {
+    height: 75dvh;
   }
 }
