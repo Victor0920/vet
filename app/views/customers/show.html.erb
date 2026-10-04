@@ -1,2 +1,167 @@
-<% content_for :title, "Customer details" %>
-<p><%= @customer.first_name %></p>
+<% full_name = [
+  @customer.first_name,
+  @customer.first_surname,
+  @customer.second_surname,
+].compact_blank.join(" ") %>
+<% content_for :title, full_name.presence || "Customer ##{@customer.id}" %>
+
+<%= link_to customers_path, class: "back-link" do %>
+  <svg
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    width="16"
+    height="16"
+    aria-hidden="true"
+  ><path
+      fill-rule="evenodd"
+      d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+      clip-rule="evenodd"
+    /></svg>
+  All customers
+<% end %>
+
+<div class="customer-profile">
+  <aside class="card customer-profile__sidebar">
+    <div class="customer-profile__header">
+      <% if @customer.photo.attached? %>
+        <%= image_tag @customer.photo.variant(resize_to_fill: [192, 192]),
+        alt: full_name,
+        class: "avatar avatar--xl avatar--photo" %>
+      <% else %>
+        <span class="avatar avatar--xl"><%= @customer.first_name.to_s.first %><%= @customer.first_surname.to_s.first %></span>
+      <% end %>
+      <div>
+        <h1 class="customer-profile__name"><%= full_name.presence || "Unnamed customer" %></h1>
+        <p class="text-subtle text-xs">Customer #<%= @customer.id %></p>
+      </div>
+      <%= link_to edit_customer_path(@customer), class: "btn btn--secondary btn--sm" do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+            d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
+          /><path
+            d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
+          /></svg>
+        Edit customer
+      <% end %>
+    </div>
+
+    <div class="card__body">
+      <dl class="details">
+        <div>
+          <dt>Email</dt>
+          <dd><%= @customer.email.present? ? mail_to(@customer.email) : "—" %></dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
+          <dd>
+            <%= @customer.first_phone.presence || "—" %>
+            <% if @customer.second_phone.present? %>
+              <br><span class="text-muted"><%= @customer.second_phone %></span>
+            <% end %>
+          </dd>
+        </div>
+        <div>
+          <dt>Address</dt>
+          <dd>
+            <%= @customer.address.presence || "—" %>
+            <% location = [@customer.post_code, @customer.province].compact_blank.join(", ") %>
+            <% if location.present? %>
+              <br><span class="text-muted"><%= location %></span>
+            <% end %>
+          </dd>
+        </div>
+        <div>
+          <dt>Document</dt>
+          <dd><%= [@customer.document_type, @customer.document_number].compact_blank
+              .join(" · ")
+              .presence || "—" %></dd>
+        </div>
+        <div>
+          <dt>Born</dt>
+          <dd><%= @customer.born_on&.strftime("%b %-d, %Y") || "—" %></dd>
+        </div>
+        <div>
+          <dt>Sex</dt>
+          <dd><%= @customer.sex.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt>Customer since</dt>
+          <dd><%= @customer.created_at.strftime("%b %-d, %Y") %></dd>
+        </div>
+      </dl>
+    </div>
+  </aside>
+
+  <section class="customer-profile__main">
+    <header class="customer-profile__section-header">
+      <div>
+        <h2 class="section__title">Pets</h2>
+        <p class="text-muted"><%= pluralize(@pets.size, "pet") %>
+          registered</p>
+      </div>
+      <%# TODO: enable once a pets route + PetsController#create exist (see @new_pet in the controller) %>
+      <button type="button" class="btn btn--secondary btn--sm"
+        disabled>Add pet</button>
+    </header>
+
+    <% if @pets.any? %>
+      <div class="pets-grid">
+        <% @pets.each do |pet| %>
+          <%= link_to [@customer, pet], class: "pet-link" do %>
+            <article class="card card--interactive pet-card">
+              <div class="pet-card__media">
+                <% if pet.photo.attached? %>
+                  <%= image_tag pet.photo.variant(resize_to_fill: [640, 400]),
+                  alt: pet.name.to_s,
+                  class: "pet-card__photo" %>
+                <% else %>
+                  <span class="pet-card__placeholder"><%= render "shared/paw_icon" %></span>
+                <% end %>
+              </div>
+
+              <div class="pet-card__body">
+                <div class="pet-card__header">
+                  <h3 class="pet-card__name"><%= pet.name.presence || "Unnamed pet" %></h3>
+                  <% if pet.species.present? %>
+                    <span class="badge badge--primary"><%= pet.species %></span>
+                  <% end %>
+                </div>
+                <% if pet.breed.present? %>
+                  <p class="pet-card__breed"><%= pet.breed %></p>
+                <% end %>
+
+                <dl class="pet-card__facts">
+                  <div>
+                    <dt>Sex</dt>
+                    <dd><%= pet.sex.presence || "—" %></dd>
+                  </div>
+                  <div>
+                    <dt>Age</dt>
+                    <dd><%= pet.born_on ? distance_of_time_in_words(pet.born_on, Date.current) : "—" %></dd>
+                  </div>
+                  <div>
+                    <dt>Color</dt>
+                    <dd><%= pet.color.presence || "—" %></dd>
+                  </div>
+                  <div>
+                    <dt>Microchip</dt>
+                    <dd title="<%= pet.transponder_location %>"><%= pet.transponder_number.presence || "—" %></dd>
+                  </div>
+                </dl>
+              </div>
+
+              <% if pet.notes.present? %>
+                <footer class="card__footer pet-card__notes"><p><%= pet.notes %></p></footer>
+              <% end %>
+            </article>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <%= render "shared/paw_icon" %>
+        <p class="empty-state__title">No pets yet</p>
+        <p>Pets registered to this customer will show up here.</p>
+      </div>
+    <% end %>
+  </section>
+</div>

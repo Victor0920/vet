@@ -1,7 +1,7 @@
 /*
  * Badges & avatars
  * <span class="badge badge--success">Delivered</span>
- * <span class="avatar">M</span>
+ * <span class="avatar">M</span>  or  <img class="avatar avatar--photo">
  */
 .badge {
   display: inline-flex;
@@ -48,4 +48,17 @@
   width: var(--avatar-lg);
   height: var(--avatar-lg);
   font-size: var(--text-lg);
+}
+
+.avatar--xl {
+  width: var(--avatar-xl);
+  height: var(--avatar-xl);
+  font-size: var(--text-2xl);
+}
+
+/* Real photo instead of initials — use on an <img> */
+.avatar--photo {
+  object-fit: cover;
+  background: var(--color-surface-sunken);
+  box-shadow: 0 0 0 1px var(--color-border);
 }

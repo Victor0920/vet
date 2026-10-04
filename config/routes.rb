@@ -22,7 +22,10 @@ Rails.application.routes.draw do
   # get "/conversations", to: "conversations#index"
   # get "/conversations/:id", to: "conversations#show"
   resources :conversations
-  resources :customers
+  resources :customers do
+    resources :pets
+  end
+
   resources :calendar
   post "/conversations/:id/messages", to: "conversations#create_message"
 

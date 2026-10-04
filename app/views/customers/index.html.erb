@@ -1,10 +1,13 @@
 <% content_for :title, "All customers" %>
 
-<ul>
-  <% @customers.each do |customer| %>
-    <li><%= customer.first_name %></li>
-  <% end %>
-</ul>
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">Customers</h1>
+    <p class="page-header__subtitle">
+      <%= pluralize(@customers.size, "customer") %> and their pets
+    </p>
+  </div>
+</div>
 
 <% if @customers.any? %>
   <div class="table-wrapper">
@@ -12,18 +15,43 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>First Name</th>
-          <th>First Surname</th>
+          <th>Customer</th>
           <th>Phone number</th>
+          <th>Pets</th>
         </tr>
       </thead>
       <tbody>
         <% @customers.each do |customer| %>
+          <% full_name = [customer.first_name, customer.first_surname].compact_blank.join(" ") %>
           <tr>
             <td class="table__numeric">#<%= customer.id %></td>
-            <td class="table__truncate"><%= link_to customer.first_name, customer_path(customer) %></td>
-            <td><%= customer.first_surname %></td>
-            <td><%= customer.first_phone %></td>
+            <td>
+              <div class="customer-cell">
+                <% if customer.photo.attached? %>
+                  <%= image_tag customer.photo.variant(resize_to_fill: [80, 80]), alt: "", class: "avatar avatar--photo" %>
+                <% else %>
+                  <span class="avatar"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
+                <% end %>
+                <div class="customer-cell__text">
+                  <%= link_to full_name.presence || "Unnamed customer", customer_path(customer), class: "customer-cell__name" %>
+                  <% if customer.email.present? %>
+                    <span class="customer-cell__meta"><%= customer.email %></span>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+            <td class="table__numeric"><%= customer.first_phone.presence || "—" %></td>
+            <td>
+              <% if customer.pets.any? %>
+                <div class="pet-chips">
+                  <% customer.pets.each do |pet| %>
+                    <span class="badge badge--primary"><%= pet.name.presence || "Unnamed" %></span>
+                  <% end %>
+                </div>
+              <% else %>
+                <span class="text-subtle">No pets</span>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>
@@ -31,6 +59,7 @@
   </div>
 <% else %>
   <div class="empty-state">
+    <%= render "shared/paw_icon" %>
     <p class="empty-state__title">No customers yet</p>
     <p>Customers will show up here once the first is created.</p>
   </div>

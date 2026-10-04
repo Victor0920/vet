@@ -2,7 +2,7 @@
  * Buttons
  * <button class="btn btn--primary">Save</button>
  * Variants: --primary, --secondary, --ghost, --danger, --danger-ghost
- * Sizes:    --sm, --lg     Modifiers: --block (full width)
+ * Sizes:    --sm, --lg     Modifiers: --block (full width), --icon (square)
  */
 .btn {
   display: inline-flex;
@@ -103,6 +103,12 @@
 
 .btn--block {
   width: 100%;
+}
+
+/* Square, icon-only button — always give it an aria-label */
+.btn--icon {
+  padding: 0;
+  aspect-ratio: 1;
 }
 
 /* button_to wraps the button in a <form>; keep it from breaking layouts */

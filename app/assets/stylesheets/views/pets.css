@@ -1,0 +1,89 @@
+/* ---------- pets#show + pets#edit ----------
+ * Layout reuses .customer-profile from customers.css.
+ */
+
+/*
+ * Pet photo. On show it's a plain .pet-photo__frame; on edit it's a
+ * .pet-photo__trigger — a <label> for a hidden file input, so clicking
+ * the image opens the file picker.
+ */
+.pet-photo {
+  border-bottom: var(--border);
+}
+
+.pet-photo__frame,
+.pet-photo__trigger {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-primary-subtle);
+}
+
+.pet-photo__trigger {
+  cursor: pointer;
+}
+
+.pet-photo__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pet-photo__placeholder {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--color-primary-border);
+
+  svg {
+    width: 4rem;
+    height: 4rem;
+  }
+}
+
+/* "Change photo" bar, slides in on hover or keyboard focus */
+.pet-photo__overlay {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-overlay);
+  color: var(--white);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    opacity var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out);
+
+  svg {
+    width: var(--icon-sm);
+    height: var(--icon-sm);
+  }
+}
+
+/* No photo yet: keep the hint visible so it's obvious you can upload one */
+.pet-photo__placeholder + .pet-photo__overlay,
+.pet-photo__trigger:hover .pet-photo__overlay,
+.pet-photo:has(input:focus-visible) .pet-photo__overlay {
+  opacity: 1;
+  transform: none;
+}
+
+.pet-photo:has(input:focus-visible) .pet-photo__trigger {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.pet-owner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--weight-medium);
+}

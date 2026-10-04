@@ -1,0 +1,104 @@
+<% owner_name = [@customer.first_name, @customer.first_surname].compact_blank.join(" ").presence || "Customer ##{@customer.id}" %>
+<% content_for :title, "Edit #{@pet.name.presence || "pet ##{@pet.id}"}" %>
+
+<%= link_to customer_pet_path(@customer, @pet), class: "back-link" do %>
+  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+  Done editing
+<% end %>
+
+<div class="customer-profile">
+  <aside class="card customer-profile__sidebar">
+    <%# Clicking the photo opens the file picker (the <label> is tied to the hidden file input);
+        the auto-submit Stimulus controller uploads as soon as a file is chosen. %>
+    <%= form_with model: [@customer, @pet], class: "pet-photo", data: { controller: "auto-submit" } do |form| %>
+      <%= form.label :photo, class: "pet-photo__trigger" do %>
+        <% if @pet.photo.attached? %>
+          <%= image_tag @pet.photo.variant(resize_to_fill: [576, 576]), alt: @pet.name.to_s, class: "pet-photo__image" %>
+        <% else %>
+          <span class="pet-photo__placeholder"><%= render "shared/paw_icon" %></span>
+        <% end %>
+        <span class="pet-photo__overlay">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
+          <%= @pet.photo.attached? ? "Change photo" : "Upload photo" %>
+        </span>
+      <% end %>
+      <%= form.file_field :photo, accept: "image/*", class: "sr-only", data: { action: "change->auto-submit#submit" } %>
+    <% end %>
+
+    <div class="customer-profile__header">
+      <div>
+        <h1 class="customer-profile__name"><%= @pet.name.presence || "Unnamed pet" %></h1>
+        <p class="text-subtle text-xs">
+          <%= [@pet.species, @pet.breed].compact_blank.join(" · ").presence || "Pet ##{@pet.id}" %>
+        </p>
+      </div>
+    </div>
+
+    <div class="card__body">
+      <dl class="details">
+        <div>
+          <dt>Owner</dt>
+          <dd>
+            <%= link_to customer_path(@customer), class: "pet-owner" do %>
+              <% if @customer.photo.attached? %>
+                <%= image_tag @customer.photo.variant(resize_to_fill: [64, 64]), alt: "", class: "avatar avatar--sm avatar--photo" %>
+              <% else %>
+                <span class="avatar avatar--sm"><%= @customer.first_name.to_s.first %><%= @customer.first_surname.to_s.first %></span>
+              <% end %>
+              <%= owner_name %>
+            <% end %>
+          </dd>
+        </div>
+        <div>
+          <dt>Added</dt>
+          <dd><%= @pet.created_at.strftime("%b %-d, %Y") %></dd>
+        </div>
+        <div>
+          <dt>Last updated</dt>
+          <dd><%= time_ago_in_words(@pet.updated_at) %> ago</dd>
+        </div>
+      </dl>
+    </div>
+  </aside>
+
+  <div class="customer-profile__main stack">
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title">General</h2>
+          <p class="card__description">Click the pencil next to a field to edit it.</p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :name, label: "Name" %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :species, label: "Species" %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :breed, label: "Breed" %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :sex, label: "Sex",
+              input: :select, choices: ["Male", "Female"] %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :born_on, label: "Born",
+              input: :date_field,
+              value: (@pet.born_on && "#{@pet.born_on.strftime("%b %-d, %Y")} · #{distance_of_time_in_words(@pet.born_on, Date.current)} old") %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :color, label: "Color" %>
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title">Identification</h2>
+      </header>
+      <dl class="field-list">
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :transponder_number, label: "Microchip number" %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :transponder_location, label: "Microchip location" %>
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title">Notes</h2>
+      </header>
+      <dl class="field-list">
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :notes, label: "Notes", input: :text_area %>
+      </dl>
+    </section>
+  </div>
+</div>
