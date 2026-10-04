@@ -2,6 +2,8 @@ class Appointment < ApplicationRecord
   belongs_to :customer
   belongs_to :pet
   belongs_to :employee
+  belongs_to :store
+  belongs_to :room
   belongs_to :enterprise, default: -> { Current.enterprise }
 
   validate :enterprise_matches_customer

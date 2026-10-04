@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_04_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_04_180003) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -55,12 +55,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_180000) do
     t.integer "employee_id", null: false
     t.integer "enterprise_id", null: false
     t.integer "pet_id", null: false
+    t.integer "room_id", null: false
+    t.integer "store_id", null: false
     t.string "title"
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_appointments_on_customer_id"
     t.index ["employee_id"], name: "index_appointments_on_employee_id"
     t.index ["enterprise_id"], name: "index_appointments_on_enterprise_id"
     t.index ["pet_id"], name: "index_appointments_on_pet_id"
+    t.index ["room_id"], name: "index_appointments_on_room_id"
+    t.index ["store_id"], name: "index_appointments_on_store_id"
   end
 
   create_table "conversations", force: :cascade do |t|
@@ -151,6 +155,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_180000) do
     t.index ["enterprise_id"], name: "index_products_on_enterprise_id"
   end
 
+  create_table "rooms", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.integer "store_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["store_id"], name: "index_rooms_on_store_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "employee_id", null: false
@@ -183,6 +195,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_180000) do
   add_foreign_key "appointments", "employees"
   add_foreign_key "appointments", "enterprises"
   add_foreign_key "appointments", "pets"
+  add_foreign_key "appointments", "rooms"
+  add_foreign_key "appointments", "stores"
   add_foreign_key "conversations", "customers"
   add_foreign_key "conversations", "users"
   add_foreign_key "customers", "enterprises"
@@ -190,6 +204,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_180000) do
   add_foreign_key "messages", "conversations"
   add_foreign_key "pets", "customers"
   add_foreign_key "products", "enterprises"
+  add_foreign_key "rooms", "stores"
   add_foreign_key "sessions", "employees"
   add_foreign_key "stores", "enterprises"
 end
