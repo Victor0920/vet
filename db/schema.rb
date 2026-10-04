@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_04_151239) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_04_180000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -95,19 +95,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_151239) do
   create_table "employees", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
+    t.integer "enterprise_id", null: false
+    t.string "first_name"
+    t.string "last_name"
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_employees_on_email_address", unique: true
-  end
-
-  create_table "employments", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "employee_id", null: false
-    t.integer "enterprise_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["employee_id", "enterprise_id"], name: "index_employments_on_employee_id_and_enterprise_id", unique: true
-    t.index ["employee_id"], name: "index_employments_on_employee_id"
-    t.index ["enterprise_id"], name: "index_employments_on_enterprise_id"
+    t.index ["enterprise_id"], name: "index_employees_on_enterprise_id"
   end
 
   create_table "enterprises", force: :cascade do |t|
@@ -166,6 +160,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_151239) do
     t.index ["employee_id"], name: "index_sessions_on_employee_id"
   end
 
+  create_table "stores", force: :cascade do |t|
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.integer "enterprise_id", null: false
+    t.string "name"
+    t.string "post_code"
+    t.datetime "updated_at", null: false
+    t.index ["enterprise_id"], name: "index_stores_on_enterprise_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
@@ -182,10 +186,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_151239) do
   add_foreign_key "conversations", "customers"
   add_foreign_key "conversations", "users"
   add_foreign_key "customers", "enterprises"
-  add_foreign_key "employments", "employees"
-  add_foreign_key "employments", "enterprises"
+  add_foreign_key "employees", "enterprises"
   add_foreign_key "messages", "conversations"
   add_foreign_key "pets", "customers"
   add_foreign_key "products", "enterprises"
   add_foreign_key "sessions", "employees"
+  add_foreign_key "stores", "enterprises"
 end
