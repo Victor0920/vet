@@ -10,12 +10,38 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_01_094235) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_04_092530) do
+  create_table "admins", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "password_digest"
+    t.datetime "updated_at", null: false
+    t.string "username"
+    t.index ["username"], name: "index_admins_on_username", unique: true
+  end
+
   create_table "conversations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_conversations_on_user_id"
+  end
+
+  create_table "customers", force: :cascade do |t|
+    t.string "address"
+    t.date "born_on"
+    t.datetime "created_at", null: false
+    t.string "document_number"
+    t.string "document_type"
+    t.string "email"
+    t.string "first_name"
+    t.string "first_phone"
+    t.string "first_surname"
+    t.string "post_code"
+    t.string "province"
+    t.string "second_phone"
+    t.string "second_surname"
+    t.string "sex"
+    t.datetime "updated_at", null: false
   end
 
   create_table "employees", force: :cascade do |t|
@@ -24,6 +50,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_094235) do
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_employees_on_email_address", unique: true
+  end
+
+  create_table "enterprises", force: :cascade do |t|
+    t.string "address"
+    t.string "cif"
+    t.datetime "created_at", null: false
+    t.string "legal_name"
+    t.string "name"
+    t.datetime "updated_at", null: false
   end
 
   create_table "messages", force: :cascade do |t|
@@ -36,6 +71,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_094235) do
     t.string "whatsapp_message_id"
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
     t.index ["whatsapp_message_id"], name: "index_messages_on_whatsapp_message_id"
+  end
+
+  create_table "pets", force: :cascade do |t|
+    t.date "born_on"
+    t.string "breed"
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.string "notes"
+    t.string "sex"
+    t.string "species"
+    t.string "transponder_location"
+    t.string "transponder_number"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.integer "enterprise_id", null: false
+    t.string "name"
+    t.decimal "price", precision: 7, scale: 2
+    t.datetime "updated_at", null: false
+    t.index ["enterprise_id"], name: "index_products_on_enterprise_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -56,5 +115,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_01_094235) do
 
   add_foreign_key "conversations", "users"
   add_foreign_key "messages", "conversations"
+  add_foreign_key "products", "enterprises"
   add_foreign_key "sessions", "employees"
 end
