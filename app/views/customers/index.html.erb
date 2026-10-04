@@ -1,0 +1,37 @@
+<% content_for :title, "All customers" %>
+
+<ul>
+  <% @customers.each do |customer| %>
+    <li><%= customer.first_name %></li>
+  <% end %>
+</ul>
+
+<% if @customers.any? %>
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>First Name</th>
+          <th>First Surname</th>
+          <th>Phone number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @customers.each do |customer| %>
+          <tr>
+            <td class="table__numeric">#<%= customer.id %></td>
+            <td class="table__truncate"><%= link_to customer.first_name, customer_path(customer) %></td>
+            <td><%= customer.first_surname %></td>
+            <td><%= customer.first_phone %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <p class="empty-state__title">No customers yet</p>
+    <p>Customers will show up here once the first is created.</p>
+  </div>
+<% end %>
