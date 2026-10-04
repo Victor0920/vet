@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_04_092530) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_04_102148) do
   create_table "admins", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "password_digest"
@@ -33,6 +33,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_092530) do
     t.string "document_number"
     t.string "document_type"
     t.string "email"
+    t.integer "enterprise_id", null: false
     t.string "first_name"
     t.string "first_phone"
     t.string "first_surname"
@@ -42,6 +43,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_092530) do
     t.string "second_surname"
     t.string "sex"
     t.datetime "updated_at", null: false
+    t.index ["enterprise_id"], name: "index_customers_on_enterprise_id"
   end
 
   create_table "employees", force: :cascade do |t|
@@ -50,6 +52,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_092530) do
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_employees_on_email_address", unique: true
+  end
+
+  create_table "employments", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "employee_id", null: false
+    t.integer "enterprise_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id", "enterprise_id"], name: "index_employments_on_employee_id_and_enterprise_id", unique: true
+    t.index ["employee_id"], name: "index_employments_on_employee_id"
+    t.index ["enterprise_id"], name: "index_employments_on_enterprise_id"
   end
 
   create_table "enterprises", force: :cascade do |t|
@@ -78,6 +90,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_092530) do
     t.string "breed"
     t.string "color"
     t.datetime "created_at", null: false
+    t.integer "customer_id", null: false
     t.string "name"
     t.string "notes"
     t.string "sex"
@@ -85,6 +98,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_092530) do
     t.string "transponder_location"
     t.string "transponder_number"
     t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_pets_on_customer_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -114,7 +128,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_04_092530) do
   end
 
   add_foreign_key "conversations", "users"
+  add_foreign_key "customers", "enterprises"
+  add_foreign_key "employments", "employees"
+  add_foreign_key "employments", "enterprises"
   add_foreign_key "messages", "conversations"
+  add_foreign_key "pets", "customers"
   add_foreign_key "products", "enterprises"
   add_foreign_key "sessions", "employees"
 end
