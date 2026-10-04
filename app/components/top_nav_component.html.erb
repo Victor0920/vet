@@ -1,8 +1,9 @@
 <aside class="sidebar">
   <%= link_to helpers.root_path, class: "sidebar__brand" do %>
     <span class="brand-mark"><%= render partial: "shared/paw_icon" %></span>
-    <span class="sidebar__brand-name">Vet</span>
+    <span class="sidebar__brand-name"><%= @enterprise&.name %></span>
   <% end %>
+  <span class="sidebar__brand-name"><%= @employee&.first_name %></span>
 
   <nav class="sidebar__nav" aria-label="Main">
     <%= link_to helpers.root_path, class: "sidebar__link", aria: { current: ("page" if request.path == "/") } do %>

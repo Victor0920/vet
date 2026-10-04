@@ -1,8 +1,8 @@
 class Enterprise < ApplicationRecord
-  has_many :employments, dependent: :destroy
-  has_many :employees, through: :employments
+  has_many :employees, dependent: :destroy
   # dependent: :destroy because a product cannot live without it's enterprise
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
   has_many :appointments, dependent: :destroy
+  has_many :stores, dependent: :destroy
 end
