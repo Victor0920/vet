@@ -28,7 +28,7 @@
   <nav class="sidebar__nav" aria-label="Clinic">
 
     <%= link_to helpers.appointments_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/appointments")) } do %>
-      <%= render "shared/icons/customers" %>
+      <%= render "shared/icons/calendar" %>
       <span>Calendar</span>
     <% end %>
     <%= link_to helpers.customers_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/customers")) } do %>

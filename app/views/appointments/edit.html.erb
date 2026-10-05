@@ -1,0 +1,5 @@
+<% content_for :title, "Edit appointment" %>
+
+<%= render layout: "modal", locals: { title: "Edit appointment" } do %>
+  <%= render "form", appointment: @appointment %>
+<% end %>
