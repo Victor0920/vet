@@ -290,6 +290,26 @@
   content: "🐾 ";
 }
 
+/* Day view has one wide column, so lay title, time and links out in a row */
+.time-grid--day .cal-event {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-3);
+
+  .cal-event__title {
+    min-width: 0; /* lets a long title shrink and get its ellipsis */
+  }
+
+  .cal-event__time {
+    flex-shrink: 0;
+  }
+
+  .cal-event__links {
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+}
+
 /* ---------- Free gap (rooms view) ---------- */
 
 .cal-gap {

@@ -14,7 +14,7 @@ module CalendarHelper
 
   # The current calendar settings with some changed, e.g. calendar_params(view: "day")
   def calendar_params(**changes)
-    { view: @view, date: @date, store_id: @store.id }.merge(changes)
+    { view: @view, date: @date, store_id: @store.id, room_id: @room&.id }.merge(changes).compact
   end
 
   # The date one step back (-1) or forward (1) in the current view

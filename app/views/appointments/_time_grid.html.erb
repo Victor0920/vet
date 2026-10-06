@@ -1,7 +1,7 @@
 <%# Day and week views: time labels on the left, one column per day %>
 <% slots = calendar_slots(columns.first[:day]) %>
 
-<div class="time-grid card" style="--columns: <%= columns.size %>; --slots: <%= slots.size %>;">
+<div class="time-grid card <%= "time-grid--day" if @view == "day" %>" style="--columns: <%= columns.size %>; --slots: <%= slots.size %>;">
   <div class="time-grid__head">
     <div class="time-grid__corner"></div>
     <% columns.each do |column| %>

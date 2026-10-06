@@ -50,20 +50,28 @@
       </div>
     </div>
 
-    <div class="form-grid">
+    <%# pet-filter only lists the selected customer's pets, and disables Pet until a customer is picked %>
+    <div class="form-grid" data-controller="pet-filter">
       <div class="form-field">
         <%= f.label :customer_id, "Customer", class: "label" %>
         <%= f.collection_select :customer_id, @customers, :id, :full_name,
               { include_blank: "No customer" },
               class: "select",
+              data: { pet_filter_target: "customer", action: "change->pet-filter#filter" },
               aria: { invalid: appointment.errors[:customer].any? } %>
       </div>
       <div class="form-field">
         <%= f.label :pet_id, "Pet", class: "label" %>
-        <%# Pets grouped under their owner, so it's clear whose pet is whose %>
-        <%= f.grouped_collection_select :pet_id, @customers, :pets, :full_name, :id, :name,
+        <%# A disabled select isn't submitted at all, so this sends pet_id="" instead.
+            When the select is enabled, its value comes later in the form and wins. %>
+        <%= hidden_field_tag "appointment[pet_id]", "", id: nil %>
+        <%= f.select :pet_id,
+              @customers.flat_map { |customer|
+                customer.pets.map { |pet| [pet.name.presence || "Unnamed pet", pet.id, { data: { customer_id: customer.id } }] }
+              },
               { include_blank: "No pet" },
               class: "select",
+              data: { pet_filter_target: "pet" },
               aria: { invalid: appointment.errors[:pet].any? } %>
       </div>
     </div>

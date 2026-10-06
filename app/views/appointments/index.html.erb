@@ -7,7 +7,7 @@
       <p class="page-header__subtitle"><%= calendar_title %> · <%= pluralize(@appointments.size, "appointment") %></p>
     </div>
     <div class="page-header__actions">
-      <%= link_to new_appointment_path(store_id: @store.id, view: @view), class: "btn btn--primary", data: { turbo_frame: "modal" } do %>
+      <%= link_to new_appointment_path(store_id: @store.id, view: @view, room_id: @room&.id), class: "btn btn--primary", data: { turbo_frame: "modal" } do %>
         <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
         New appointment
       <% end %>
@@ -34,6 +34,21 @@
           <%= label_tag :store_id, "Store", class: "sr-only" %>
           <%= select_tag :store_id,
                 options_from_collection_for_select(@stores, :id, :name, @store.id),
+                class: "select select--sm",
+                data: { action: "change->auto-submit#submit" } %>
+        <% end %>
+      <% end %>
+
+      <% if @rooms.any? %>
+        <%# Changing store above doesn't send room_id, so the room filter resets with it %>
+        <%= form_with url: appointments_path, method: :get, data: { controller: "auto-submit", turbo_action: "advance" } do %>
+          <%= hidden_field_tag :view, @view %>
+          <%= hidden_field_tag :date, @date %>
+          <%= hidden_field_tag :store_id, @store.id %>
+          <%= label_tag :room_id, "Room", class: "sr-only" %>
+          <%= select_tag :room_id,
+                options_from_collection_for_select(@rooms, :id, :name, @room&.id),
+                include_blank: "All rooms",
                 class: "select select--sm",
                 data: { action: "change->auto-submit#submit" } %>
         <% end %>

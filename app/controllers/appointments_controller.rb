@@ -12,10 +12,12 @@ class AppointmentsController < ApplicationController
     @date = requested_date
     @days = calendar_days
     @rooms = @store.rooms.order(:name)
+    @room = @rooms.find_by(id: params[:room_id])
     @appointments = @store.appointments
                           .overlapping(@days.first.beginning_of_day, @days.last.end_of_day)
                           .includes(:room, :customer, pet: :customer)
                           .order(:starts_at)
+    @appointments = @appointments.where(room: @room) if @room
   end
 
   def new
