@@ -8,6 +8,20 @@
   --slot-line: var(--color-surface-sunken);
 }
 
+/* ---------- "Booking for <customer>" banner ---------- */
+
+.calendar-booking {
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.calendar-booking__cancel {
+  margin-left: auto;
+  color: inherit;
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+}
+
 /* ---------- Toolbar ---------- */
 
 .calendar-toolbar {

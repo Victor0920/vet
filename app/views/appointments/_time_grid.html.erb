@@ -26,7 +26,8 @@
         <%# Background layer: every empty slot is a link to book that time %>
         <div class="time-grid__slots">
           <% calendar_slots(column[:day]).each do |slot| %>
-            <%= link_to new_appointment_path(store_id: @store.id, view: @view, starts_at: slot.iso8601),
+            <%= link_to new_appointment_path(store_id: @store.id, view: @view, starts_at: slot.iso8601,
+                                       filter_room_id: @room&.id, customer_id: @customer&.id),
                   class: "time-grid__slot",
                   data: { turbo_frame: "modal", hour: slot.min.zero? },
                   aria: { label: "New appointment at #{slot.strftime('%H:%M')}" } do %><% end %>

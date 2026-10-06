@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_06_061950) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_06_065136) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -161,6 +161,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_061950) do
   end
 
   create_table "rooms", force: :cascade do |t|
+    t.string "color"
     t.datetime "created_at", null: false
     t.string "name"
     t.integer "store_id", null: false
@@ -179,6 +180,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_061950) do
 
   create_table "stores", force: :cascade do |t|
     t.string "address"
+    t.string "color"
     t.datetime "created_at", null: false
     t.integer "enterprise_id", null: false
     t.string "name"

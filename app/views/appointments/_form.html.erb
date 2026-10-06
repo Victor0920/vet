@@ -14,6 +14,7 @@
     <%# Not part of the appointment: they tell the controller where to return afterwards %>
     <%= hidden_field_tag :store_id, @store.id %>
     <%= hidden_field_tag :view, params[:view] %>
+    <%= hidden_field_tag :filter_room_id, params[:filter_room_id] %>
 
     <div class="form-field">
       <%= f.label :title, class: "label" %>
@@ -100,7 +101,7 @@
 
 <footer class="card__footer modal__footer">
   <% if appointment.persisted? %>
-    <%= button_to appointment_path(appointment, view: params[:view]),
+    <%= button_to appointment_path(appointment, view: params[:view], filter_room_id: params[:filter_room_id].presence),
           method: :delete,
           class: "btn btn--danger-ghost",
           form: { data: { turbo_confirm: "Delete this appointment?", turbo_frame: "_top" } } do %>
