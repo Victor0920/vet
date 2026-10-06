@@ -2,7 +2,11 @@ class CustomersController < ApplicationController
   before_action :set_customer, only: %i[ show edit update ]
 
   def index
-    @customers = Current.enterprise.customers.all
+    @query = params[:q].to_s.strip
+    @customers = Current.enterprise.customers
+      .search(@query)
+      .includes(:pets, photo_attachment: :blob)
+      .order(:first_name)
   end
 
   def new

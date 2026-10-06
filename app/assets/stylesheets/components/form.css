@@ -273,3 +273,26 @@
     }
   }
 }
+
+/*
+ * Search field: input with a magnifying glass on the left
+ * <div class="search-field"><svg>…</svg><input class="input" type="search"></div>
+ */
+.search-field {
+  position: relative;
+
+  svg {
+    position: absolute;
+    top: 50%;
+    left: var(--space-3);
+    width: var(--icon-sm);
+    height: var(--icon-sm);
+    color: var(--color-text-subtle);
+    translate: 0 -50%;
+    pointer-events: none; /* clicks go through to the input */
+  }
+
+  .input {
+    padding-left: calc(var(--space-3) + var(--icon-sm) + var(--space-2));
+  }
+}

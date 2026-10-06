@@ -3,10 +3,7 @@
 <div class="page-header">
   <div>
     <h1 class="page-header__title">Customers</h1>
-    <p class="page-header__subtitle">
-      <%= pluralize(@customers.size, "customer") %>
-      and their pets
-    </p>
+    <p class="page-header__subtitle">Everyone registered and their pets</p>
   </div>
   <div class="page-header__actions">
     <%= link_to new_customer_path, class: "btn btn--primary" do %>
@@ -19,64 +16,104 @@
 
 </div>
 
-<% if @customers.any? %>
-  <div class="table-wrapper">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Customer</th>
-          <th>Phone number</th>
-          <th>Pets</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @customers.each do |customer| %>
-          <% full_name = [customer.first_name, customer.first_surname].compact_blank.join(
-            " ",
-          ) %>
-          <tr>
-            <td class="table__numeric">#<%= customer.id %></td>
-            <td>
-              <div class="customer-cell">
-                <% if customer.photo.attached? %>
-                  <%= image_tag customer.photo.variant(resize_to_fill: [80, 80]),
-                  alt: "",
-                  class: "avatar avatar--photo" %>
-                <% else %>
-                  <span class="avatar"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
-                <% end %>
-                <div class="customer-cell__text">
-                  <%= link_to full_name.presence || "Unnamed customer",
-                  customer_path(customer),
-                  class: "customer-cell__name" %>
-                  <% if customer.email.present? %>
-                    <span class="customer-cell__meta"><%= customer.email %></span>
+<%# Typing submits this form (debounced, see search_controller.js). It targets the
+    "customers" frame below, so only the table is replaced and the input keeps focus.
+    turbo_action "replace" updates the URL to ?q=… without adding a history entry per keystroke. %>
+  <%= form_with url: customers_path, method: :get, role: "search", class: "customers-search",
+      data: { controller: "search", turbo_frame: "customers", turbo_action: "replace" } do %>
+    <div class="search-field">
+      <%= render "shared/icons/magnifying_glass" %>
+      <%= label_tag :q, "Search customers", class: "sr-only" %>
+      <%= search_field_tag :q,
+      @query,
+      class: "input",
+      placeholder: "Search by name, phone, email or document…",
+      autocomplete: "off",
+      data: {
+        action: "input->search#submit",
+      } %>
+    </div>
+  <% end %>
+
+  <%# target: "_top" so links inside (customer names) open the full page, not the frame %>
+  <%= turbo_frame_tag "customers", target: "_top" do %>
+    <p class="customers-search__count">
+      <% if @query.present? %>
+        <%= pluralize(@customers.size, "customer") %>
+        matching “<%= @query %>
+      <% else %>
+        <%= pluralize(@customers.size, "customer") %><% end %>
+    </p>
+
+    <% if @customers.any? %>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer</th>
+              <th>Phone number</th>
+              <th>Pets</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @customers.each do |customer| %>
+              <% full_name = [customer.first_name, customer.first_surname].compact_blank.join(
+                " ",
+              ) %>
+              <tr>
+                <td class="table__numeric">#<%= customer.id %></td>
+                <td>
+                  <div class="customer-cell">
+                    <% if customer.photo.attached? %>
+                      <%= image_tag customer.photo.variant(resize_to_fill: [80, 80]),
+                      alt: "",
+                      class: "avatar avatar--photo" %>
+                    <% else %>
+                      <span class="avatar"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
+                    <% end %>
+                    <div class="customer-cell__text">
+                      <%= link_to full_name.presence || "Unnamed customer",
+                      customer_path(customer),
+                      class: "customer-cell__name" %>
+                      <% if customer.email.present? %>
+                        <span class="customer-cell__meta"><%= customer.email %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
+                <td class="table__numeric"><%= customer.first_phone.presence || "—" %></td>
+                <td>
+                  <% if customer.pets.any? %>
+                    <div class="pet-chips">
+                      <% customer.pets.each do |pet| %>
+                        <span class="badge badge--primary"><%= pet.name.presence || "Unnamed" %></span>
+                      <% end %>
+                    </div>
+                  <% else %>
+                    <span class="text-subtle">No pets</span>
                   <% end %>
-                </div>
-              </div>
-            </td>
-            <td class="table__numeric"><%= customer.first_phone.presence || "—" %></td>
-            <td>
-              <% if customer.pets.any? %>
-                <div class="pet-chips">
-                  <% customer.pets.each do |pet| %>
-                    <span class="badge badge--primary"><%= pet.name.presence || "Unnamed" %></span>
-                  <% end %>
-                </div>
-              <% else %>
-                <span class="text-subtle">No pets</span>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <div class="empty-state">
-    <%= render "shared/paw_icon" %>
-    <p class="empty-state__title">No customers yet</p>
-    <p>Customers will show up here once the first is created.</p>
-  </div>
-<% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% elsif @query.present? %>
+      <div class="empty-state">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+            fill-rule="evenodd"
+            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+            clip-rule="evenodd"
+          /></svg>
+        <p class="empty-state__title">No customers match “<%= @query %>”</p>
+        <p>Try part of a name, a phone number or a document number.</p>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <%= render "shared/paw_icon" %>
+        <p class="empty-state__title">No customers yet</p>
+        <p>Customers will show up here once the first is created.</p>
+      </div>
+    <% end %>
+  <% end %>
