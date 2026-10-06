@@ -39,8 +39,11 @@
 
   <% employee = Current.session&.employee %>
   <div class="sidebar__footer">
-    <span class="avatar avatar--sm"><%= employee&.email_address.to_s.first %></span>
-    <span class="sidebar__user" title="<%= employee&.email_address %>"><%= employee&.email_address %></span>
+
+    <%= link_to helpers.employee_path(employee) do %>
+      <span class="avatar avatar--sm"><%= employee&.email_address.to_s.first %></span>
+      <span class="sidebar__user" title="<%= employee&.email_address %>"><%= employee&.email_address %></span>
+    <% end %>
     <%= button_to helpers.session_path, method: :delete, class: "btn btn--ghost btn--sm", title: "Sign out", aria: { label: "Sign out" } do %>
       <svg
         viewBox="0 0 24 24"

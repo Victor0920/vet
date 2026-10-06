@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     resources :pets
   end
 
+  resources :employees
   resources :appointments
   post "/conversations/:id/messages", to: "conversations#create_message"
 

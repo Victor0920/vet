@@ -6,7 +6,7 @@ class CustomersController < ApplicationController
   end
 
   def new
-    @customer = Customer.new
+    @customer = Current.enterprise.customers.new
   end
 
   def show
@@ -45,8 +45,8 @@ class CustomersController < ApplicationController
 
   # Strong parameters: only these fields can be changed from a form
   def customer_params
-    params.expect(customer: [ :first_name, :first_surname, :second_surname, :sex, :born_on,
-                              :document_type, :document_number, :email, :first_phone, :second_phone,
-                              :address, :post_code, :province, :photo ])
+    params.expect(customer: [ :first_name, :first_surname, :second_surname, :sex,
+      :document_type, :document_number, :email, :first_phone, :second_phone,
+      :born_on, :address, :post_code, :province, :photo ])
   end
 end
