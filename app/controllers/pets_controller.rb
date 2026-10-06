@@ -34,7 +34,7 @@ class PetsController < ApplicationController
   private
 
   def set_customer
-    @customer = Customer.find_by(id: params[:customer_id])
+    @customer = Current.enterprise.customers.find_by(id: params[:customer_id])
     redirect_to customers_url, alert: "Customer not found" if @customer.nil?
   end
 

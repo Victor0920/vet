@@ -2,7 +2,7 @@ class CustomersController < ApplicationController
   before_action :set_customer, only: %i[ show edit update ]
 
   def index
-    @customers = Customer.all
+    @customers = Current.enterprise.customers.all
   end
 
   def new
@@ -39,8 +39,7 @@ class CustomersController < ApplicationController
   private
 
   def set_customer
-    @customer = Customer.find_by(id: params[:id])
-    # NOTE: Add validation to show customers only of current enterprise
+    @customer = Current.enterprise.customers.find_by(id: params[:id])
     redirect_to customers_url, alert: "Customer not found" if @customer.nil?
   end
 
