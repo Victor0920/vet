@@ -1,0 +1,103 @@
+<% owner_name = [@customer.first_name, @customer.first_surname].compact_blank.join(" ").presence || "Customer ##{@customer.id}" %>
+<% content_for :title, @pet.name.presence || "Pet ##{@pet.id}" %>
+
+<%= link_to customer_path(@customer), class: "back-link" do %>
+  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+  <%= owner_name %>
+<% end %>
+
+<div class="customer-profile">
+  <aside class="card customer-profile__sidebar">
+    <div class="pet-photo">
+      <div class="pet-photo__frame">
+        <% if @pet.photo.attached? %>
+          <%= image_tag @pet.photo.variant(resize_to_fill: [576, 576]), alt: @pet.name.to_s, class: "pet-photo__image" %>
+        <% else %>
+          <span class="pet-photo__placeholder"><%= render "shared/paw_icon" %></span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="customer-profile__header">
+      <div>
+        <h1 class="customer-profile__name"><%= @pet.name.presence || "Unnamed pet" %></h1>
+        <p class="text-subtle text-xs">
+          <%= [@pet.species, @pet.breed].compact_blank.join(" · ").presence || "Pet ##{@pet.id}" %>
+        </p>
+      </div>
+      <%= link_to edit_customer_pet_path(@customer, @pet), class: "btn btn--secondary btn--sm" do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
+        Edit pet
+      <% end %>
+    </div>
+
+    <div class="card__body">
+      <dl class="details">
+        <div>
+          <dt>Owner</dt>
+          <dd>
+            <%= link_to customer_path(@customer), class: "pet-owner" do %>
+              <% if @customer.photo.attached? %>
+                <%= image_tag @customer.photo.variant(resize_to_fill: [64, 64]), alt: "", class: "avatar avatar--sm avatar--photo" %>
+              <% else %>
+                <span class="avatar avatar--sm"><%= @customer.first_name.to_s.first %><%= @customer.first_surname.to_s.first %></span>
+              <% end %>
+              <%= owner_name %>
+            <% end %>
+          </dd>
+        </div>
+        <div>
+          <dt>Added</dt>
+          <dd><%= @pet.created_at.strftime("%b %-d, %Y") %></dd>
+        </div>
+        <div>
+          <dt>Last updated</dt>
+          <dd><%= time_ago_in_words(@pet.updated_at) %> ago</dd>
+        </div>
+      </dl>
+    </div>
+  </aside>
+
+  <%# Each card is a title plus a list of [label, value] pairs, rendered read-only %>
+  <% sections = {
+    "General" => [
+      ["Name", @pet.name],
+      ["Species", @pet.species],
+      ["Breed", @pet.breed],
+      ["Sex", @pet.sex],
+      ["Born", @pet.born_on && "#{@pet.born_on.strftime("%b %-d, %Y")} · #{distance_of_time_in_words(@pet.born_on, Date.current)} old"],
+      ["Color", @pet.color]
+    ],
+    "Identification" => [
+      ["Microchip number", @pet.transponder_number],
+      ["Microchip location", @pet.transponder_location]
+    ],
+    "Notes" => [
+      ["Notes", @pet.notes]
+    ]
+  } %>
+
+  <div class="customer-profile__main stack">
+    <% sections.each do |title, fields| %>
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title"><%= title %></h2>
+        </header>
+        <dl class="field-list">
+          <% fields.each do |label, value| %>
+            <div class="field-row">
+              <dt class="field-row__label"><%= label %></dt>
+              <dd class="field-row__value">
+                <div class="field-row__display">
+                  <span class="<%= "text-subtle" if value.blank? %> <%= "field-row__text--multiline" if label == "Notes" %>">
+                    <%= value.presence || "Not set" %>
+                  </span>
+                </div>
+              </dd>
+            </div>
+          <% end %>
+        </dl>
+      </section>
+    <% end %>
+  </div>
+</div>

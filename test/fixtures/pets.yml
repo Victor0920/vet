@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  species: MyString
+  breed: MyString
+  sex: MyString
+  born_on: 2026-10-04
+  notes: MyString
+  color: MyString
+  transponder_number: MyString
+  transponder_location: MyString
+
+two:
+  name: MyString
+  species: MyString
+  breed: MyString
+  sex: MyString
+  born_on: 2026-10-04
+  notes: MyString
+  color: MyString
+  transponder_number: MyString
+  transponder_location: MyString

@@ -1,0 +1,77 @@
+/*
+ * Field list — label/value rows inside a card, optionally editable inline
+ * (see shared/_editable_field.html.erb + inline_edit_controller.js)
+ * <dl class="field-list">
+ *   <div class="field-row">
+ *     <dt class="field-row__label">Name</dt>
+ *     <dd class="field-row__value"><div class="field-row__display"><span>Titan</span></div></dd>
+ *   </div>
+ * </dl>
+ */
+
+.field-list {
+  padding: var(--space-1) var(--space-5);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+  padding: var(--space-3) 0;
+  border-bottom: var(--border);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  /* [hidden] must win over the display: flex rules below */
+  [hidden] {
+    display: none;
+  }
+}
+
+.field-row__label {
+  /* line up with the 32px-tall value row */
+  padding-top: var(--space-1-5);
+  color: var(--color-text-muted);
+  font-weight: var(--weight-medium);
+}
+
+.field-row__value {
+  min-width: 0;
+}
+
+.field-row__display {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+
+  > span {
+    padding-top: var(--space-1-5);
+    word-break: break-word;
+  }
+
+  .btn--icon {
+    color: var(--color-text-subtle);
+  }
+}
+
+.field-row__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field-row__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+@media (max-width: 640px) {
+  .field-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+}
