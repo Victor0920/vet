@@ -4,9 +4,19 @@
   <div>
     <h1 class="page-header__title">Customers</h1>
     <p class="page-header__subtitle">
-      <%= pluralize(@customers.size, "customer") %> and their pets
+      <%= pluralize(@customers.size, "customer") %>
+      and their pets
     </p>
   </div>
+  <div class="page-header__actions">
+    <%= link_to new_customer_path, class: "btn btn--primary" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+          d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+        /></svg>
+      New customer
+    <% end %>
+  </div>
+
 </div>
 
 <% if @customers.any? %>
@@ -22,18 +32,24 @@
       </thead>
       <tbody>
         <% @customers.each do |customer| %>
-          <% full_name = [customer.first_name, customer.first_surname].compact_blank.join(" ") %>
+          <% full_name = [customer.first_name, customer.first_surname].compact_blank.join(
+            " ",
+          ) %>
           <tr>
             <td class="table__numeric">#<%= customer.id %></td>
             <td>
               <div class="customer-cell">
                 <% if customer.photo.attached? %>
-                  <%= image_tag customer.photo.variant(resize_to_fill: [80, 80]), alt: "", class: "avatar avatar--photo" %>
+                  <%= image_tag customer.photo.variant(resize_to_fill: [80, 80]),
+                  alt: "",
+                  class: "avatar avatar--photo" %>
                 <% else %>
                   <span class="avatar"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
                 <% end %>
                 <div class="customer-cell__text">
-                  <%= link_to full_name.presence || "Unnamed customer", customer_path(customer), class: "customer-cell__name" %>
+                  <%= link_to full_name.presence || "Unnamed customer",
+                  customer_path(customer),
+                  class: "customer-cell__name" %>
                   <% if customer.email.present? %>
                     <span class="customer-cell__meta"><%= customer.email %></span>
                   <% end %>

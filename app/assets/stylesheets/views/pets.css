@@ -1,5 +1,6 @@
-/* ---------- pets#show + pets#edit ----------
- * Layout reuses .customer-profile from customers.css.
+/* ---------- pets#show + pets#edit + pets#new ----------
+ * Layout reuses .customer-profile (and .customer-form__toolbar on new)
+ * from customers.css.
  */
 
 /*
@@ -68,8 +69,9 @@
   }
 }
 
-/* No photo yet: keep the hint visible so it's obvious you can upload one */
-.pet-photo__placeholder + .pet-photo__overlay,
+/* No photo yet: keep the hint visible so it's obvious you can upload one.
+ * :not([hidden]) — on new, image-preview hides the placeholder once a photo is picked. */
+.pet-photo__placeholder:not([hidden]) + .pet-photo__overlay,
 .pet-photo__trigger:hover .pet-photo__overlay,
 .pet-photo:has(input:focus-visible) .pet-photo__overlay {
   opacity: 1;
@@ -79,6 +81,11 @@
 .pet-photo:has(input:focus-visible) .pet-photo__trigger {
   outline: 2px solid var(--color-focus);
   outline-offset: -2px;
+}
+
+/* .pet-photo__placeholder sets display: grid, which would override the hidden attribute */
+.pet-photo [hidden] {
+  display: none;
 }
 
 .pet-owner {

@@ -5,12 +5,26 @@ class CustomersController < ApplicationController
     @customers = Customer.all
   end
 
+  def new
+    @customer = Customer.new
+  end
+
   def show
     @pets = @customer.pets
     @new_pet = Pet.new(customer_id: @customer.id)
   end
 
   def edit
+  end
+
+  def create
+    @customer = Current.enterprise.customers.new(customer_params)
+
+    if @customer.save
+      redirect_to customer_path(@customer), notice: "Customer created"
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   def update

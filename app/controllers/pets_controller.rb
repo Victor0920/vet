@@ -1,10 +1,15 @@
 class PetsController < ApplicationController
-  before_action :set_pet
+  before_action :set_customer
+  before_action :set_pet, only: %i[ show edit update ]
 
   def show
   end
 
   def edit
+  end
+
+  def new
+    @pet = @customer.pets.new
   end
 
   def update
@@ -16,13 +21,25 @@ class PetsController < ApplicationController
     end
   end
 
+  def create
+    @pet = @customer.pets.new(pet_params)
+
+    if @pet.save
+      redirect_to customer_path(@customer), notice: "Pet created"
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
   private
 
-  # Looking the pet up through the customer means /customers/1/pets/5
-  # only works if pet 5 really belongs to customer 1.
-  def set_pet
+  def set_customer
     @customer = Customer.find_by(id: params[:customer_id])
-    @pet = @customer&.pets&.find_by(id: params[:id])
+    redirect_to customers_url, alert: "Customer not found" if @customer.nil?
+  end
+
+  def set_pet
+    @pet = @customer.pets.find_by(id: params[:id])
     redirect_to customers_url, alert: "Pet not found" if @pet.nil?
   end
 
