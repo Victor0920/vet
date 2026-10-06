@@ -1,0 +1,46 @@
+<%# Month view: full weeks (Mon–Sun) covering @date's month %>
+<% max_visible = 3 %>
+
+<div class="month-grid card">
+  <div class="month-grid__head">
+    <% @days.first(7).each do |day| %>
+      <div class="month-grid__weekday"><%= day.strftime("%a") %></div>
+    <% end %>
+  </div>
+
+  <div class="month-grid__body">
+    <% @days.each do |day| %>
+      <% day_appointments = appointments_on(day) %>
+
+      <div class="month-grid__cell<%= " month-grid__cell--outside" if day.month != @date.month %>"
+           <%= "aria-current=date" if day == Date.current %>>
+        <div class="month-grid__cell-head">
+          <%= link_to day.day, appointments_path(calendar_params(view: "day", date: day)), class: "month-grid__date" %>
+          <%= link_to new_appointment_path(store_id: @store.id, view: @view, starts_at: day.in_time_zone.change(hour: CalendarHelper::DAY_START_HOUR).iso8601),
+                class: "month-grid__add",
+                data: { turbo_frame: "modal" },
+                aria: { label: "New appointment on #{day.strftime('%-d %B')}" } do %>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+          <% end %>
+        </div>
+
+        <ul class="month-grid__events">
+          <% day_appointments.first(max_visible).each do |appointment| %>
+            <li>
+              <%= link_to edit_appointment_path(appointment, view: @view), class: "month-event", data: { turbo_frame: "modal" } do %>
+                <span class="month-event__time"><%= appointment.starts_at.strftime("%H:%M") %></span>
+                <span class="month-event__title"><%= appointment.title %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+
+        <% if day_appointments.size > max_visible %>
+          <%= link_to "+#{day_appointments.size - max_visible} more",
+                appointments_path(calendar_params(view: "day", date: day)),
+                class: "month-grid__more" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     resources :pets
   end
 
-  resources :calendar
+  resources :appointments
   post "/conversations/:id/messages", to: "conversations#create_message"
 
   get "/auth", to: "auth#index"

@@ -1,0 +1,27 @@
+<%# One appointment block inside a time grid.
+    The title link is "stretched" over the whole block (see .cal-event__title::after),
+    so clicking anywhere opens the edit modal. The customer/pet links sit above it,
+    because links can't be nested inside other links. %>
+<div class="cal-event" style="<%= style %>">
+  <%= link_to appointment.title.presence || "Untitled", edit_appointment_path(appointment, view: @view),
+        class: "cal-event__title",
+        data: { turbo_frame: "modal" } %>
+  <span class="cal-event__time">
+    <%= appointment.starts_at.strftime("%H:%M") %>–<%= appointment.ends_at.strftime("%H:%M") %>
+    <% if show_room %> · <%= appointment.room.name %><% end %>
+  </span>
+
+  <% if appointment.customer || appointment.pet %>
+    <span class="cal-event__links">
+      <% if appointment.customer %>
+        <%= link_to appointment.customer.full_name, customer_path(appointment.customer), class: "cal-event__link", data: { turbo_frame: "_top" } %>
+      <% end %>
+      <% if appointment.pet %>
+        <%= link_to appointment.pet.name.presence || "Unnamed pet",
+              customer_pet_path(appointment.pet.customer, appointment.pet),
+              class: "cal-event__link cal-event__link--pet",
+              data: { turbo_frame: "_top" } %>
+      <% end %>
+    </span>
+  <% end %>
+</div>

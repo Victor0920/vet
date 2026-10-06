@@ -1,0 +1,65 @@
+<% content_for :title, "Calendar" %>
+
+<div class="calendar">
+  <div class="page-header">
+    <div>
+      <h1 class="page-header__title">Calendar</h1>
+      <p class="page-header__subtitle"><%= calendar_title %> · <%= pluralize(@appointments.size, "appointment") %></p>
+    </div>
+    <div class="page-header__actions">
+      <%= link_to new_appointment_path(store_id: @store.id, view: @view), class: "btn btn--primary", data: { turbo_frame: "modal" } do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+        New appointment
+      <% end %>
+    </div>
+  </div>
+
+  <div class="calendar-toolbar">
+    <div class="calendar-toolbar__nav">
+      <%= link_to appointments_path(calendar_params(date: calendar_step_date(-1))), class: "btn btn--secondary btn--icon", aria: { label: "Previous" } do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>
+      <% end %>
+      <%= link_to "Today", appointments_path(calendar_params(date: Date.current)), class: "btn btn--secondary" %>
+      <%= link_to appointments_path(calendar_params(date: calendar_step_date(1))), class: "btn btn--secondary btn--icon", aria: { label: "Next" } do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+      <% end %>
+      <h2 class="calendar-toolbar__title"><%= calendar_title %></h2>
+    </div>
+
+    <div class="calendar-toolbar__controls">
+      <% if @stores.size > 1 %>
+        <%= form_with url: appointments_path, method: :get, data: { controller: "auto-submit", turbo_action: "advance" } do %>
+          <%= hidden_field_tag :view, @view %>
+          <%= hidden_field_tag :date, @date %>
+          <%= label_tag :store_id, "Store", class: "sr-only" %>
+          <%= select_tag :store_id,
+                options_from_collection_for_select(@stores, :id, :name, @store.id),
+                class: "select select--sm",
+                data: { action: "change->auto-submit#submit" } %>
+        <% end %>
+      <% end %>
+
+      <nav class="segmented" aria-label="Calendar view">
+        <% { "day" => "Day", "week" => "Week", "month" => "Month", "rooms" => "Rooms" }.each do |view, label| %>
+          <%= link_to label, appointments_path(calendar_params(view: view)),
+                class: "segmented__item",
+                aria: { current: ("page" if @view == view) } %>
+        <% end %>
+      </nav>
+    </div>
+  </div>
+
+  <% case @view %>
+  <% when "day" %>
+    <%= render "time_grid", columns: [ { label: @date, day: @date, appointments: appointments_on(@date) } ] %>
+  <% when "week" %>
+    <%= render "time_grid", columns: @days.map { |day| { label: day, day: day, appointments: appointments_on(day) } } %>
+  <% when "month" %>
+    <%= render "month" %>
+  <% when "rooms" %>
+    <%= render "rooms" %>
+  <% end %>
+
+  <%# new/edit forms load into this frame and show as a modal %>
+  <%= turbo_frame_tag "modal" %>
+</div>

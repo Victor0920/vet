@@ -1,0 +1,45 @@
+<%# Day and week views: time labels on the left, one column per day %>
+<% slots = calendar_slots(columns.first[:day]) %>
+
+<div class="time-grid card" style="--columns: <%= columns.size %>; --slots: <%= slots.size %>;">
+  <div class="time-grid__head">
+    <div class="time-grid__corner"></div>
+    <% columns.each do |column| %>
+      <%= link_to appointments_path(calendar_params(view: "day", date: column[:day])),
+            class: "time-grid__day",
+            aria: { current: ("date" if column[:day] == Date.current) } do %>
+        <span class="time-grid__weekday"><%= column[:label].strftime("%a") %></span>
+        <span class="time-grid__date"><%= column[:label].day %></span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="time-grid__body">
+    <div class="time-grid__hours">
+      <% slots.each do |slot| %>
+        <div class="time-grid__hour"><%= slot.strftime("%H:%M") if slot.min.zero? %></div>
+      <% end %>
+    </div>
+
+    <% columns.each do |column| %>
+      <div class="time-grid__column">
+        <%# Background layer: every empty slot is a link to book that time %>
+        <div class="time-grid__slots">
+          <% calendar_slots(column[:day]).each do |slot| %>
+            <%= link_to new_appointment_path(store_id: @store.id, view: @view, starts_at: slot.iso8601),
+                  class: "time-grid__slot",
+                  data: { turbo_frame: "modal", hour: slot.min.zero? },
+                  aria: { label: "New appointment at #{slot.strftime('%H:%M')}" } do %><% end %>
+          <% end %>
+        </div>
+
+        <div class="time-grid__events">
+          <% column[:appointments].each do |appointment| %>
+            <% position = calendar_position(appointment.starts_at, appointment.ends_at, column[:day]) %>
+            <%= render "appointment", appointment: appointment, style: position, show_room: true if position %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
