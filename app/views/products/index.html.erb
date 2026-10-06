@@ -1,0 +1,99 @@
+<% content_for :title, "All products" %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">Products</h1>
+    <p class="page-header__subtitle">Everything the clinic sells</p>
+  </div>
+  <div class="page-header__actions">
+    <%= link_to "Categories", product_categories_path, class: "btn btn--secondary" %>
+    <%= link_to new_product_path, class: "btn btn--primary" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+          d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+        /></svg>
+      New product
+    <% end %>
+  </div>
+</div>
+
+<%# Same pattern as customers#index: typing or picking a category submits the form
+    (debounced by search_controller.js) into the "products" frame, so only the table
+    is replaced. Both params end up in the URL: /products?q=…&category_id=… %>
+<%= form_with url: products_path, method: :get, role: "search", class: "products-filters",
+    data: { controller: "search", turbo_frame: "products", turbo_action: "replace" } do %>
+  <div class="search-field products-filters__search">
+    <%= render "shared/icons/magnifying_glass" %>
+    <%= label_tag :q, "Search products", class: "sr-only" %>
+    <%= search_field_tag :q, @query,
+          class: "input",
+          placeholder: "Search by name or description…",
+          autocomplete: "off",
+          data: { action: "input->search#submit" } %>
+  </div>
+
+  <%= label_tag :category_id, "Category", class: "sr-only" %>
+  <%= select_tag :category_id,
+        options_from_collection_for_select(@categories, :id, :name, @category_id),
+        include_blank: "All categories",
+        class: "select products-filters__category",
+        data: { action: "change->search#submit" } %>
+<% end %>
+
+<%# target: "_top" so links inside (product names) open the full page, not the frame %>
+<%= turbo_frame_tag "products", target: "_top" do %>
+  <p class="products-filters__count">
+    <%= pluralize(@products.size, "product") %>
+    <% if @query.present? %>matching “<%= @query %>”<% end %>
+  </p>
+
+  <% if @products.any? %>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th class="products-table__price">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @products.each do |product| %>
+            <tr>
+              <td class="table__numeric">#<%= product.id %></td>
+              <td>
+                <div class="product-cell">
+                  <%= link_to product.name.presence || "Unnamed product", product_path(product),
+                        class: "product-cell__name" %>
+                  <% if product.description.present? %>
+                    <span class="product-cell__meta"><%= product.description %></span>
+                  <% end %>
+                </div>
+              </td>
+              <td>
+                <%= link_to product.product_category.name.presence || "Unnamed",
+                      product_category_path(product.product_category),
+                      class: "badge badge--primary" %>
+              </td>
+              <td class="table__numeric products-table__price">
+                <%= product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "—" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% elsif @query.present? || @category_id.present? %>
+    <div class="empty-state">
+      <%= render "shared/icons/magnifying_glass" %>
+      <p class="empty-state__title">No products match these filters</p>
+      <p>Try another search or pick “All categories”.</p>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <%= render "shared/paw_icon" %>
+      <p class="empty-state__title">No products yet</p>
+      <p>Products will show up here once the first is created.</p>
+    </div>
+  <% end %>
+<% end %>
