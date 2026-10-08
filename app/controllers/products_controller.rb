@@ -40,7 +40,7 @@
      end
    end
 
-    private
+   private
 
    def set_product
      @product = Current.enterprise.products.find_by(id: params[:id])

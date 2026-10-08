@@ -3,13 +3,15 @@ import { Controller } from "@hotwired/stimulus"
 // Modal shown inside <turbo-frame id="modal">.
 //
 // - close(): empties the frame. When the modal was opened on its own page
-//   (no calendar behind it), the link is followed instead.
+//   (nothing behind it to go back to), the link is followed instead.
 // - submitEnd(): after a successful save inside the frame, reload the whole
 //   page at the redirect URL so the calendar shows the change.
 export default class extends Controller {
   close(event) {
     const frame = this.element.closest("turbo-frame")
-    if (!frame || !document.querySelector(".calendar")) return
+    // Turbo sets src on the frame when a link loads the modal into it (calendar,
+    // invoice page…). No src means this is the modal's own page: follow the link.
+    if (!frame || !frame.hasAttribute("src")) return
 
     event?.preventDefault()
     // Clearing src lets the same link open the modal again later

@@ -1,0 +1,66 @@
+<% content_for :title, t(".title") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+  <div class="page-header__actions">
+    <%= link_to new_invoice_path, class: "btn btn--primary" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+          d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+        /></svg>
+      <%= t(".new_invoice") %>
+    <% end %>
+  </div>
+</div>
+
+<%# Same pattern as customers#index: typing or picking a date submits the form
+    (debounced by search_controller.js) into the "invoices" frame, so only the table
+    is replaced. All three params end up in the URL: /invoices?q=…&from=…&to=… %>
+<%= form_with url: invoices_path, method: :get, role: "search", class: "invoices-filters",
+    data: { controller: "search", turbo_frame: "invoices", turbo_action: "replace" } do %>
+  <div class="search-field invoices-filters__search">
+    <%= render "shared/icons/magnifying_glass" %>
+    <%= label_tag :q, t(".search_label"), class: "sr-only" %>
+    <%= search_field_tag :q, @query,
+          class: "input",
+          placeholder: t(".search_placeholder"),
+          autocomplete: "off",
+          data: { action: "input->search#submit" } %>
+  </div>
+
+  <div class="invoices-filters__dates">
+    <%= label_tag :from, t(".from"), class: "invoices-filters__label" %>
+    <%= date_field_tag :from, @from, class: "input", data: { action: "change->search#submit" } %>
+    <%= label_tag :to, t(".to"), class: "invoices-filters__label" %>
+    <%= date_field_tag :to, @to, class: "input", data: { action: "change->search#submit" } %>
+  </div>
+<% end %>
+
+<%# target: "_top" so links inside (invoice numbers, customers) open the full page, not the frame %>
+<%= turbo_frame_tag "invoices", target: "_top" do %>
+  <p class="invoices-filters__count">
+    <% if @query.present? %>
+      <%= t(".count_matching", count: @invoices.size, query: @query) %>
+    <% else %>
+      <%= t(".count", count: @invoices.size) %>
+    <% end %>
+  </p>
+
+  <% if @invoices.any? %>
+    <%= render "table", invoices: @invoices %>
+  <% elsif @query.present? || @from || @to %>
+    <div class="empty-state">
+      <%= render "shared/icons/magnifying_glass" %>
+      <p class="empty-state__title"><%= t(".no_matches") %></p>
+      <p><%= t(".no_matches_hint") %></p>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <%= render "shared/paw_icon" %>
+      <p class="empty-state__title"><%= t(".empty") %></p>
+      <p><%= t(".empty_hint") %></p>
+    </div>
+  <% end %>
+<% end %>

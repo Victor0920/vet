@@ -5,6 +5,7 @@ class Appointment < ApplicationRecord
   belongs_to :store
   belongs_to :room
   belongs_to :enterprise, default: -> { Current.enterprise }
+  has_one :invoice, dependent: :restrict_with_error
 
   before_validation :fill_in_from_associations
 

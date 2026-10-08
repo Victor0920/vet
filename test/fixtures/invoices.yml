@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  invoice_id: MyString
+  customer: one
+  enterprise: one
+  store: one
+  employee: one
+  date: 2026-10-08 14:14:59
+
+two:
+  invoice_id: MyString
+  customer: two
+  enterprise: two
+  store: two
+  employee: two
+  date: 2026-10-08 14:14:59

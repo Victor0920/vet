@@ -6,4 +6,5 @@ class Enterprise < ApplicationRecord
   has_many :customers, dependent: :destroy
   has_many :appointments, dependent: :destroy
   has_many :stores, dependent: :destroy
+  has_many :invoices, dependent: :destroy
 end
