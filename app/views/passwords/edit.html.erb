@@ -1,22 +1,22 @@
-<% content_for :title, "Reset password" %>
+<% content_for :title, t(".title") %>
 
 <div class="card auth-card">
   <div class="auth-card__header">
-    <h1 class="auth-card__title">Set a new password</h1>
-    <p class="auth-card__subtitle">Choose something you haven't used before.</p>
+    <h1 class="auth-card__title"><%= t(".heading") %></h1>
+    <p class="auth-card__subtitle"><%= t(".subtitle") %></p>
   </div>
 
   <%= form_with url: password_path(params[:token]), method: :put, class: "form" do |form| %>
     <div class="form-field">
-      <%= form.label :password, "New password", class: "label" %>
+      <%= form.label :password, t(".password"), class: "label" %>
       <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "••••••••", maxlength: 72, class: "input" %>
     </div>
 
     <div class="form-field">
-      <%= form.label :password_confirmation, "Confirm password", class: "label" %>
+      <%= form.label :password_confirmation, t(".password_confirmation"), class: "label" %>
       <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "••••••••", maxlength: 72, class: "input" %>
     </div>
 
-    <%= form.submit "Save password", class: "btn btn--primary btn--block btn--lg" %>
+    <%= form.submit t(".submit"), class: "btn btn--primary btn--block btn--lg" %>
   <% end %>
 </div>

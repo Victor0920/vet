@@ -2,14 +2,14 @@
   <div class="message message--<%= @message.sender %>">
     <div class="message__bubble"><%= @message.text %></div>
     <div class="message__meta">
-      <span><%= @message.sender&.humanize %></span>
+      <span><%= @message.sender && t(@message.sender, scope: "shared.message_senders", default: @message.sender.humanize) %></span>
       <% if @message.created_at %>
         <span aria-hidden="true">·</span>
         <time datetime="<%= @message.created_at.iso8601 %>"><%= @message.created_at.strftime("%H:%M") %></time>
       <% end %>
       <% if @message.delivery_status.present? %>
         <span aria-hidden="true">·</span>
-        <span><%= @message.delivery_status.humanize %></span>
+        <span><%= t(@message.delivery_status, scope: "shared.delivery_statuses", default: @message.delivery_status.humanize) %></span>
       <% end %>
     </div>
   </div>

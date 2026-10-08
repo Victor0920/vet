@@ -1,9 +1,9 @@
-<% content_for :title, "All messages" %>
+<% content_for :title, t(".title") %>
 
 <div class="page-header">
   <div>
-    <h1 class="page-header__title">All messages</h1>
-    <p class="page-header__subtitle"><%= pluralize(@messages.size, "message") %> across every conversation</p>
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle", count: @messages.size) %></p>
   </div>
 </div>
 
@@ -12,11 +12,11 @@
     <table class="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Message</th>
-          <th>Sender</th>
-          <th>Status</th>
-          <th>Sent</th>
+          <th><%= t(".columns.id") %></th>
+          <th><%= t(".columns.message") %></th>
+          <th><%= t(".columns.sender") %></th>
+          <th><%= t(".columns.status") %></th>
+          <th><%= t(".columns.sent") %></th>
         </tr>
       </thead>
       <tbody>
@@ -24,9 +24,9 @@
           <tr>
             <td class="table__numeric">#<%= message.id %></td>
             <td class="table__truncate"><%= link_to message.text, message_path(message) %></td>
-            <td><span class="badge <%= "badge--primary" unless message.user? %>"><%= message.sender&.humanize || "Unknown" %></span></td>
-            <td><%= message.delivery_status.presence&.humanize || "—" %></td>
-            <td class="table__numeric"><%= message.created_at.strftime("%b %-d, %H:%M") %></td>
+            <td><span class="badge <%= "badge--primary" unless message.user? %>"><%= message.sender ? t(message.sender, scope: "shared.message_senders", default: message.sender.humanize) : t("shared.unknown") %></span></td>
+            <td><%= message.delivery_status.present? ? t(message.delivery_status, scope: "shared.delivery_statuses", default: message.delivery_status.humanize) : "—" %></td>
+            <td class="table__numeric"><%= l(message.created_at, format: :short_datetime) %></td>
           </tr>
         <% end %>
       </tbody>
@@ -34,7 +34,7 @@
   </div>
 <% else %>
   <div class="empty-state">
-    <p class="empty-state__title">No messages yet</p>
-    <p>Messages will show up here once a conversation starts.</p>
+    <p class="empty-state__title"><%= t(".empty") %></p>
+    <p><%= t(".empty_hint") %></p>
   </div>
 <% end %>

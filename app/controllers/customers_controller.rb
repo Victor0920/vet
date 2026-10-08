@@ -25,7 +25,7 @@ class CustomersController < ApplicationController
     @customer = Current.enterprise.customers.new(customer_params)
 
     if @customer.save
-      redirect_to customer_path(@customer), notice: "Customer created"
+      redirect_to customer_path(@customer), notice: t("flash.customers.created")
     else
       render :new, status: :unprocessable_entity
     end
@@ -34,7 +34,7 @@ class CustomersController < ApplicationController
   def update
     # Back to the edit page, so you can keep editing other fields
     if @customer.update(customer_params)
-      redirect_to edit_customer_path(@customer), notice: "Customer updated"
+      redirect_to edit_customer_path(@customer), notice: t("flash.customers.updated")
     else
       redirect_to edit_customer_path(@customer), alert: @customer.errors.full_messages.to_sentence
     end
@@ -44,7 +44,7 @@ class CustomersController < ApplicationController
 
   def set_customer
     @customer = Current.enterprise.customers.find_by(id: params[:id])
-    redirect_to customers_url, alert: "Customer not found" if @customer.nil?
+    redirect_to customers_url, alert: t("flash.customers.not_found") if @customer.nil?
   end
 
   # Strong parameters: only these fields can be changed from a form

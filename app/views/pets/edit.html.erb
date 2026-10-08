@@ -1,9 +1,9 @@
-<% owner_name = [@customer.first_name, @customer.first_surname].compact_blank.join(" ").presence || "Customer ##{@customer.id}" %>
-<% content_for :title, "Edit #{@pet.name.presence || "pet ##{@pet.id}"}" %>
+<% owner_name = [@customer.first_name, @customer.first_surname].compact_blank.join(" ").presence || t("shared.customer_number", id: @customer.id) %>
+<% content_for :title, t(".title", name: @pet.name.presence || t("shared.pet_number", id: @pet.id)) %>
 
 <%= link_to customer_pet_path(@customer, @pet), class: "back-link" do %>
   <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-  Done editing
+  <%= t("shared.done_editing") %>
 <% end %>
 
 <div class="customer-profile">
@@ -19,7 +19,7 @@
         <% end %>
         <span class="pet-photo__overlay">
           <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
-          <%= @pet.photo.attached? ? "Change photo" : "Upload photo" %>
+          <%= @pet.photo.attached? ? t("shared.change_photo") : t("shared.upload_photo") %>
         </span>
       <% end %>
       <%= form.file_field :photo, accept: "image/*", class: "sr-only", data: { action: "change->auto-submit#submit" } %>
@@ -27,9 +27,9 @@
 
     <div class="customer-profile__header">
       <div>
-        <h1 class="customer-profile__name"><%= @pet.name.presence || "Unnamed pet" %></h1>
+        <h1 class="customer-profile__name"><%= @pet.name.presence || t("shared.unnamed_pet") %></h1>
         <p class="text-subtle text-xs">
-          <%= [@pet.species, @pet.breed].compact_blank.join(" · ").presence || "Pet ##{@pet.id}" %>
+          <%= [@pet.species, @pet.breed].compact_blank.join(" · ").presence || t("shared.pet_number", id: @pet.id) %>
         </p>
       </div>
     </div>
@@ -37,7 +37,7 @@
     <div class="card__body">
       <dl class="details">
         <div>
-          <dt>Owner</dt>
+          <dt><%= t("pets.owner") %></dt>
           <dd>
             <%= link_to customer_path(@customer), class: "pet-owner" do %>
               <% if @customer.photo.attached? %>
@@ -50,12 +50,12 @@
           </dd>
         </div>
         <div>
-          <dt>Added</dt>
-          <dd><%= @pet.created_at.strftime("%b %-d, %Y") %></dd>
+          <dt><%= t("pets.added") %></dt>
+          <dd><%= l(@pet.created_at, format: :display) %></dd>
         </div>
         <div>
-          <dt>Last updated</dt>
-          <dd><%= time_ago_in_words(@pet.updated_at) %> ago</dd>
+          <dt><%= t("shared.last_updated") %></dt>
+          <dd><%= t("shared.time_ago", time: time_ago_in_words(@pet.updated_at)) %></dd>
         </div>
       </dl>
     </div>
@@ -65,39 +65,40 @@
     <section class="card">
       <header class="card__header">
         <div>
-          <h2 class="card__title">General</h2>
-          <p class="card__description">Click the pencil next to a field to edit it.</p>
+          <h2 class="card__title"><%= t("pets.sections.general") %></h2>
+          <p class="card__description"><%= t("shared.pencil_hint") %></p>
         </div>
       </header>
       <dl class="field-list">
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :name, label: "Name" %>
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :species, label: "Species" %>
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :breed, label: "Breed" %>
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :sex, label: "Sex",
-              input: :select, choices: ["Male", "Female"] %>
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :born_on, label: "Born",
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :name, label: Pet.human_attribute_name(:name) %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :species, label: Pet.human_attribute_name(:species) %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :breed, label: Pet.human_attribute_name(:breed) %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :sex, label: Pet.human_attribute_name(:sex),
+              input: :select, choices: [[t("pets.sex.male"), "Male"], [t("pets.sex.female"), "Female"]],
+              value: @pet.sex.presence && t(@pet.sex.downcase, scope: "pets.sex", default: @pet.sex) %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :born_on, label: Pet.human_attribute_name(:born_on),
               input: :date_field,
-              value: (@pet.born_on && "#{@pet.born_on.strftime("%b %-d, %Y")} · #{distance_of_time_in_words(@pet.born_on, Date.current)} old") %>
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :color, label: "Color" %>
+              value: (@pet.born_on && t("pets.born_value", date: l(@pet.born_on, format: :display), age: distance_of_time_in_words(@pet.born_on, Date.current))) %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :color, label: Pet.human_attribute_name(:color) %>
       </dl>
     </section>
 
     <section class="card">
       <header class="card__header">
-        <h2 class="card__title">Identification</h2>
+        <h2 class="card__title"><%= t("pets.sections.identification") %></h2>
       </header>
       <dl class="field-list">
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :transponder_number, label: "Microchip number" %>
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :transponder_location, label: "Microchip location" %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :transponder_number, label: Pet.human_attribute_name(:transponder_number) %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :transponder_location, label: Pet.human_attribute_name(:transponder_location) %>
       </dl>
     </section>
 
     <section class="card">
       <header class="card__header">
-        <h2 class="card__title">Notes</h2>
+        <h2 class="card__title"><%= t("pets.sections.notes") %></h2>
       </header>
       <dl class="field-list">
-        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :notes, label: "Notes", input: :text_area %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :notes, label: Pet.human_attribute_name(:notes), input: :text_area %>
       </dl>
     </section>
   </div>

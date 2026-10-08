@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -38,7 +38,7 @@
             <%# Footer %>
             <tr>
               <td style="padding: 24px 8px 0; font-size: 12px; line-height: 1.5; color: #64748b; text-align: center;">
-                You're receiving this email because of activity on your Vet account.
+                <%= t(".footer") %>
               </td>
             </tr>
           </table>

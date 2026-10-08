@@ -22,6 +22,8 @@ module Vet
     # in config/environments, which are processed later.
     #
     config.time_zone = "Madrid"
+    config.i18n.available_locales = [ :es, :en ]
+    config.i18n.default_locale = :es
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

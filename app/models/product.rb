@@ -4,6 +4,8 @@ class Product < ApplicationRecord
 
   validates :name, presence: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :stock, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
   validate :category_belongs_to_same_enterprise
 
   scope :search, ->(query) {
@@ -13,7 +15,18 @@ class Product < ApplicationRecord
     end
   }
 
-    private
+  def adjust_stock(amount)
+    with_lock do
+      self.stock += amount
+      save
+    end
+  end
+
+  def low_stock?
+    stock < show_warning_when_stock_under_x_items
+  end
+
+  private
 
   def category_belongs_to_same_enterprise
     if product_category && product_category.enterprise_id != enterprise_id

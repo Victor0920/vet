@@ -1,10 +1,10 @@
-<% content_for :title, "Conversations" %>
+<% content_for :title, t(".title") %>
 
 <div class="page-header">
   <div>
-    <h1 class="page-header__title">Conversations</h1>
+    <h1 class="page-header__title"><%= t(".title") %></h1>
     <p class="page-header__subtitle">
-      <%= pluralize(@conversations.size, "conversation") %> with pet owners
+      <%= t(".subtitle", count: @conversations.size) %>
     </p>
   </div>
 </div>
@@ -12,24 +12,24 @@
 <section class="card">
   <header class="card__header">
     <div>
-      <h2 class="card__title">Start a new conversation</h2>
-      <p class="card__description">Pick a client to open a WhatsApp thread with.</p>
+      <h2 class="card__title"><%= t(".new_heading") %></h2>
+      <p class="card__description"><%= t(".new_description") %></p>
     </div>
   </header>
   <div class="card__body">
     <%= form_with model: @conversation, local: true, class: "form-inline" do |form| %>
       <div class="form-field">
-        <%= form.label :user_id, "Client", class: "label" %>
+        <%= form.label :user_id, t(".client"), class: "label" %>
         <%= form.collection_select :user_id, @users, :id, :name, {}, class: "select" %>
       </div>
 
-      <%= form.submit "Create conversation", class: "btn btn--primary" %>
+      <%= form.submit t(".submit"), class: "btn btn--primary" %>
     <% end %>
   </div>
 </section>
 
 <section class="section">
-  <h2 class="section__title">All conversations</h2>
+  <h2 class="section__title"><%= t(".all") %></h2>
 
   <% if @conversations.any? %>
     <div class="conversations-grid">
@@ -38,10 +38,9 @@
           <div class="conversation-card__header">
             <span class="avatar"><%= conversation.user&.name.to_s.first %></span>
             <div>
-              <div class="conversation-card__name"><%= conversation.user&.name.presence || "Unknown client" %></div>
+              <div class="conversation-card__name"><%= conversation.user&.name.presence || t("conversations.unknown_client") %></div>
               <div class="conversation-card__meta">
-                <%= pluralize(conversation.messages.size, "message") %>
-                · updated <%= time_ago_in_words(conversation.updated_at) %> ago
+                <%= t(".meta", count: conversation.messages.size, time: time_ago_in_words(conversation.updated_at)) %>
               </div>
             </div>
           </div>
@@ -58,8 +57,8 @@
   <% else %>
     <div class="empty-state">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"/></svg>
-      <p class="empty-state__title">No conversations yet</p>
-      <p>Start one above to begin messaging a client.</p>
+      <p class="empty-state__title"><%= t(".empty") %></p>
+      <p><%= t(".empty_hint") %></p>
     </div>
   <% end %>
 </section>

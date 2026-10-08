@@ -3,11 +3,11 @@
     so clicking anywhere opens the edit modal. The customer/pet links sit above it,
     because links can't be nested inside other links. %>
 <div class="cal-event" style="<%= style %>">
-  <%= link_to appointment.title.presence || "Untitled", edit_appointment_path(appointment, view: @view, filter_room_id: @room&.id),
+  <%= link_to appointment.title.presence || t("shared.untitled"), edit_appointment_path(appointment, view: @view, filter_room_id: @room&.id),
         class: "cal-event__title",
         data: { turbo_frame: "modal" } %>
   <span class="cal-event__time">
-    <%= appointment.starts_at.strftime("%H:%M") %>–<%= appointment.ends_at.strftime("%H:%M") %>
+    <%= l(appointment.starts_at, format: :hour) %>–<%= l(appointment.ends_at, format: :hour) %>
     <% if show_room %> · <%= appointment.room.name %><% end %>
   </span>
 
@@ -17,7 +17,7 @@
         <%= link_to appointment.customer.full_name, customer_path(appointment.customer), class: "cal-event__link", data: { turbo_frame: "_top" } %>
       <% end %>
       <% if appointment.pet %>
-        <%= link_to appointment.pet.name.presence || "Unnamed pet",
+        <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"),
               customer_pet_path(appointment.pet.customer, appointment.pet),
               class: "cal-event__link cal-event__link--pet",
               data: { turbo_frame: "_top" } %>

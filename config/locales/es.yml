@@ -1,0 +1,579 @@
+# Traducciones al español (tuteo).
+# Mismas claves que en.yml: cualquier clave nueva debe añadirse en los dos archivos.
+#
+# Los nombres de meses/días, los mensajes de validación estándar ("no puede estar en blanco"),
+# time_ago_in_words y los formatos de número (12,50 €) vienen de la gema rails-i18n.
+
+es:
+  # ---------- Fechas y horas (l(valor, format: :nombre)) ----------
+  date:
+    formats:
+      display: "%-d %b %Y"                  # 6 oct 2026
+      day_month: "%-d de %B"                # 6 de octubre
+      calendar_day: "%A, %-d de %B de %Y"   # martes, 6 de octubre de 2026
+      calendar_month: "%B de %Y"            # octubre de 2026
+      calendar_week_start: "%-d %b"         # 5 oct
+      calendar_week_end: "%-d %b %Y"        # 11 oct 2026
+  time:
+    formats:
+      display: "%-d %b %Y"                  # 6 oct 2026
+      hour: "%H:%M"                         # 09:30
+      short_datetime: "%-d %b, %H:%M"       # 6 oct, 09:30
+      full: "%-d %b %Y a las %H:%M"         # 6 oct 2026 a las 09:30
+
+  # ---------- Modelos y atributos ----------
+  activerecord:
+    models:
+      appointment:
+        one: "Cita"
+        other: "Citas"
+      customer:
+        one: "Cliente"
+        other: "Clientes"
+      employee:
+        one: "Empleado"
+        other: "Empleados"
+      pet:
+        one: "Mascota"
+        other: "Mascotas"
+      product:
+        one: "Producto"
+        other: "Productos"
+      product_category:
+        one: "Categoría"
+        other: "Categorías"
+    attributes:
+      appointment:
+        title: "Título"
+        starts_at: "Inicio"
+        ends_at: "Fin"
+        room: "Sala"
+        room_id: "Sala"
+        employee: "Profesional"
+        employee_id: "Profesional"
+        customer: "Cliente"
+        customer_id: "Cliente"
+        pet: "Mascota"
+        pet_id: "Mascota"
+        store: "Centro"
+        enterprise: "Empresa"
+        description: "Notas"
+      customer:
+        first_name: "Nombre"
+        first_surname: "Primer apellido"
+        second_surname: "Segundo apellido"
+        sex: "Sexo"
+        born_on: "Fecha de nacimiento"
+        document_type: "Tipo de documento"
+        document_number: "Número de documento"
+        email: "Correo electrónico"
+        first_phone: "Teléfono"
+        second_phone: "Segundo teléfono"
+        address: "Dirección"
+        post_code: "Código postal"
+        province: "Provincia"
+        photo: "Foto"
+      employee:
+        first_name: "Nombre"
+        last_name: "Apellidos"
+        email_address: "Correo electrónico"
+        phone: "Teléfono"
+        role: "Rol"
+        active: "Activo"
+        locale: "Idioma"
+        password: "Contraseña"
+        password_confirmation: "Confirmación de contraseña"
+        photo: "Foto"
+      pet:
+        name: "Nombre"
+        species: "Especie"
+        breed: "Raza"
+        sex: "Sexo"
+        born_on: "Fecha de nacimiento"
+        color: "Color"
+        transponder_number: "Número de microchip"
+        transponder_location: "Ubicación del microchip"
+        notes: "Notas"
+        photo: "Foto"
+        customer: "Propietario"
+      product:
+        name: "Nombre"
+        description: "Descripción"
+        price: "Precio"
+        product_category: "Categoría"
+        product_category_id: "Categoría"
+        stock: "Stock"
+        show_warning_when_stock_under_x_items: "Aviso de stock bajo"
+      product_category:
+        name: "Nombre"
+        products: "Productos"
+    errors:
+      messages:
+        must_be_after_start: "debe ser posterior a la hora de inicio"
+        already_booked: "ya está reservada a esa hora"
+        not_this_customers_pet: "no pertenece a este cliente"
+        must_match_customer_enterprise: "debe coincidir con la empresa del cliente"
+
+  # ---------- Mensajes flash (controladores) ----------
+  flash:
+    appointments:
+      created: "Cita creada"
+      updated: "Cita actualizada"
+      deleted: "Cita eliminada"
+      not_found: "No se ha encontrado la cita"
+      store_required: "Primero crea un centro"
+    conversations:
+      created: "Conversación creada"
+      deleted: "Conversación eliminada"
+      failed: "No se ha podido guardar la conversación"
+      not_found: "No se ha encontrado la conversación"
+      message_created: "Mensaje creado"
+    customers:
+      created: "Cliente creado"
+      updated: "Cliente actualizado"
+      not_found: "No se ha encontrado el cliente"
+    employees:
+      created: "Empleado creado"
+      updated: "Empleado actualizado"
+      language_updated: "Idioma actualizado"
+      not_found: "No se ha encontrado el empleado"
+    messages:
+      created: "Mensaje creado"
+      failed: "No se ha podido enviar el mensaje"
+    passwords:
+      rate_limited: "Inténtalo de nuevo más tarde."
+      instructions_sent: "Te hemos enviado las instrucciones para restablecer la contraseña (si existe un empleado con ese correo)."
+      reset: "La contraseña se ha restablecido."
+      mismatch: "Las contraseñas no coinciden."
+      invalid_token: "El enlace para restablecer la contraseña no es válido o ha caducado."
+    pets:
+      created: "Mascota creada"
+      updated: "Mascota actualizada"
+      not_found: "No se ha encontrado la mascota"
+    product_categories:
+      created: "Categoría creada"
+      updated: "Categoría actualizada"
+      not_found: "No se ha encontrado la categoría"
+    products:
+      created: "Producto creado"
+      updated: "Producto actualizado"
+      not_found: "No se ha encontrado el producto"
+      stock_updated: "%{name}: el stock ahora es %{stock}"
+      stock_invalid: "%{name}: no hay suficiente stock o la cantidad no es válida"
+    sessions:
+      rate_limited: "Inténtalo de nuevo más tarde."
+      invalid: "Prueba con otro correo o contraseña."
+
+  # ---------- Palabras compartidas ----------
+  shared:
+    add_photo: "Añadir foto"
+    cancel: "Cancelar"
+    change_photo: "Cambiar foto"
+    close: "Cerrar"
+    customer_number: "Cliente n.º %{id}"
+    delete: "Eliminar"
+    done_editing: "Terminar edición"
+    edit: "Editar"
+    edit_field: "Editar %{field}"
+    last_updated: "Última actualización"
+    not_set: "Sin especificar"
+    pencil_hint: "Pulsa el lápiz junto a un campo para editarlo."
+    pet_number: "Mascota n.º %{id}"
+    save: "Guardar"
+    save_changes: "Guardar cambios"
+    time_ago: "hace %{time}"
+    unknown: "Desconocido"
+    unnamed: "Sin nombre"
+    unnamed_customer: "Cliente sin nombre"
+    unnamed_pet: "Mascota sin nombre"
+    untitled: "Sin título"
+    upload_photo: "Subir foto"
+    message_senders:
+      user: "Usuario"
+      bot: "Bot"
+      admin: "Admin"
+    delivery_statuses:
+      sent: "Enviado"
+      delivered: "Entregado"
+      read: "Leído"
+      failed: "Fallido"
+
+  # ---------- Componentes ----------
+  components:
+    conversation:
+      empty: "Todavía no hay mensajes"
+    top_nav:
+      main: "Principal"
+      home: "Inicio"
+      messaging: "Mensajería"
+      conversations: "Conversaciones"
+      all_messages: "Todos los mensajes"
+      clinic: "Clínica"
+      calendar: "Calendario"
+      customers: "Clientes"
+      products: "Productos"
+      sign_out: "Cerrar sesión"
+
+  # ---------- Layouts ----------
+  layouts:
+    mailer:
+      footer: "Recibes este correo por actividad en tu cuenta de Vet."
+
+  # ---------- Páginas ----------
+  pages:
+    home:
+      title: "Inicio"
+      heading: "Hola de nuevo"
+      subtitle: "Aquí tienes por dónde empezar hoy."
+      conversations: "Conversaciones"
+      conversations_description: "Responde a los clientes por WhatsApp."
+      all_messages: "Todos los mensajes"
+      all_messages_description: "Consulta todos los mensajes y su estado de entrega."
+      developer_tools: "Herramientas de desarrollo"
+      developer_tools_description_html: "Envía una petición de prueba a <code>POST /messages</code>."
+      send_test_message: "Enviar mensaje de prueba"
+
+  sessions:
+    new:
+      title: "Iniciar sesión"
+      heading: "Inicia sesión en Vet"
+      subtitle: "¡Hola de nuevo! Introduce tus datos."
+      email: "Correo electrónico"
+      email_placeholder: "tu@clinica.com"
+      password: "Contraseña"
+      forgot_password: "¿Has olvidado tu contraseña?"
+      submit: "Iniciar sesión"
+
+  passwords:
+    new:
+      title: "Contraseña olvidada"
+      heading: "¿Has olvidado tu contraseña?"
+      subtitle: "Introduce tu correo y te enviaremos un enlace para restablecerla."
+      email: "Correo electrónico"
+      email_placeholder: "tu@clinica.com"
+      submit: "Enviar instrucciones"
+      remembered: "¿Ya la recuerdas?"
+      back_to_sign_in: "Volver a iniciar sesión"
+    edit:
+      title: "Restablecer contraseña"
+      heading: "Elige una nueva contraseña"
+      subtitle: "Usa una que no hayas utilizado antes."
+      password: "Nueva contraseña"
+      password_confirmation: "Confirmar contraseña"
+      submit: "Guardar contraseña"
+
+  passwords_mailer:
+    reset:
+      subject: "Restablece tu contraseña"
+      heading: "Restablece tu contraseña"
+      intro_html: "Hemos recibido una solicitud para restablecer la contraseña de %{email}. Pulsa el botón para elegir una nueva."
+      intro: "Hemos recibido una solicitud para restablecer la contraseña de %{email}."
+      button: "Restablecer contraseña"
+      choose: "Elige una nueva contraseña aquí:"
+      expires: "Este enlace caduca en %{time}. Si no has pedido restablecer tu contraseña, puedes ignorar este correo: tu contraseña no cambiará."
+      expires_short: "Este enlace caduca en %{time}."
+      ignore: "Si no has pedido restablecer tu contraseña, puedes ignorar este correo."
+      fallback: "¿No funciona el botón? Copia y pega este enlace en tu navegador:"
+
+  # ---------- Clientes ----------
+  customers:
+    customer_since: "Cliente desde"
+    # En la base de datos se guarda "Male"/"Female"; solo se traduce la etiqueta
+    sex:
+      male: "Hombre"
+      female: "Mujer"
+    sections:
+      personal: "Datos personales"
+      contact: "Contacto"
+      address: "Dirección"
+    index:
+      title: "Todos los clientes"
+      heading: "Clientes"
+      subtitle: "Todos los clientes registrados y sus mascotas"
+      new_customer: "Nuevo cliente"
+      search_label: "Buscar clientes"
+      search_placeholder: "Busca por nombre, teléfono, correo o documento…"
+      count:
+        one: "1 cliente"
+        other: "%{count} clientes"
+      count_matching:
+        one: "1 cliente coincide con «%{query}»"
+        other: "%{count} clientes coinciden con «%{query}»"
+      columns:
+        id: "ID"
+        customer: "Cliente"
+        phone: "Teléfono"
+        pets: "Mascotas"
+      no_pets: "Sin mascotas"
+      no_matches: "Ningún cliente coincide con «%{query}»"
+      no_matches_hint: "Prueba con parte de un nombre, un teléfono o un número de documento."
+      empty: "Todavía no hay clientes"
+      empty_hint: "Los clientes aparecerán aquí cuando crees el primero."
+    new:
+      title: "Nuevo cliente"
+    form:
+      all_customers: "Todos los clientes"
+      submit: "Crear cliente"
+      photo_hint: "Pulsa el círculo para añadir una foto"
+      heading: "Nuevo cliente"
+      pets_hint: "Podrás añadir mascotas cuando guardes el cliente"
+    edit:
+      title: "Editar %{name}"
+      photo_hint_change: "Pulsa la foto para cambiarla"
+      photo_hint_upload: "Pulsa la foto para subirla"
+      pets: "Mascotas"
+      no_pets: "Ninguna todavía"
+    show:
+      all_customers: "Todos los clientes"
+      edit_customer: "Editar cliente"
+      new_appointment: "Nueva cita"
+      document: "Documento"
+      pets: "Mascotas"
+      pets_count:
+        one: "1 mascota registrada"
+        other: "%{count} mascotas registradas"
+      new_pet: "Nueva mascota"
+      age: "Edad"
+      microchip: "Microchip"
+      no_pets: "Todavía no hay mascotas"
+      no_pets_hint: "Las mascotas de este cliente aparecerán aquí."
+
+  # ---------- Mascotas ----------
+  pets:
+    owner: "Propietario"
+    sex:
+      male: "Macho"
+      female: "Hembra"
+    added: "Alta"
+    born_value: "%{date} · %{age}"
+    sections:
+      general: "General"
+      identification: "Identificación"
+      notes: "Notas"
+    show:
+      edit_pet: "Editar mascota"
+    edit:
+      title: "Editar %{name}"
+    new:
+      title: "Nueva mascota"
+      heading: "Nueva mascota"
+      back_to: "Volver a %{name}"
+      submit: "Crear mascota"
+      photo_hint: "Pulsa la imagen para añadir una foto"
+
+  # ---------- Empleados ----------
+  employees:
+    roles:
+      admin: "Admin"
+      vet: "Vet"
+      atv: "ATV"
+      recepcionist: "Recepcionista"
+    show:
+      number: "Empleado n.º %{id}"
+      active: "Activo"
+      inactive: "Inactivo"
+      enterprise: "Empresa"
+      employee_since: "Empleado desde"
+      language: "Idioma"
+      language_hint: "Cambia el idioma de toda la aplicación para ti."
+      appointments: "Citas"
+      appointments_count:
+        one: "1 cita asignada"
+        other: "%{count} citas asignadas"
+      columns:
+        when: "Cuándo"
+        appointment: "Cita"
+        customer: "Cliente"
+        pet: "Mascota"
+        room: "Sala"
+      empty: "Todavía no hay citas"
+      empty_hint: "Las citas asignadas a este empleado aparecerán aquí."
+
+  # ---------- Citas / calendario ----------
+  appointments:
+    index:
+      title: "Calendario"
+      count:
+        one: "1 cita"
+        other: "%{count} citas"
+      new_appointment: "Nueva cita"
+      booking_for_html: "Reservando para <strong>%{name}</strong>. Elige un hueco libre para crear la cita."
+      previous: "Anterior"
+      today: "Hoy"
+      next: "Siguiente"
+      store: "Centro"
+      room: "Sala"
+      all_rooms: "Todas las salas"
+      view_label: "Vista del calendario"
+      views:
+        day: "Día"
+        week: "Semana"
+        month: "Mes"
+        rooms: "Salas"
+    new:
+      title: "Nueva cita"
+    edit:
+      title: "Editar cita"
+    form:
+      title_placeholder: "p. ej. Vacunación, Peluquería…"
+      choose_room: "Elige una sala"
+      no_customer: "Sin cliente"
+      no_pet: "Sin mascota"
+      view_customer: "Ver cliente · %{name}"
+      view_pet: "Ver mascota · %{name}"
+      delete_confirm: "¿Eliminar esta cita?"
+      create: "Crear cita"
+    month:
+      new_on: "Nueva cita el %{day}"
+      more:
+        one: "+1 más"
+        other: "+%{count} más"
+    rooms:
+      empty: "Este centro todavía no tiene salas"
+      empty_hint: "Añade salas a %{store} para ver aquí su disponibilidad."
+      room: "Sala"
+      free: "Libre"
+    time_grid:
+      new_at: "Nueva cita a las %{time}"
+
+  # ---------- Conversaciones y mensajes ----------
+  conversations:
+    unknown_client: "Cliente desconocido"
+    index:
+      title: "Conversaciones"
+      subtitle:
+        one: "1 conversación con propietarios de mascotas"
+        other: "%{count} conversaciones con propietarios de mascotas"
+      new_heading: "Empieza una conversación"
+      new_description: "Elige un cliente para abrir un chat de WhatsApp."
+      client: "Cliente"
+      submit: "Crear conversación"
+      all: "Todas las conversaciones"
+      meta:
+        one: "1 mensaje · actualizada hace %{time}"
+        other: "%{count} mensajes · actualizada hace %{time}"
+      empty: "Todavía no hay conversaciones"
+      empty_hint: "Empieza una arriba para escribir a un cliente."
+    show:
+      number: "Conversación n.º %{id}"
+      delete_confirm: "¿Eliminar esta conversación? No se puede deshacer."
+      send_as: "Enviar como"
+      message: "Mensaje"
+      placeholder: "Escribe un mensaje…"
+      send: "Enviar"
+      client: "Cliente"
+      phone: "Teléfono"
+      messages: "Mensajes"
+      started: "Iniciada"
+
+  messages:
+    index:
+      title: "Todos los mensajes"
+      subtitle:
+        one: "1 mensaje en todas las conversaciones"
+        other: "%{count} mensajes en todas las conversaciones"
+      columns:
+        id: "ID"
+        message: "Mensaje"
+        sender: "Remitente"
+        status: "Estado"
+        sent: "Enviado"
+      empty: "Todavía no hay mensajes"
+      empty_hint: "Los mensajes aparecerán aquí cuando empiece una conversación."
+    show:
+      number: "Mensaje n.º %{id}"
+      back: "Volver a la conversación"
+      sent: "Enviado el %{time}"
+      text: "Texto"
+      sender: "Remitente"
+      delivery_status: "Estado de entrega"
+      whatsapp_id: "ID de WhatsApp"
+
+  # ---------- Productos y categorías ----------
+  products:
+    all_products: "Todos los productos"
+    unnamed: "Producto sin nombre"
+    number: "Producto n.º %{id}"
+    columns:
+      id: "ID"
+      product: "Producto"
+      category: "Categoría"
+      price: "Precio"
+      stock: "Stock"
+      update_stock: "Actualizar stock"
+    stock_form:
+      quantity: "Cantidad"
+      sell: "Vender"
+      restock: "Reponer"
+    index:
+      title: "Todos los productos"
+      heading: "Productos"
+      subtitle: "Todo lo que vende la clínica"
+      categories: "Categorías"
+      new_product: "Nuevo producto"
+      search_label: "Buscar productos"
+      search_placeholder: "Busca por nombre o descripción…"
+      category: "Categoría"
+      all_categories: "Todas las categorías"
+      count:
+        one: "1 producto"
+        other: "%{count} productos"
+      count_matching:
+        one: "1 producto coincide con «%{query}»"
+        other: "%{count} productos coinciden con «%{query}»"
+      no_matches: "Ningún producto coincide con estos filtros"
+      no_matches_hint: "Prueba otra búsqueda o elige «Todas las categorías»."
+      empty: "Todavía no hay productos"
+      empty_hint: "Los productos aparecerán aquí cuando crees el primero."
+    show:
+      edit_product: "Editar producto"
+      created: "Creado"
+    new:
+      title: "Nuevo producto"
+    edit:
+      title: "Editar %{name}"
+    form:
+      back_to_product: "Volver al producto"
+      create: "Crear producto"
+      details: "Detalles"
+      choose_category: "Elige una categoría…"
+      no_categories_html: "Todavía no hay categorías: %{link}."
+      create_category_first: "crea una primero"
+      price_label: "Precio (€)"
+      stock: "Stock"
+      stock_hint: "Unidades que hay ahora mismo en la clínica"
+      warning_hint: "El stock se resalta en naranja cuando baja de este número"
+
+  product_categories:
+    all_categories: "Todas las categorías"
+    unnamed: "Categoría sin nombre"
+    number: "Categoría n.º %{id}"
+    products_count:
+      one: "1 producto"
+      other: "%{count} productos"
+    index:
+      title: "Categorías de productos"
+      heading: "Categorías"
+      subtitle: "Cómo se agrupan los productos"
+      new_category: "Nueva categoría"
+      count:
+        one: "1 categoría"
+        other: "%{count} categorías"
+      columns:
+        products: "Productos"
+        created: "Creada"
+      empty: "Todavía no hay categorías"
+      empty_hint: "Crea una categoría antes de añadirle productos."
+    show:
+      view_in_products: "Ver en productos"
+      edit_category: "Editar categoría"
+      empty: "No hay productos en esta categoría"
+      empty_hint: "Elige esta categoría al crear o editar un producto."
+    new:
+      title: "Nueva categoría"
+    edit:
+      title: "Editar %{name}"
+    form:
+      back_to_category: "Volver a la categoría"
+      create: "Crear categoría"
+      details: "Detalles"

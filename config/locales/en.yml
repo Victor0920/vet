@@ -1,31 +1,592 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
+# English translations.
 #
-# To use the locales, use `I18n.t`:
+# How keys are organised:
+#   - View keys mirror the view path, so `t(".title")` in app/views/products/index.html.erb
+#     reads `en.products.index.title` ("lazy lookup"). Partials drop the underscore:
+#     products/_form.html.erb -> `en.products.form.*`.
+#   - `shared.*` holds words used across many pages (Cancel, Save changes…).
+#   - `components.*` is for ViewComponents (they use full keys, not lazy ones).
+#   - `activerecord.*` names models and attributes. Form labels (`f.label :name`),
+#     `Model.human_attribute_name(:name)` and validation messages all read from here.
+#   - `flash.*` is for notice/alert messages set in controllers.
 #
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
+# Keys with `one:`/`other:` are pluralized: t(".count", count: 3) -> "3 products".
+# Keys ending in `_html` may contain HTML; values passed in are still escaped.
+# Quote values that start with % or contain ": " so YAML reads them as strings.
 
 en:
-  hello: "Hello world"
+  # ---------- Dates & times (used with l(value, format: :name)) ----------
+  date:
+    formats:
+      display: "%b %-d, %Y"            # Oct 6, 2026
+      day_month: "%B %-d"              # October 6
+      calendar_day: "%A, %-d %B %Y"    # Tuesday, 6 October 2026
+      calendar_month: "%B %Y"          # October 2026
+      calendar_week_start: "%-d %b"    # 5 Oct
+      calendar_week_end: "%-d %b %Y"   # 11 Oct 2026
+  time:
+    formats:
+      display: "%b %-d, %Y"            # Oct 6, 2026
+      hour: "%H:%M"                    # 09:30
+      short_datetime: "%b %-d, %H:%M"  # Oct 6, 09:30
+      full: "%b %-d, %Y at %H:%M"      # Oct 6, 2026 at 09:30
+
+  # ---------- Models & attributes ----------
+  activerecord:
+    models:
+      appointment:
+        one: "Appointment"
+        other: "Appointments"
+      customer:
+        one: "Customer"
+        other: "Customers"
+      employee:
+        one: "Employee"
+        other: "Employees"
+      pet:
+        one: "Pet"
+        other: "Pets"
+      product:
+        one: "Product"
+        other: "Products"
+      product_category:
+        one: "Category"
+        other: "Categories"
+    attributes:
+      appointment:
+        title: "Title"
+        starts_at: "Starts"
+        ends_at: "Ends"
+        room: "Room"
+        room_id: "Room"
+        employee: "Staff"
+        employee_id: "Staff"
+        customer: "Customer"
+        customer_id: "Customer"
+        pet: "Pet"
+        pet_id: "Pet"
+        store: "Store"
+        enterprise: "Enterprise"
+        description: "Notes"
+      customer:
+        first_name: "First name"
+        first_surname: "First surname"
+        second_surname: "Second surname"
+        sex: "Sex"
+        born_on: "Born"
+        document_type: "Document type"
+        document_number: "Document number"
+        email: "Email"
+        first_phone: "Phone"
+        second_phone: "Second phone"
+        address: "Address"
+        post_code: "Post code"
+        province: "Province"
+        photo: "Photo"
+      employee:
+        first_name: "First name"
+        last_name: "Last name"
+        email_address: "Email"
+        phone: "Phone"
+        role: "Role"
+        active: "Active"
+        locale: "Language"
+        password: "Password"
+        password_confirmation: "Password confirmation"
+        photo: "Photo"
+      pet:
+        name: "Name"
+        species: "Species"
+        breed: "Breed"
+        sex: "Sex"
+        born_on: "Born"
+        color: "Color"
+        transponder_number: "Microchip number"
+        transponder_location: "Microchip location"
+        notes: "Notes"
+        photo: "Photo"
+        customer: "Owner"
+      product:
+        name: "Name"
+        description: "Description"
+        price: "Price"
+        product_category: "Category"
+        product_category_id: "Category"
+        stock: "Stock"
+        show_warning_when_stock_under_x_items: "Low stock warning"
+      product_category:
+        name: "Name"
+        products: "Products"
+    # Custom validation messages: errors.add(:ends_at, :must_be_after_start)
+    errors:
+      messages:
+        must_be_after_start: "must be after the start time"
+        already_booked: "is already booked at that time"
+        not_this_customers_pet: "doesn't belong to this customer"
+        must_match_customer_enterprise: "must match the customer's enterprise"
+
+  # ---------- Flash messages (controllers) ----------
+  flash:
+    appointments:
+      created: "Appointment created"
+      updated: "Appointment updated"
+      deleted: "Appointment deleted"
+      not_found: "Appointment not found"
+      store_required: "Create a store first"
+    conversations:
+      created: "Conversation created"
+      deleted: "Conversation deleted"
+      failed: "Conversation failed"
+      not_found: "Conversation not found"
+      message_created: "Message created"
+    customers:
+      created: "Customer created"
+      updated: "Customer updated"
+      not_found: "Customer not found"
+    employees:
+      created: "Employee created"
+      updated: "Employee updated"
+      language_updated: "Language updated"
+      not_found: "Employee not found"
+    messages:
+      created: "Message created"
+      failed: "Message failed"
+    passwords:
+      rate_limited: "Try again later."
+      instructions_sent: "Password reset instructions sent (if an employee with that email address exists)."
+      reset: "Password has been reset."
+      mismatch: "Passwords did not match."
+      invalid_token: "Password reset link is invalid or has expired."
+    pets:
+      created: "Pet created"
+      updated: "Pet updated"
+      not_found: "Pet not found"
+    product_categories:
+      created: "Category created"
+      updated: "Category updated"
+      not_found: "Category not found"
+    products:
+      created: "Product created"
+      updated: "Product updated"
+      not_found: "Product not found"
+      stock_updated: "%{name}: stock is now %{stock}"
+      stock_invalid: "%{name}: not enough stock, or the quantity is invalid"
+    sessions:
+      rate_limited: "Try again later."
+      invalid: "Try another email address or password."
+
+  # ---------- Shared words ----------
+  shared:
+    add_photo: "Add photo"
+    cancel: "Cancel"
+    change_photo: "Change photo"
+    close: "Close"
+    customer_number: "Customer #%{id}"
+    delete: "Delete"
+    done_editing: "Done editing"
+    edit: "Edit"
+    edit_field: "Edit %{field}"
+    last_updated: "Last updated"
+    not_set: "Not set"
+    pencil_hint: "Click the pencil next to a field to edit it."
+    pet_number: "Pet #%{id}"
+    save: "Save"
+    save_changes: "Save changes"
+    time_ago: "%{time} ago"
+    unknown: "Unknown"
+    unnamed: "Unnamed"
+    unnamed_customer: "Unnamed customer"
+    unnamed_pet: "Unnamed pet"
+    untitled: "Untitled"
+    upload_photo: "Upload photo"
+    message_senders:
+      user: "User"
+      bot: "Bot"
+      admin: "Admin"
+    delivery_statuses:
+      sent: "Sent"
+      delivered: "Delivered"
+      read: "Read"
+      failed: "Failed"
+
+  # ---------- Components ----------
+  components:
+    conversation:
+      empty: "No messages yet"
+    top_nav:
+      main: "Main"
+      home: "Home"
+      messaging: "Messaging"
+      conversations: "Conversations"
+      all_messages: "All messages"
+      clinic: "Clinic"
+      calendar: "Calendar"
+      customers: "Customers"
+      products: "Products"
+      sign_out: "Sign out"
+
+  # ---------- Layouts ----------
+  layouts:
+    mailer:
+      footer: "You're receiving this email because of activity on your Vet account."
+
+  # ---------- Pages ----------
+  pages:
+    home:
+      title: "Home"
+      heading: "Welcome back"
+      subtitle: "Here's where to pick up today."
+      conversations: "Conversations"
+      conversations_description: "Reply to clients on WhatsApp."
+      all_messages: "All messages"
+      all_messages_description: "Browse every message and its delivery status."
+      developer_tools: "Developer tools"
+      developer_tools_description_html: "Sends a test request to <code>POST /messages</code>."
+      send_test_message: "Send test message"
+
+  sessions:
+    new:
+      title: "Sign in"
+      heading: "Sign in to Vet"
+      subtitle: "Welcome back! Enter your details below."
+      email: "Email"
+      email_placeholder: "you@clinic.com"
+      password: "Password"
+      forgot_password: "Forgot password?"
+      submit: "Sign in"
+
+  passwords:
+    new:
+      title: "Forgot password"
+      heading: "Forgot your password?"
+      subtitle: "Enter your email and we'll send you a reset link."
+      email: "Email"
+      email_placeholder: "you@clinic.com"
+      submit: "Email reset instructions"
+      remembered: "Remembered it?"
+      back_to_sign_in: "Back to sign in"
+    edit:
+      title: "Reset password"
+      heading: "Set a new password"
+      subtitle: "Choose something you haven't used before."
+      password: "New password"
+      password_confirmation: "Confirm password"
+      submit: "Save password"
+
+  passwords_mailer:
+    reset:
+      subject: "Reset your password"
+      heading: "Reset your password"
+      intro_html: "We received a request to reset the password for %{email}. Click the button below to choose a new one."
+      intro: "We received a request to reset the password for %{email}."
+      button: "Reset password"
+      choose: "Choose a new password here:"
+      expires: "This link will expire in %{time}. If you didn't ask to reset your password, you can safely ignore this email — your password won't change."
+      expires_short: "This link will expire in %{time}."
+      ignore: "If you didn't ask to reset your password, you can safely ignore this email."
+      fallback: "Button not working? Copy and paste this link into your browser:"
+
+  # ---------- Customers ----------
+  customers:
+    customer_since: "Customer since"
+    # Stored in the database as "Male"/"Female"; only the label is translated
+    sex:
+      male: "Male"
+      female: "Female"
+    sections:
+      personal: "Personal"
+      contact: "Contact"
+      address: "Address"
+    index:
+      title: "All customers"
+      heading: "Customers"
+      subtitle: "Everyone registered and their pets"
+      new_customer: "New customer"
+      search_label: "Search customers"
+      search_placeholder: "Search by name, phone, email or document…"
+      count:
+        one: "1 customer"
+        other: "%{count} customers"
+      count_matching:
+        one: "1 customer matching “%{query}”"
+        other: "%{count} customers matching “%{query}”"
+      columns:
+        id: "ID"
+        customer: "Customer"
+        phone: "Phone number"
+        pets: "Pets"
+      no_pets: "No pets"
+      no_matches: "No customers match “%{query}”"
+      no_matches_hint: "Try part of a name, a phone number or a document number."
+      empty: "No customers yet"
+      empty_hint: "Customers will show up here once the first is created."
+    new:
+      title: "New customer"
+    form:
+      all_customers: "All customers"
+      submit: "Create customer"
+      photo_hint: "Click the circle to add a photo"
+      heading: "New customer"
+      pets_hint: "Pets can be added once the customer is saved"
+    edit:
+      title: "Edit %{name}"
+      photo_hint_change: "Click the photo to change it"
+      photo_hint_upload: "Click the photo to upload it"
+      pets: "Pets"
+      no_pets: "None yet"
+    show:
+      all_customers: "All customers"
+      edit_customer: "Edit customer"
+      new_appointment: "New appointment"
+      document: "Document"
+      pets: "Pets"
+      pets_count:
+        one: "1 pet registered"
+        other: "%{count} pets registered"
+      new_pet: "New pet"
+      age: "Age"
+      microchip: "Microchip"
+      no_pets: "No pets yet"
+      no_pets_hint: "Pets registered to this customer will show up here."
+
+  # ---------- Pets ----------
+  pets:
+    owner: "Owner"
+    sex:
+      male: "Male"
+      female: "Female"
+    added: "Added"
+    born_value: "%{date} · %{age} old"
+    sections:
+      general: "General"
+      identification: "Identification"
+      notes: "Notes"
+    show:
+      edit_pet: "Edit pet"
+    edit:
+      title: "Edit %{name}"
+    new:
+      title: "New pet"
+      heading: "New pet"
+      back_to: "Back to %{name}"
+      submit: "Create pet"
+      photo_hint: "Click the image to add a photo"
+
+  # ---------- Employees ----------
+  employees:
+    # Translations for employee.role values (the key is what's stored in the database);
+    # unknown roles fall back to role.humanize
+    roles:
+      admin: "Admin"
+      vet: "Vet"
+      atv: "ATV"
+      recepcionist: "Receptionist"
+    show:
+      number: "Employee #%{id}"
+      active: "Active"
+      inactive: "Inactive"
+      enterprise: "Enterprise"
+      employee_since: "Employee since"
+      language: "Language"
+      language_hint: "Changes the language of the whole app for you."
+      appointments: "Appointments"
+      appointments_count:
+        one: "1 appointment assigned"
+        other: "%{count} appointments assigned"
+      columns:
+        when: "When"
+        appointment: "Appointment"
+        customer: "Customer"
+        pet: "Pet"
+        room: "Room"
+      empty: "No appointments yet"
+      empty_hint: "Appointments assigned to this employee will show up here."
+
+  # ---------- Appointments / calendar ----------
+  appointments:
+    index:
+      title: "Calendar"
+      count:
+        one: "1 appointment"
+        other: "%{count} appointments"
+      new_appointment: "New appointment"
+      booking_for_html: "Booking for <strong>%{name}</strong>. Pick a free slot to create the appointment."
+      previous: "Previous"
+      today: "Today"
+      next: "Next"
+      store: "Store"
+      room: "Room"
+      all_rooms: "All rooms"
+      view_label: "Calendar view"
+      views:
+        day: "Day"
+        week: "Week"
+        month: "Month"
+        rooms: "Rooms"
+    new:
+      title: "New appointment"
+    edit:
+      title: "Edit appointment"
+    form:
+      title_placeholder: "e.g. Vaccination, Grooming…"
+      choose_room: "Choose a room"
+      no_customer: "No customer"
+      no_pet: "No pet"
+      view_customer: "View customer · %{name}"
+      view_pet: "View pet · %{name}"
+      delete_confirm: "Delete this appointment?"
+      create: "Create appointment"
+    month:
+      new_on: "New appointment on %{day}"
+      more:
+        one: "+1 more"
+        other: "+%{count} more"
+    rooms:
+      empty: "This store has no rooms yet"
+      empty_hint: "Add rooms to %{store} to see their availability here."
+      room: "Room"
+      free: "Free"
+    time_grid:
+      new_at: "New appointment at %{time}"
+
+  # ---------- Conversations & messages ----------
+  conversations:
+    unknown_client: "Unknown client"
+    index:
+      title: "Conversations"
+      subtitle:
+        one: "1 conversation with pet owners"
+        other: "%{count} conversations with pet owners"
+      new_heading: "Start a new conversation"
+      new_description: "Pick a client to open a WhatsApp thread with."
+      client: "Client"
+      submit: "Create conversation"
+      all: "All conversations"
+      meta:
+        one: "1 message · updated %{time} ago"
+        other: "%{count} messages · updated %{time} ago"
+      empty: "No conversations yet"
+      empty_hint: "Start one above to begin messaging a client."
+    show:
+      number: "Conversation #%{id}"
+      delete_confirm: "Delete this conversation? This can't be undone."
+      send_as: "Send as"
+      message: "Message"
+      placeholder: "Write a message…"
+      send: "Send"
+      client: "Client"
+      phone: "Phone"
+      messages: "Messages"
+      started: "Started"
+
+  messages:
+    index:
+      title: "All messages"
+      subtitle:
+        one: "1 message across every conversation"
+        other: "%{count} messages across every conversation"
+      columns:
+        id: "ID"
+        message: "Message"
+        sender: "Sender"
+        status: "Status"
+        sent: "Sent"
+      empty: "No messages yet"
+      empty_hint: "Messages will show up here once a conversation starts."
+    show:
+      number: "Message #%{id}"
+      back: "Back to conversation"
+      sent: "Sent %{time}"
+      text: "Text"
+      sender: "Sender"
+      delivery_status: "Delivery status"
+      whatsapp_id: "WhatsApp ID"
+
+  # ---------- Products & categories ----------
+  products:
+    all_products: "All products"
+    unnamed: "Unnamed product"
+    number: "Product #%{id}"
+    columns:
+      id: "ID"
+      product: "Product"
+      category: "Category"
+      price: "Price"
+      stock: "Stock"
+      update_stock: "Update stock"
+    stock_form:
+      quantity: "Quantity"
+      sell: "Sell"
+      restock: "Restock"
+    index:
+      title: "All products"
+      heading: "Products"
+      subtitle: "Everything the clinic sells"
+      categories: "Categories"
+      new_product: "New product"
+      search_label: "Search products"
+      search_placeholder: "Search by name or description…"
+      category: "Category"
+      all_categories: "All categories"
+      count:
+        one: "1 product"
+        other: "%{count} products"
+      count_matching:
+        one: "1 product matching “%{query}”"
+        other: "%{count} products matching “%{query}”"
+      no_matches: "No products match these filters"
+      no_matches_hint: "Try another search or pick “All categories”."
+      empty: "No products yet"
+      empty_hint: "Products will show up here once the first is created."
+    show:
+      edit_product: "Edit product"
+      created: "Created"
+    new:
+      title: "New product"
+    edit:
+      title: "Edit %{name}"
+    form:
+      back_to_product: "Back to product"
+      create: "Create product"
+      details: "Details"
+      choose_category: "Choose a category…"
+      no_categories_html: "No categories yet — %{link}."
+      create_category_first: "create one first"
+      price_label: "Price (€)"
+      stock: "Stock"
+      stock_hint: "Units in the clinic right now"
+      warning_hint: "The stock is highlighted in orange when it drops below this number"
+
+  product_categories:
+    all_categories: "All categories"
+    unnamed: "Unnamed category"
+    number: "Category #%{id}"
+    products_count:
+      one: "1 product"
+      other: "%{count} products"
+    index:
+      title: "Product categories"
+      heading: "Categories"
+      subtitle: "How products are grouped"
+      new_category: "New category"
+      count:
+        one: "1 category"
+        other: "%{count} categories"
+      columns:
+        products: "Products"
+        created: "Created"
+      empty: "No categories yet"
+      empty_hint: "Create a category before adding products to it."
+    show:
+      view_in_products: "View in products"
+      edit_category: "Edit category"
+      empty: "No products in this category"
+      empty_hint: "Pick this category when creating or editing a product."
+    new:
+      title: "New category"
+    edit:
+      title: "Edit %{name}"
+    form:
+      back_to_category: "Back to category"
+      create: "Create category"
+      details: "Details"

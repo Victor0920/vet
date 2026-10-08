@@ -8,7 +8,7 @@ class ConversationsController < ApplicationController
   def show
     @conversation = Conversation.find_by(id: params[:id])
     @user = User.find_by(id: @conversation.user_id)
-    return redirect_to conversations_url, alert: "Conversation not found" if @conversation.nil?
+    return redirect_to conversations_url, alert: t("flash.conversations.not_found") if @conversation.nil?
 
     @messages = @conversation.messages
     @message = Message.new(conversation_id: @conversation.id)
@@ -19,7 +19,7 @@ class ConversationsController < ApplicationController
     @message = @conversation.messages.build(message_params)
 
     if @message.save
-      redirect_to @convesation, notice: "Message created"
+      redirect_to @convesation, notice: t("flash.conversations.message_created")
     else
       @messages = @convesation.messages
       render :show
@@ -30,11 +30,11 @@ class ConversationsController < ApplicationController
     @conversation = Conversation.new(conversation_params)
 
     if @conversation.save
-      redirect_to @conversation, notice: "Conversation created"
+      redirect_to @conversation, notice: t("flash.conversations.created")
     else
       respond_to do |format|
         format.json { render json: { success: false, errors: @conversation.errors }, status: :unprocessable_entity }
-        format.html { redirect_to @conversation, notice: "Conversation failed" }
+        format.html { redirect_to @conversation, notice: t("flash.conversations.failed") }
       end
     end
   end
@@ -43,11 +43,11 @@ class ConversationsController < ApplicationController
     @conversation = Conversation.find(params[:id])
 
     if @conversation.destroy
-      redirect_to conversations_url, notice: "Conversation deleted"
+      redirect_to conversations_url, notice: t("flash.conversations.deleted")
     else
       respond_to do |format|
         format.json { render json: { success: false, errors: @conversation.errors }, status: :unprocessable_entity }
-        format.html { redirect_to @conversation, notice: "Conversation failed" }
+        format.html { redirect_to @conversation, notice: t("flash.conversations.failed") }
       end
     end
   end

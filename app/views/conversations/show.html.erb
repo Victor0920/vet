@@ -1,4 +1,4 @@
-<% content_for :title, @user&.name.presence || "Conversation ##{@conversation.id}" %>
+<% content_for :title, @user&.name.presence || t(".number", id: @conversation.id) %>
 
 <div class="chat">
   <section class="card chat__main">
@@ -6,16 +6,16 @@
       <div class="chat__contact">
         <span class="avatar"><%= @user&.name.to_s.first %></span>
         <div>
-          <h1 class="chat__title"><%= @user&.name.presence || "Unknown client" %></h1>
-          <p class="chat__subtitle">Conversation #<%= @conversation.id %></p>
+          <h1 class="chat__title"><%= @user&.name.presence || t("conversations.unknown_client") %></h1>
+          <p class="chat__subtitle"><%= t(".number", id: @conversation.id) %></p>
         </div>
       </div>
 
-      <%= button_to "Delete",
+      <%= button_to t("shared.delete"),
         @conversation,
         method: :delete,
         class: "btn btn--danger-ghost btn--sm",
-        form: { data: { turbo_confirm: "Delete this conversation? This can't be undone." } } %>
+        form: { data: { turbo_confirm: t(".delete_confirm") } } %>
     </header>
 
     <div class="chat__messages">
@@ -31,13 +31,13 @@
     <%= form_with model: @message, local: true, class: "chat__composer" do |form| %>
       <%= form.hidden_field :conversation_id, value: @conversation.id %>
 
-      <%= form.label :sender, "Send as", class: "sr-only" %>
-      <%= form.select :sender, [["Bot", 1], ["Admin", 2]], {}, class: "select select--sm" %>
+      <%= form.label :sender, t(".send_as"), class: "sr-only" %>
+      <%= form.select :sender, [[t("shared.message_senders.bot"), 1], [t("shared.message_senders.admin"), 2]], {}, class: "select select--sm" %>
 
-      <%= form.label :text, "Message", class: "sr-only" %>
-      <%= form.text_field :text, class: "input", placeholder: "Write a message…", autocomplete: "off" %>
+      <%= form.label :text, t(".message"), class: "sr-only" %>
+      <%= form.text_field :text, class: "input", placeholder: t(".placeholder"), autocomplete: "off" %>
 
-      <%= form.submit "Send", class: "btn btn--primary" %>
+      <%= form.submit t(".send"), class: "btn btn--primary" %>
     <% end %>
   </section>
 
@@ -45,23 +45,23 @@
     <div class="chat__profile">
       <span class="avatar avatar--lg"><%= @user&.name.to_s.first %></span>
       <div>
-        <h2 class="card__title"><%= @user&.name.presence || "Unknown client" %></h2>
-        <p class="text-subtle text-xs">Client</p>
+        <h2 class="card__title"><%= @user&.name.presence || t("conversations.unknown_client") %></h2>
+        <p class="text-subtle text-xs"><%= t(".client") %></p>
       </div>
     </div>
     <div class="card__body">
       <dl class="details">
         <div>
-          <dt>Phone</dt>
+          <dt><%= t(".phone") %></dt>
           <dd><%= @user&.phone.presence || "—" %></dd>
         </div>
         <div>
-          <dt>Messages</dt>
+          <dt><%= t(".messages") %></dt>
           <dd><%= @conversation.messages.size %></dd>
         </div>
         <div>
-          <dt>Started</dt>
-          <dd><%= @conversation.created_at.strftime("%b %-d, %Y") %></dd>
+          <dt><%= t(".started") %></dt>
+          <dd><%= l(@conversation.created_at, format: :display) %></dd>
         </div>
       </dl>
     </div>

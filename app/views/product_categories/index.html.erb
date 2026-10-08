@@ -1,36 +1,36 @@
-<% content_for :title, "Product categories" %>
+<% content_for :title, t(".title") %>
 
 <%= link_to products_path, class: "back-link" do %>
   <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-  All products
+  <%= t("products.all_products") %>
 <% end %>
 
 <div class="page-header">
   <div>
-    <h1 class="page-header__title">Categories</h1>
-    <p class="page-header__subtitle">How products are grouped</p>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
   </div>
   <div class="page-header__actions">
     <%= link_to new_product_category_path, class: "btn btn--primary" do %>
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
           d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
         /></svg>
-      New category
+      <%= t(".new_category") %>
     <% end %>
   </div>
 </div>
 
-<p class="products-filters__count"><%= pluralize(@categories.size, "category") %></p>
+<p class="products-filters__count"><%= t(".count", count: @categories.size) %></p>
 
 <% if @categories.any? %>
   <div class="table-wrapper">
     <table class="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Category</th>
-          <th>Products</th>
-          <th>Created</th>
+          <th><%= t("products.columns.id") %></th>
+          <th><%= t("products.columns.category") %></th>
+          <th><%= t(".columns.products") %></th>
+          <th><%= t(".columns.created") %></th>
         </tr>
       </thead>
       <tbody>
@@ -38,11 +38,11 @@
           <tr>
             <td class="table__numeric">#<%= category.id %></td>
             <td>
-              <%= link_to category.name.presence || "Unnamed category", product_category_path(category),
+              <%= link_to category.name.presence || t("product_categories.unnamed"), product_category_path(category),
                     class: "product-cell__name" %>
             </td>
-            <td class="table__numeric"><%= pluralize(category.products.size, "product") %></td>
-            <td class="table__numeric"><%= category.created_at.strftime("%b %-d, %Y") %></td>
+            <td class="table__numeric"><%= t("product_categories.products_count", count: category.products.size) %></td>
+            <td class="table__numeric"><%= l(category.created_at, format: :display) %></td>
           </tr>
         <% end %>
       </tbody>
@@ -51,7 +51,7 @@
 <% else %>
   <div class="empty-state">
     <%= render "shared/paw_icon" %>
-    <p class="empty-state__title">No categories yet</p>
-    <p>Create a category before adding products to it.</p>
+    <p class="empty-state__title"><%= t(".empty") %></p>
+    <p><%= t(".empty_hint") %></p>
   </div>
 <% end %>

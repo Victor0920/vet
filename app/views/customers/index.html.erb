@@ -1,16 +1,16 @@
-<% content_for :title, "All customers" %>
+<% content_for :title, t(".title") %>
 
 <div class="page-header">
   <div>
-    <h1 class="page-header__title">Customers</h1>
-    <p class="page-header__subtitle">Everyone registered and their pets</p>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
   </div>
   <div class="page-header__actions">
     <%= link_to new_customer_path, class: "btn btn--primary" do %>
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
           d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
         /></svg>
-      New customer
+      <%= t(".new_customer") %>
     <% end %>
   </div>
 
@@ -23,11 +23,11 @@
       data: { controller: "search", turbo_frame: "customers", turbo_action: "replace" } do %>
     <div class="search-field">
       <%= render "shared/icons/magnifying_glass" %>
-      <%= label_tag :q, "Search customers", class: "sr-only" %>
+      <%= label_tag :q, t(".search_label"), class: "sr-only" %>
       <%= search_field_tag :q,
       @query,
       class: "input",
-      placeholder: "Search by name, phone, email or document…",
+      placeholder: t(".search_placeholder"),
       autocomplete: "off",
       data: {
         action: "input->search#submit",
@@ -39,10 +39,10 @@
   <%= turbo_frame_tag "customers", target: "_top" do %>
     <p class="customers-search__count">
       <% if @query.present? %>
-        <%= pluralize(@customers.size, "customer") %>
-        matching “<%= @query %>
+        <%= t(".count_matching", count: @customers.size, query: @query) %>
       <% else %>
-        <%= pluralize(@customers.size, "customer") %><% end %>
+        <%= t(".count", count: @customers.size) %>
+      <% end %>
     </p>
 
     <% if @customers.any? %>
@@ -50,10 +50,10 @@
         <table class="table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Customer</th>
-              <th>Phone number</th>
-              <th>Pets</th>
+              <th><%= t(".columns.id") %></th>
+              <th><%= t(".columns.customer") %></th>
+              <th><%= t(".columns.phone") %></th>
+              <th><%= t(".columns.pets") %></th>
             </tr>
           </thead>
           <tbody>
@@ -73,7 +73,7 @@
                       <span class="avatar"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
                     <% end %>
                     <div class="customer-cell__text">
-                      <%= link_to full_name.presence || "Unnamed customer",
+                      <%= link_to full_name.presence || t("shared.unnamed_customer"),
                       customer_path(customer),
                       class: "customer-cell__name" %>
                       <% if customer.email.present? %>
@@ -87,11 +87,11 @@
                   <% if customer.pets.any? %>
                     <div class="pet-chips">
                       <% customer.pets.each do |pet| %>
-                        <span class="badge badge--primary"><%= pet.name.presence || "Unnamed" %></span>
+                        <span class="badge badge--primary"><%= pet.name.presence || t("shared.unnamed") %></span>
                       <% end %>
                     </div>
                   <% else %>
-                    <span class="text-subtle">No pets</span>
+                    <span class="text-subtle"><%= t(".no_pets") %></span>
                   <% end %>
                 </td>
               </tr>
@@ -106,14 +106,14 @@
             d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
             clip-rule="evenodd"
           /></svg>
-        <p class="empty-state__title">No customers match “<%= @query %>”</p>
-        <p>Try part of a name, a phone number or a document number.</p>
+        <p class="empty-state__title"><%= t(".no_matches", query: @query) %></p>
+        <p><%= t(".no_matches_hint") %></p>
       </div>
     <% else %>
       <div class="empty-state">
         <%= render "shared/paw_icon" %>
-        <p class="empty-state__title">No customers yet</p>
-        <p>Customers will show up here once the first is created.</p>
+        <p class="empty-state__title"><%= t(".empty") %></p>
+        <p><%= t(".empty_hint") %></p>
       </div>
     <% end %>
   <% end %>

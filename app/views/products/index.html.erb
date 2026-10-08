@@ -1,17 +1,17 @@
-<% content_for :title, "All products" %>
+<% content_for :title, t(".title") %>
 
 <div class="page-header">
   <div>
-    <h1 class="page-header__title">Products</h1>
-    <p class="page-header__subtitle">Everything the clinic sells</p>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
   </div>
   <div class="page-header__actions">
-    <%= link_to "Categories", product_categories_path, class: "btn btn--secondary" %>
+    <%= link_to t(".categories"), product_categories_path, class: "btn btn--secondary" %>
     <%= link_to new_product_path, class: "btn btn--primary" do %>
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
           d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
         /></svg>
-      New product
+      <%= t(".new_product") %>
     <% end %>
   </div>
 </div>
@@ -23,18 +23,18 @@
     data: { controller: "search", turbo_frame: "products", turbo_action: "replace" } do %>
   <div class="search-field products-filters__search">
     <%= render "shared/icons/magnifying_glass" %>
-    <%= label_tag :q, "Search products", class: "sr-only" %>
+    <%= label_tag :q, t(".search_label"), class: "sr-only" %>
     <%= search_field_tag :q, @query,
           class: "input",
-          placeholder: "Search by name or description…",
+          placeholder: t(".search_placeholder"),
           autocomplete: "off",
           data: { action: "input->search#submit" } %>
   </div>
 
-  <%= label_tag :category_id, "Category", class: "sr-only" %>
+  <%= label_tag :category_id, t(".category"), class: "sr-only" %>
   <%= select_tag :category_id,
         options_from_collection_for_select(@categories, :id, :name, @category_id),
-        include_blank: "All categories",
+        include_blank: t(".all_categories"),
         class: "select products-filters__category",
         data: { action: "change->search#submit" } %>
 <% end %>
@@ -42,8 +42,11 @@
 <%# target: "_top" so links inside (product names) open the full page, not the frame %>
 <%= turbo_frame_tag "products", target: "_top" do %>
   <p class="products-filters__count">
-    <%= pluralize(@products.size, "product") %>
-    <% if @query.present? %>matching “<%= @query %>”<% end %>
+    <% if @query.present? %>
+      <%= t(".count_matching", count: @products.size, query: @query) %>
+    <% else %>
+      <%= t(".count", count: @products.size) %>
+    <% end %>
   </p>
 
   <% if @products.any? %>
@@ -51,10 +54,12 @@
       <table class="table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Product</th>
-            <th>Category</th>
-            <th class="products-table__price">Price</th>
+            <th><%= t("products.columns.id") %></th>
+            <th><%= t("products.columns.product") %></th>
+            <th><%= t("products.columns.category") %></th>
+            <th class="products-table__price"><%= t("products.columns.price") %></th>
+            <th class="products-table__stock"><%= t("products.columns.stock") %></th>
+            <th><%= t("products.columns.update_stock") %></th>
           </tr>
         </thead>
         <tbody>
@@ -63,7 +68,7 @@
               <td class="table__numeric">#<%= product.id %></td>
               <td>
                 <div class="product-cell">
-                  <%= link_to product.name.presence || "Unnamed product", product_path(product),
+                  <%= link_to product.name.presence || t("products.unnamed"), product_path(product),
                         class: "product-cell__name" %>
                   <% if product.description.present? %>
                     <span class="product-cell__meta"><%= product.description %></span>
@@ -71,12 +76,39 @@
                 </div>
               </td>
               <td>
-                <%= link_to product.product_category.name.presence || "Unnamed",
+                <%= link_to product.product_category.name.presence || t("shared.unnamed"),
                       product_category_path(product.product_category),
                       class: "badge badge--primary" %>
               </td>
               <td class="table__numeric products-table__price">
                 <%= product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "—" %>
+              </td>
+              <td class="table__numeric products-table__stock">
+                <%# Out of stock → red, under the product's warning threshold → orange %>
+                <% if product.stock.zero? %>
+                  <span class="badge badge--danger"><%= product.stock %></span>
+                <% elsif product.low_stock? %>
+                  <span class="badge badge--warning"><%= product.stock %></span>
+                <% else %>
+                  <%= product.stock %>
+                <% end %>
+              </td>
+              <td>
+                <%# PATCH /products/:product_id/stock → Products::StocksController#update.
+                    Only the clicked button's name/value is sent, so params[:direction]
+                    is "sell" or "restock". The frame's target: "_top" makes the redirect
+                    reload the whole page, so the flash message shows up. %>
+                <%= form_with url: product_stock_path(product), method: :patch, class: "stock-form" do %>
+                  <%= label_tag "quantity_#{product.id}", t("products.stock_form.quantity"), class: "sr-only" %>
+                  <%= number_field_tag :quantity, 1,
+                        id: "quantity_#{product.id}",
+                        min: 1, step: 1, required: true,
+                        class: "input stock-form__quantity" %>
+                  <%= button_tag t("products.stock_form.sell"),
+                        name: "direction", value: "sell", class: "btn btn--sm btn--primary" %>
+                  <%= button_tag t("products.stock_form.restock"),
+                        name: "direction", value: "restock", class: "btn btn--sm btn--secondary" %>
+                <% end %>
               </td>
             </tr>
           <% end %>
@@ -86,14 +118,14 @@
   <% elsif @query.present? || @category_id.present? %>
     <div class="empty-state">
       <%= render "shared/icons/magnifying_glass" %>
-      <p class="empty-state__title">No products match these filters</p>
-      <p>Try another search or pick “All categories”.</p>
+      <p class="empty-state__title"><%= t(".no_matches") %></p>
+      <p><%= t(".no_matches_hint") %></p>
     </div>
   <% else %>
     <div class="empty-state">
       <%= render "shared/paw_icon" %>
-      <p class="empty-state__title">No products yet</p>
-      <p>Products will show up here once the first is created.</p>
+      <p class="empty-state__title"><%= t(".empty") %></p>
+      <p><%= t(".empty_hint") %></p>
     </div>
   <% end %>
 <% end %>

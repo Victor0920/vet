@@ -1,21 +1,21 @@
-<% content_for :title, "Forgot password" %>
+<% content_for :title, t(".title") %>
 
 <div class="card auth-card">
   <div class="auth-card__header">
-    <h1 class="auth-card__title">Forgot your password?</h1>
-    <p class="auth-card__subtitle">Enter your email and we'll send you a reset link.</p>
+    <h1 class="auth-card__title"><%= t(".heading") %></h1>
+    <p class="auth-card__subtitle"><%= t(".subtitle") %></p>
   </div>
 
   <%= form_with url: passwords_path, class: "form" do |form| %>
     <div class="form-field">
-      <%= form.label :email_address, "Email", class: "label" %>
-      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "you@clinic.com", value: params[:email_address], class: "input" %>
+      <%= form.label :email_address, t(".email"), class: "label" %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: t(".email_placeholder"), value: params[:email_address], class: "input" %>
     </div>
 
-    <%= form.submit "Email reset instructions", class: "btn btn--primary btn--block btn--lg" %>
+    <%= form.submit t(".submit"), class: "btn btn--primary btn--block btn--lg" %>
   <% end %>
 </div>
 
 <p class="auth-footer">
-  Remembered it? <%= link_to "Back to sign in", new_session_path %>
+  <%= t(".remembered") %> <%= link_to t(".back_to_sign_in"), new_session_path %>
 </p>
