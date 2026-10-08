@@ -5,17 +5,17 @@
   <div class="resource-form__toolbar">
     <%= link_to back_path, class: "back-link" do %>
       <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-      <%= category.persisted? ? "Back to category" : "All categories" %>
+      <%= category.persisted? ? t(".back_to_category") : t("product_categories.all_categories") %>
     <% end %>
 
     <div class="page-header__actions">
-      <%= link_to "Cancel", back_path, class: "btn btn--ghost" %>
-      <%= f.submit (category.persisted? ? "Save changes" : "Create category"), class: "btn btn--primary" %>
+      <%= link_to t("shared.cancel"), back_path, class: "btn btn--ghost" %>
+      <%= f.submit (category.persisted? ? t("shared.save_changes") : t(".create")), class: "btn btn--primary" %>
     </div>
   </div>
 
   <div class="resource-form stack">
-    <h1 class="page-header__title"><%= category.persisted? ? "Edit #{category.name_was.presence || "category"}" : "New category" %></h1>
+    <h1 class="page-header__title"><%= category.persisted? ? t("product_categories.edit.title", name: category.name_was.presence || t("product_categories.number", id: category.id)) : t("product_categories.new.title") %></h1>
 
     <% if category.errors.any? %>
       <div class="alert alert--danger" role="alert">
@@ -30,7 +30,7 @@
 
     <section class="card">
       <header class="card__header">
-        <h2 class="card__title">Details</h2>
+        <h2 class="card__title"><%= t("product_categories.form.details") %></h2>
       </header>
       <dl class="field-list">
         <div class="field-row">

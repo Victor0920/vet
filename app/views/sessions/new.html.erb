@@ -1,25 +1,25 @@
-<% content_for :title, "Sign in" %>
+<% content_for :title, t(".title") %>
 
 <div class="card auth-card">
   <div class="auth-card__header">
-    <h1 class="auth-card__title">Sign in to Vet</h1>
-    <p class="auth-card__subtitle">Welcome back! Enter your details below.</p>
+    <h1 class="auth-card__title"><%= t(".heading") %></h1>
+    <p class="auth-card__subtitle"><%= t(".subtitle") %></p>
   </div>
 
   <%= form_with url: session_path, class: "form" do |form| %>
     <div class="form-field">
-      <%= form.label :email_address, "Email", class: "label" %>
-      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "you@clinic.com", value: params[:email_address], class: "input" %>
+      <%= form.label :email_address, t(".email"), class: "label" %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: t(".email_placeholder"), value: params[:email_address], class: "input" %>
     </div>
 
     <div class="form-field">
       <div class="label-row">
-        <%= form.label :password, class: "label" %>
-        <%= link_to "Forgot password?", new_password_path %>
+        <%= form.label :password, t(".password"), class: "label" %>
+        <%= link_to t(".forgot_password"), new_password_path %>
       </div>
       <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "••••••••", maxlength: 72, class: "input" %>
     </div>
 
-    <%= form.submit "Sign in", class: "btn btn--primary btn--block btn--lg" %>
+    <%= form.submit t(".submit"), class: "btn btn--primary btn--block btn--lg" %>
   <% end %>
 </div>

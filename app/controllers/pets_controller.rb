@@ -15,7 +15,7 @@ class PetsController < ApplicationController
   def update
     # Back to the edit page, so you can keep editing other fields
     if @pet.update(pet_params)
-      redirect_to edit_customer_pet_path(@customer, @pet), notice: "Pet updated"
+      redirect_to edit_customer_pet_path(@customer, @pet), notice: t("flash.pets.updated")
     else
       redirect_to edit_customer_pet_path(@customer, @pet), alert: @pet.errors.full_messages.to_sentence
     end
@@ -25,7 +25,7 @@ class PetsController < ApplicationController
     @pet = @customer.pets.new(pet_params)
 
     if @pet.save
-      redirect_to customer_path(@customer), notice: "Pet created"
+      redirect_to customer_path(@customer), notice: t("flash.pets.created")
     else
       render :new, status: :unprocessable_entity
     end
@@ -35,12 +35,12 @@ class PetsController < ApplicationController
 
   def set_customer
     @customer = Current.enterprise.customers.find_by(id: params[:customer_id])
-    redirect_to customers_url, alert: "Customer not found" if @customer.nil?
+    redirect_to customers_url, alert: t("flash.customers.not_found") if @customer.nil?
   end
 
   def set_pet
     @pet = @customer.pets.find_by(id: params[:id])
-    redirect_to customers_url, alert: "Pet not found" if @pet.nil?
+    redirect_to customers_url, alert: t("flash.pets.not_found") if @pet.nil?
   end
 
   # Strong parameters: only these fields can be changed from a form

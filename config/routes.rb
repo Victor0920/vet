@@ -28,7 +28,10 @@ Rails.application.routes.draw do
 
   resources :employees
   resources :appointments
-  resources :products
+
+  resources :products do
+    resource :stock, only: :update, module: :products
+  end
   resources :product_categories
   post "/conversations/:id/messages", to: "conversations#create_message"
 

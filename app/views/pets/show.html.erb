@@ -1,5 +1,5 @@
-<% owner_name = [@customer.first_name, @customer.first_surname].compact_blank.join(" ").presence || "Customer ##{@customer.id}" %>
-<% content_for :title, @pet.name.presence || "Pet ##{@pet.id}" %>
+<% owner_name = [@customer.first_name, @customer.first_surname].compact_blank.join(" ").presence || t("shared.customer_number", id: @customer.id) %>
+<% content_for :title, @pet.name.presence || t("shared.pet_number", id: @pet.id) %>
 
 <%= link_to customer_path(@customer), class: "back-link" do %>
   <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
@@ -20,21 +20,21 @@
 
     <div class="customer-profile__header">
       <div>
-        <h1 class="customer-profile__name"><%= @pet.name.presence || "Unnamed pet" %></h1>
+        <h1 class="customer-profile__name"><%= @pet.name.presence || t("shared.unnamed_pet") %></h1>
         <p class="text-subtle text-xs">
-          <%= [@pet.species, @pet.breed].compact_blank.join(" · ").presence || "Pet ##{@pet.id}" %>
+          <%= [@pet.species, @pet.breed].compact_blank.join(" · ").presence || t("shared.pet_number", id: @pet.id) %>
         </p>
       </div>
       <%= link_to edit_customer_pet_path(@customer, @pet), class: "btn btn--secondary btn--sm" do %>
         <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
-        Edit pet
+        <%= t(".edit_pet") %>
       <% end %>
     </div>
 
     <div class="card__body">
       <dl class="details">
         <div>
-          <dt>Owner</dt>
+          <dt><%= t("pets.owner") %></dt>
           <dd>
             <%= link_to customer_path(@customer), class: "pet-owner" do %>
               <% if @customer.photo.attached? %>
@@ -47,12 +47,12 @@
           </dd>
         </div>
         <div>
-          <dt>Added</dt>
-          <dd><%= @pet.created_at.strftime("%b %-d, %Y") %></dd>
+          <dt><%= t("pets.added") %></dt>
+          <dd><%= l(@pet.created_at, format: :display) %></dd>
         </div>
         <div>
-          <dt>Last updated</dt>
-          <dd><%= time_ago_in_words(@pet.updated_at) %> ago</dd>
+          <dt><%= t("shared.last_updated") %></dt>
+          <dd><%= t("shared.time_ago", time: time_ago_in_words(@pet.updated_at)) %></dd>
         </div>
       </dl>
     </div>
@@ -60,20 +60,20 @@
 
   <%# Each card is a title plus a list of [label, value] pairs, rendered read-only %>
   <% sections = {
-    "General" => [
-      ["Name", @pet.name],
-      ["Species", @pet.species],
-      ["Breed", @pet.breed],
-      ["Sex", @pet.sex],
-      ["Born", @pet.born_on && "#{@pet.born_on.strftime("%b %-d, %Y")} · #{distance_of_time_in_words(@pet.born_on, Date.current)} old"],
-      ["Color", @pet.color]
+    t("pets.sections.general") => [
+      [Pet.human_attribute_name(:name), @pet.name],
+      [Pet.human_attribute_name(:species), @pet.species],
+      [Pet.human_attribute_name(:breed), @pet.breed],
+      [Pet.human_attribute_name(:sex), @pet.sex.presence && t(@pet.sex.downcase, scope: "pets.sex", default: @pet.sex)],
+      [Pet.human_attribute_name(:born_on), @pet.born_on && t("pets.born_value", date: l(@pet.born_on, format: :display), age: distance_of_time_in_words(@pet.born_on, Date.current))],
+      [Pet.human_attribute_name(:color), @pet.color]
     ],
-    "Identification" => [
-      ["Microchip number", @pet.transponder_number],
-      ["Microchip location", @pet.transponder_location]
+    t("pets.sections.identification") => [
+      [Pet.human_attribute_name(:transponder_number), @pet.transponder_number],
+      [Pet.human_attribute_name(:transponder_location), @pet.transponder_location]
     ],
-    "Notes" => [
-      ["Notes", @pet.notes]
+    t("pets.sections.notes") => [
+      [Pet.human_attribute_name(:notes), @pet.notes]
     ]
   } %>
 
@@ -89,8 +89,8 @@
               <dt class="field-row__label"><%= label %></dt>
               <dd class="field-row__value">
                 <div class="field-row__display">
-                  <span class="<%= "text-subtle" if value.blank? %> <%= "field-row__text--multiline" if label == "Notes" %>">
-                    <%= value.presence || "Not set" %>
+                  <span class="<%= "text-subtle" if value.blank? %> <%= "field-row__text--multiline" if label == Pet.human_attribute_name(:notes) %>">
+                    <%= value.presence || t("shared.not_set") %>
                   </span>
                 </div>
               </dd>

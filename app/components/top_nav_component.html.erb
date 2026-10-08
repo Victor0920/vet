@@ -3,41 +3,40 @@
     <span class="brand-mark"><%= render partial: "shared/paw_icon" %></span>
     <span class="sidebar__brand-name"><%= @enterprise&.name %></span>
   <% end %>
-  <span class="sidebar__brand-name"><%= @employee&.first_name %></span>
 
-  <nav class="sidebar__nav" aria-label="Main">
+  <nav class="sidebar__nav" aria-label="<%= t("components.top_nav.main") %>">
     <%= link_to helpers.root_path, class: "sidebar__link", aria: { current: ("page" if request.path == "/") } do %>
       <%= render "shared/icons/home" %>
-      <span>Home</span>
+      <span><%= t("components.top_nav.home") %></span>
     <% end %>
   </nav>
 
-  <div class="sidebar__section-label">Messaging</div>
-  <nav class="sidebar__nav" aria-label="Messaging">
+  <div class="sidebar__section-label"><%= t("components.top_nav.messaging") %></div>
+  <nav class="sidebar__nav" aria-label="<%= t("components.top_nav.messaging") %>">
     <%= link_to helpers.conversations_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/conversations")) } do %>
       <%= render "shared/icons/messages" %>
-      <span>Conversations</span>
+      <span><%= t("components.top_nav.conversations") %></span>
     <% end %>
     <%= link_to helpers.messages_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/messages")) } do %>
       <%= render "shared/icons/tray_box" %>
-      <span>All messages</span>
+      <span><%= t("components.top_nav.all_messages") %></span>
     <% end %>
   </nav>
 
-  <div class="sidebar__section-label">Clinic</div>
-  <nav class="sidebar__nav" aria-label="Clinic">
+  <div class="sidebar__section-label"><%= t("components.top_nav.clinic") %></div>
+  <nav class="sidebar__nav" aria-label="<%= t("components.top_nav.clinic") %>">
 
     <%= link_to helpers.appointments_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/appointments")) } do %>
       <%= render "shared/icons/calendar" %>
-      <span>Calendar</span>
+      <span><%= t("components.top_nav.calendar") %></span>
     <% end %>
     <%= link_to helpers.customers_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/customers")) } do %>
       <%= render "shared/icons/customers" %>
-      <span>Customers</span>
+      <span><%= t("components.top_nav.customers") %></span>
     <% end %>
     <%= link_to helpers.products_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/product")) } do %>
       <%= render "shared/icons/shopping_bag" %>
-      <span>Products</span>
+      <span><%= t("components.top_nav.products") %></span>
     <% end %>
   </nav>
 
@@ -48,7 +47,7 @@
       <span class="avatar avatar--sm"><%= employee&.email_address.to_s.first %></span>
       <span class="sidebar__user" title="<%= employee&.email_address %>"><%= employee&.email_address %></span>
     <% end %>
-    <%= button_to helpers.session_path, method: :delete, class: "btn btn--ghost btn--sm", title: "Sign out", aria: { label: "Sign out" } do %>
+    <%= button_to helpers.session_path, method: :delete, class: "btn btn--ghost btn--sm", title: t("components.top_nav.sign_out"), aria: { label: t("components.top_nav.sign_out") } do %>
       <svg
         viewBox="0 0 24 24"
         fill="none"

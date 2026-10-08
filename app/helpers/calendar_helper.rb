@@ -6,9 +6,9 @@ module CalendarHelper
   # "Tuesday, 6 October 2026" / "5 Oct – 11 Oct 2026" / "October 2026"
   def calendar_title
     case @view
-    when "week"  then "#{@days.first.strftime('%-d %b')} – #{@days.last.strftime('%-d %b %Y')}"
-    when "month" then @date.strftime("%B %Y")
-    else @date.strftime("%A, %-d %B %Y")
+    when "week"  then "#{l(@days.first, format: :calendar_week_start)} – #{l(@days.last, format: :calendar_week_end)}"
+    when "month" then l(@date, format: :calendar_month)
+    else l(@date, format: :calendar_day)
     end
   end
 

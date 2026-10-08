@@ -4,7 +4,7 @@
 <div class="month-grid card">
   <div class="month-grid__head">
     <% @days.first(7).each do |day| %>
-      <div class="month-grid__weekday"><%= day.strftime("%a") %></div>
+      <div class="month-grid__weekday"><%= l(day, format: "%a") %></div>
     <% end %>
   </div>
 
@@ -20,7 +20,7 @@
                                      filter_room_id: @room&.id, customer_id: @customer&.id),
                 class: "month-grid__add",
                 data: { turbo_frame: "modal" },
-                aria: { label: "New appointment on #{day.strftime('%-d %B')}" } do %>
+                aria: { label: t(".new_on", day: l(day, format: :day_month)) } do %>
             <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
           <% end %>
         </div>
@@ -29,7 +29,7 @@
           <% day_appointments.first(max_visible).each do |appointment| %>
             <li>
               <%= link_to edit_appointment_path(appointment, view: @view, filter_room_id: @room&.id), class: "month-event", data: { turbo_frame: "modal" } do %>
-                <span class="month-event__time"><%= appointment.starts_at.strftime("%H:%M") %></span>
+                <span class="month-event__time"><%= l(appointment.starts_at, format: :hour) %></span>
                 <span class="month-event__title"><%= appointment.title %></span>
               <% end %>
             </li>
@@ -37,7 +37,7 @@
         </ul>
 
         <% if day_appointments.size > max_visible %>
-          <%= link_to "+#{day_appointments.size - max_visible} more",
+          <%= link_to t(".more", count: day_appointments.size - max_visible),
                 appointments_path(calendar_params(view: "day", date: day)),
                 class: "month-grid__more" %>
         <% end %>

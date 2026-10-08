@@ -5,4 +5,14 @@ class ApplicationController < ActionController::Base
 
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
+
+  around_action :switch_locale
+
+  private
+
+  # Runs every request in the signed-in employee's language (Spanish on the login pages)
+  def switch_locale(&action)
+    locale = resume_session&.employee&.locale.presence || I18n.default_locale
+    I18n.with_locale(locale, &action)
+  end
 end

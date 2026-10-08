@@ -31,7 +31,7 @@ class AppointmentsController < ApplicationController
     @appointment = Appointment.new(appointment_params)
 
     if @appointment.save
-      redirect_to appointments_path(calendar_return_params), notice: "Appointment created"
+      redirect_to appointments_path(calendar_return_params), notice: t("flash.appointments.created")
     else
       render :new, status: :unprocessable_entity
     end
@@ -42,7 +42,7 @@ class AppointmentsController < ApplicationController
 
   def update
     if @appointment.update(appointment_params)
-      redirect_to appointments_path(calendar_return_params), notice: "Appointment updated"
+      redirect_to appointments_path(calendar_return_params), notice: t("flash.appointments.updated")
     else
       render :edit, status: :unprocessable_entity
     end
@@ -50,21 +50,21 @@ class AppointmentsController < ApplicationController
 
   def destroy
     @appointment.destroy
-    redirect_to appointments_path(calendar_return_params), notice: "Appointment deleted", status: :see_other
+    redirect_to appointments_path(calendar_return_params), notice: t("flash.appointments.deleted"), status: :see_other
   end
 
     private
 
   def set_appointment
     @appointment = Current.enterprise.appointments.find_by(id: params[:id])
-    redirect_to appointments_path, alert: "Appointment not found" if @appointment.nil?
+    redirect_to appointments_path, alert: t("flash.appointments.not_found") if @appointment.nil?
   end
 
   # Editing uses the appointment's store; otherwise the one picked in the selector
   def set_store
     @stores = Current.enterprise.stores.order(:name)
     @store = @appointment&.store || @stores.find_by(id: params[:store_id]) || @stores.first
-    redirect_to root_path, alert: "Create a store first" if @store.nil?
+    redirect_to root_path, alert: t("flash.appointments.store_required") if @store.nil?
   end
 
   def set_form_options

@@ -4,17 +4,17 @@
   <div class="resource-form__toolbar">
     <%= link_to (product.persisted? ? product_path(product) : products_path), class: "back-link" do %>
       <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-      <%= product.persisted? ? "Back to product" : "All products" %>
+      <%= product.persisted? ? t(".back_to_product") : t("products.all_products") %>
     <% end %>
 
     <div class="page-header__actions">
-      <%= link_to "Cancel", (product.persisted? ? product_path(product) : products_path), class: "btn btn--ghost" %>
-      <%= f.submit (product.persisted? ? "Save changes" : "Create product"), class: "btn btn--primary" %>
+      <%= link_to t("shared.cancel"), (product.persisted? ? product_path(product) : products_path), class: "btn btn--ghost" %>
+      <%= f.submit (product.persisted? ? t("shared.save_changes") : t(".create")), class: "btn btn--primary" %>
     </div>
   </div>
 
   <div class="resource-form stack">
-    <h1 class="page-header__title"><%= product.persisted? ? "Edit #{product.name_was.presence || "product"}" : "New product" %></h1>
+    <h1 class="page-header__title"><%= product.persisted? ? t("products.edit.title", name: product.name_was.presence || t("products.number", id: product.id)) : t("products.new.title") %></h1>
 
     <% if product.errors.any? %>
       <div class="alert alert--danger" role="alert">
@@ -29,7 +29,7 @@
 
     <section class="card">
       <header class="card__header">
-        <h2 class="card__title">Details</h2>
+        <h2 class="card__title"><%= t(".details") %></h2>
       </header>
       <dl class="field-list">
         <div class="field-row">
@@ -40,21 +40,21 @@
           </dd>
         </div>
         <div class="field-row">
-          <dt class="field-row__label"><%= f.label :product_category_id, "Category" %></dt>
+          <dt class="field-row__label"><%= f.label :product_category_id %></dt>
           <dd class="field-row__value">
             <%= f.collection_select :product_category_id, categories, :id, :name,
-                  { prompt: "Choose a category…" },
+                  { prompt: t(".choose_category") },
                   class: "select", required: true,
                   aria: { invalid: product.errors[:product_category].any? } %>
             <% if categories.empty? %>
               <p class="form-hint">
-                No categories yet — <%= link_to "create one first", new_product_category_path %>.
+                <%= t(".no_categories_html", link: link_to(t(".create_category_first"), new_product_category_path)) %>
               </p>
             <% end %>
           </dd>
         </div>
         <div class="field-row">
-          <dt class="field-row__label"><%= f.label :price, "Price (€)" %></dt>
+          <dt class="field-row__label"><%= f.label :price, t(".price_label") %></dt>
           <dd class="field-row__value">
             <%= f.number_field :price, class: "input", step: 0.01, min: 0,
                   aria: { invalid: product.errors[:price].any? } %>
@@ -63,6 +63,30 @@
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :description %></dt>
           <dd class="field-row__value"><%= f.text_area :description, class: "textarea", rows: 4 %></dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".stock") %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :stock %></dt>
+          <dd class="field-row__value">
+            <%= f.number_field :stock, class: "input", step: 1, min: 0, required: true,
+                  aria: { invalid: product.errors[:stock].any?, describedby: "stock_hint" } %>
+            <p class="form-hint" id="stock_hint"><%= t(".stock_hint") %></p>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :show_warning_when_stock_under_x_items %></dt>
+          <dd class="field-row__value">
+            <%= f.number_field :show_warning_when_stock_under_x_items, class: "input", step: 1, min: 0, required: true,
+                  aria: { invalid: product.errors[:show_warning_when_stock_under_x_items].any?, describedby: "warning_hint" } %>
+            <p class="form-hint" id="warning_hint"><%= t(".warning_hint") %></p>
+          </dd>
         </div>
       </dl>
     </section>

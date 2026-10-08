@@ -8,7 +8,7 @@
       <%= link_to appointments_path(calendar_params(view: "day", date: column[:day])),
             class: "time-grid__day",
             aria: { current: ("date" if column[:day] == Date.current) } do %>
-        <span class="time-grid__weekday"><%= column[:label].strftime("%a") %></span>
+        <span class="time-grid__weekday"><%= l(column[:label], format: "%a") %></span>
         <span class="time-grid__date"><%= column[:label].day %></span>
       <% end %>
     <% end %>
@@ -17,7 +17,7 @@
   <div class="time-grid__body">
     <div class="time-grid__hours">
       <% slots.each do |slot| %>
-        <div class="time-grid__hour"><%= slot.strftime("%H:%M") if slot.min.zero? %></div>
+        <div class="time-grid__hour"><%= l(slot, format: :hour) if slot.min.zero? %></div>
       <% end %>
     </div>
 
@@ -30,7 +30,7 @@
                                        filter_room_id: @room&.id, customer_id: @customer&.id),
                   class: "time-grid__slot",
                   data: { turbo_frame: "modal", hour: slot.min.zero? },
-                  aria: { label: "New appointment at #{slot.strftime('%H:%M')}" } do %><% end %>
+                  aria: { label: t(".new_at", time: l(slot, format: :hour)) } do %><% end %>
           <% end %>
         </div>
 

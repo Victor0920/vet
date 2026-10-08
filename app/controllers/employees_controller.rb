@@ -22,7 +22,7 @@ class EmployeesController < ApplicationController
     @employee = Current.enterprise.employee.new(employee_params)
 
     if @employee.save
-      redirect_to employee_path(@employee), notice: "Employee created"
+      redirect_to employee_path(@employee), notice: t("flash.employees.created")
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,9 +30,12 @@ class EmployeesController < ApplicationController
 
   def update
     if @employee.update(employee_params)
-      redirect_to edit_employee_path(@employee), notice: "Employee updated"
+      key = @employee.saved_change_to_locale? ? "flash.employees.language_updated" : "flash.employees.updated"
+      # This action still runs in the OLD language, so build the message in the new one
+      notice = I18n.with_locale(@employee.locale) { t(key) }
+      redirect_to employee_path(@employee), notice: notice
     else
-      redirect_to edit_customer_path(@customer), alert: @customer.errors.full_messages.to_sentence
+      redirect_to employee_path(@employee), alert: @employee.errors.full_messages.to_sentence
     end
   end
 
@@ -40,11 +43,11 @@ class EmployeesController < ApplicationController
 
   def set_employee
     @employee = Current.employee
-    redirect_to employee_url, alert: "Employee not found" if @employee.nil?
+    redirect_to employee_url, alert: t("flash.employees.not_found") if @employee.nil?
   end
 
   # Strong parameters: only these fields can be changed from a form
   def employee_params
-    params.expect(employee: [ :first_name, :last_name, :email_address, :phone, :role, :active, :photo ])
+    params.expect(employee: [ :first_name, :last_name, :email_address, :phone, :role, :active, :photo, :locale ])
   end
 end

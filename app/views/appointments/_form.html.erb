@@ -19,18 +19,18 @@
     <div class="form-field">
       <%= f.label :title, class: "label" %>
       <%= f.text_field :title, class: "input", required: true, autofocus: true,
-            placeholder: "e.g. Vaccination, Grooming…",
+            placeholder: t(".title_placeholder"),
             aria: { invalid: appointment.errors[:title].any? } %>
     </div>
 
     <div class="form-grid">
       <div class="form-field">
-        <%= f.label :starts_at, "Starts", class: "label" %>
+        <%= f.label :starts_at, class: "label" %>
         <%= f.datetime_field :starts_at, class: "input", step: 900, required: true,
               aria: { invalid: appointment.errors[:starts_at].any? } %>
       </div>
       <div class="form-field">
-        <%= f.label :ends_at, "Ends", class: "label" %>
+        <%= f.label :ends_at, class: "label" %>
         <%= f.datetime_field :ends_at, class: "input", step: 900, required: true,
               aria: { invalid: appointment.errors[:ends_at].any? } %>
       </div>
@@ -38,14 +38,14 @@
 
     <div class="form-grid">
       <div class="form-field">
-        <%= f.label :room_id, "Room", class: "label" %>
+        <%= f.label :room_id, class: "label" %>
         <%= f.collection_select :room_id, @rooms, :id, :name,
-              { prompt: "Choose a room" },
+              { prompt: t(".choose_room") },
               class: "select", required: true,
               aria: { invalid: appointment.errors[:room].any? } %>
       </div>
       <div class="form-field">
-        <%= f.label :employee_id, "Staff", class: "label" %>
+        <%= f.label :employee_id, class: "label" %>
         <%= f.collection_select :employee_id, @employees, :id, :display_name,
               {}, class: "select" %>
       </div>
@@ -54,23 +54,23 @@
     <%# pet-filter only lists the selected customer's pets, and disables Pet until a customer is picked %>
     <div class="form-grid" data-controller="pet-filter">
       <div class="form-field">
-        <%= f.label :customer_id, "Customer", class: "label" %>
+        <%= f.label :customer_id, class: "label" %>
         <%= f.collection_select :customer_id, @customers, :id, :full_name,
-              { include_blank: "No customer" },
+              { include_blank: t(".no_customer") },
               class: "select",
               data: { pet_filter_target: "customer", action: "change->pet-filter#filter" },
               aria: { invalid: appointment.errors[:customer].any? } %>
       </div>
       <div class="form-field">
-        <%= f.label :pet_id, "Pet", class: "label" %>
+        <%= f.label :pet_id, class: "label" %>
         <%# A disabled select isn't submitted at all, so this sends pet_id="" instead.
             When the select is enabled, its value comes later in the form and wins. %>
         <%= hidden_field_tag "appointment[pet_id]", "", id: nil %>
         <%= f.select :pet_id,
               @customers.flat_map { |customer|
-                customer.pets.map { |pet| [pet.name.presence || "Unnamed pet", pet.id, { data: { customer_id: customer.id } }] }
+                customer.pets.map { |pet| [pet.name.presence || t("shared.unnamed_pet"), pet.id, { data: { customer_id: customer.id } }] }
               },
-              { include_blank: "No pet" },
+              { include_blank: t(".no_pet") },
               class: "select",
               data: { pet_filter_target: "pet" },
               aria: { invalid: appointment.errors[:pet].any? } %>
@@ -78,7 +78,7 @@
     </div>
 
     <div class="form-field">
-      <%= f.label :description, "Notes", class: "label" %>
+      <%= f.label :description, class: "label" %>
       <%= f.text_area :description, class: "textarea", rows: 3 %>
     </div>
 
@@ -86,12 +86,12 @@
       <div class="modal__shortcuts">
         <% if appointment.customer %>
           <%= link_to customer_path(appointment.customer), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
-            View customer · <%= appointment.customer.full_name %>
+            <%= t(".view_customer", name: appointment.customer.full_name) %>
           <% end %>
         <% end %>
         <% if appointment.pet %>
           <%= link_to customer_pet_path(appointment.pet.customer, appointment.pet), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
-            View pet · <%= appointment.pet.name.presence || "Unnamed pet" %>
+            <%= t(".view_pet", name: appointment.pet.name.presence || t("shared.unnamed_pet")) %>
           <% end %>
         <% end %>
       </div>
@@ -104,14 +104,14 @@
     <%= button_to appointment_path(appointment, view: params[:view], filter_room_id: params[:filter_room_id].presence),
           method: :delete,
           class: "btn btn--danger-ghost",
-          form: { data: { turbo_confirm: "Delete this appointment?", turbo_frame: "_top" } } do %>
+          form: { data: { turbo_confirm: t(".delete_confirm"), turbo_frame: "_top" } } do %>
       <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd"/></svg>
-      Delete
+      <%= t("shared.delete") %>
     <% end %>
   <% end %>
 
   <div class="modal__footer-actions">
-    <%= link_to "Cancel", appointments_path(calendar_return_params), class: "btn btn--ghost", data: { action: "modal#close", turbo_frame: "_top" } %>
-    <%= button_tag appointment.persisted? ? "Save changes" : "Create appointment", type: "submit", form: "appointment-form", class: "btn btn--primary" %>
+    <%= link_to t("shared.cancel"), appointments_path(calendar_return_params), class: "btn btn--ghost", data: { action: "modal#close", turbo_frame: "_top" } %>
+    <%= button_tag appointment.persisted? ? t("shared.save_changes") : t(".create"), type: "submit", form: "appointment-form", class: "btn btn--primary" %>
   </div>
 </footer>

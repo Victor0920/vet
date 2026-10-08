@@ -19,7 +19,7 @@ class ProductCategoriesController < ApplicationController
     @category = Current.enterprise.product_categories.new(category_params)
 
     if @category.save
-      redirect_to product_category_path(@category), notice: "Category created"
+      redirect_to product_category_path(@category), notice: t("flash.product_categories.created")
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class ProductCategoriesController < ApplicationController
 
   def update
     if @category.update(category_params)
-      redirect_to product_category_path(@category), notice: "Category updated"
+      redirect_to product_category_path(@category), notice: t("flash.product_categories.updated")
     else
       render :edit, status: :unprocessable_entity
     end
@@ -40,7 +40,7 @@ class ProductCategoriesController < ApplicationController
 
   def set_category
     @category = Current.enterprise.product_categories.find_by(id: params[:id])
-    redirect_to product_categories_url, alert: "Category not found" if @category.nil?
+    redirect_to product_categories_url, alert: t("flash.product_categories.not_found") if @category.nil?
   end
 
   # The form is built from a ProductCategory, so its params arrive under :product_category

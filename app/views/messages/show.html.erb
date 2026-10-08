@@ -1,15 +1,15 @@
-<% content_for :title, "Message ##{@message.id}" %>
+<% content_for :title, t(".number", id: @message.id) %>
 
 <% if @message.conversation_id %>
   <%= link_to conversation_path(@message.conversation_id), class: "back-link" do %>
-    ← Back to conversation
+    ← <%= t(".back") %>
   <% end %>
 <% end %>
 
 <div class="page-header">
   <div>
-    <h1 class="page-header__title">Message #<%= @message.id %></h1>
-    <p class="page-header__subtitle">Sent <%= @message.created_at.strftime("%b %-d, %Y at %H:%M") %></p>
+    <h1 class="page-header__title"><%= t(".number", id: @message.id) %></h1>
+    <p class="page-header__subtitle"><%= t(".sent", time: l(@message.created_at, format: :full)) %></p>
   </div>
 </div>
 
@@ -17,20 +17,20 @@
   <div class="card__body">
     <dl class="details">
       <div>
-        <dt>Text</dt>
+        <dt><%= t(".text") %></dt>
         <dd><%= @message.text %></dd>
       </div>
       <div>
-        <dt>Sender</dt>
-        <dd><span class="badge <%= "badge--primary" unless @message.user? %>"><%= @message.sender&.humanize || "Unknown" %></span></dd>
+        <dt><%= t(".sender") %></dt>
+        <dd><span class="badge <%= "badge--primary" unless @message.user? %>"><%= @message.sender ? t(@message.sender, scope: "shared.message_senders", default: @message.sender.humanize) : t("shared.unknown") %></span></dd>
       </div>
       <div>
-        <dt>Delivery status</dt>
-        <dd><%= @message.delivery_status.presence&.humanize || "—" %></dd>
+        <dt><%= t(".delivery_status") %></dt>
+        <dd><%= @message.delivery_status.present? ? t(@message.delivery_status, scope: "shared.delivery_statuses", default: @message.delivery_status.humanize) : "—" %></dd>
       </div>
       <% if @message.whatsapp_message_id.present? %>
         <div>
-          <dt>WhatsApp ID</dt>
+          <dt><%= t(".whatsapp_id") %></dt>
           <dd><code><%= @message.whatsapp_message_id %></code></dd>
         </div>
       <% end %>

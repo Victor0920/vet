@@ -1,9 +1,9 @@
 <% full_name = [@customer.first_name, @customer.first_surname, @customer.second_surname].compact_blank.join(" ") %>
-<% content_for :title, "Edit #{full_name.presence || "customer ##{@customer.id}"}" %>
+<% content_for :title, t(".title", name: full_name.presence || t("shared.customer_number", id: @customer.id)) %>
 
 <%= link_to customer_path(@customer), class: "back-link" do %>
   <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-  Done editing
+  <%= t("shared.done_editing") %>
 <% end %>
 
 <div class="customer-profile">
@@ -12,7 +12,7 @@
       <%# Same trick as the pet photo: the avatar is a <label> for a hidden file input,
           and the auto-submit Stimulus controller uploads as soon as a file is chosen. %>
       <%= form_with model: @customer, class: "avatar-upload", data: { controller: "auto-submit" } do |form| %>
-        <%= form.label :photo, class: "avatar-upload__trigger", title: "Change photo" do %>
+        <%= form.label :photo, class: "avatar-upload__trigger", title: t("shared.change_photo") do %>
           <% if @customer.photo.attached? %>
             <%= image_tag @customer.photo.variant(resize_to_fill: [192, 192]), alt: full_name, class: "avatar avatar--xl avatar--photo" %>
           <% else %>
@@ -20,32 +20,32 @@
           <% end %>
           <span class="avatar-upload__overlay">
             <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
-            <span class="sr-only"><%= @customer.photo.attached? ? "Change photo" : "Upload photo" %></span>
+            <span class="sr-only"><%= @customer.photo.attached? ? t("shared.change_photo") : t("shared.upload_photo") %></span>
           </span>
         <% end %>
         <%= form.file_field :photo, accept: "image/*", class: "sr-only", data: { action: "change->auto-submit#submit" } %>
       <% end %>
-      <p class="text-subtle text-xs">Click the photo to <%= @customer.photo.attached? ? "change" : "upload" %> it</p>
+      <p class="text-subtle text-xs"><%= @customer.photo.attached? ? t(".photo_hint_change") : t(".photo_hint_upload") %></p>
 
       <div>
-        <h1 class="customer-profile__name"><%= full_name.presence || "Unnamed customer" %></h1>
-        <p class="text-subtle text-xs">Customer #<%= @customer.id %></p>
+        <h1 class="customer-profile__name"><%= full_name.presence || t("shared.unnamed_customer") %></h1>
+        <p class="text-subtle text-xs"><%= t("shared.customer_number", id: @customer.id) %></p>
       </div>
     </div>
 
     <div class="card__body">
       <dl class="details">
         <div>
-          <dt>Pets</dt>
-          <dd><%= @customer.pets.map(&:name).compact_blank.to_sentence.presence || "None yet" %></dd>
+          <dt><%= t(".pets") %></dt>
+          <dd><%= @customer.pets.map(&:name).compact_blank.to_sentence.presence || t(".no_pets") %></dd>
         </div>
         <div>
-          <dt>Customer since</dt>
-          <dd><%= @customer.created_at.strftime("%b %-d, %Y") %></dd>
+          <dt><%= t("customers.customer_since") %></dt>
+          <dd><%= l(@customer.created_at, format: :display) %></dd>
         </div>
         <div>
-          <dt>Last updated</dt>
-          <dd><%= time_ago_in_words(@customer.updated_at) %> ago</dd>
+          <dt><%= t("shared.last_updated") %></dt>
+          <dd><%= t("shared.time_ago", time: time_ago_in_words(@customer.updated_at)) %></dd>
         </div>
       </dl>
     </div>
@@ -55,42 +55,43 @@
     <section class="card">
       <header class="card__header">
         <div>
-          <h2 class="card__title">Personal</h2>
-          <p class="card__description">Click the pencil next to a field to edit it.</p>
+          <h2 class="card__title"><%= t("customers.sections.personal") %></h2>
+          <p class="card__description"><%= t("shared.pencil_hint") %></p>
         </div>
       </header>
       <dl class="field-list">
-        <%= render "shared/editable_field", model: @customer, attribute: :first_name, label: "First name" %>
-        <%= render "shared/editable_field", model: @customer, attribute: :first_surname, label: "First surname" %>
-        <%= render "shared/editable_field", model: @customer, attribute: :second_surname, label: "Second surname" %>
-        <%= render "shared/editable_field", model: @customer, attribute: :sex, label: "Sex",
-              input: :select, choices: ["Male", "Female"] %>
-        <%= render "shared/editable_field", model: @customer, attribute: :born_on, label: "Born",
-              input: :date_field, value: @customer.born_on&.strftime("%b %-d, %Y") %>
-        <%= render "shared/editable_field", model: @customer, attribute: :document_type, label: "Document type" %>
-        <%= render "shared/editable_field", model: @customer, attribute: :document_number, label: "Document number" %>
+        <%= render "shared/editable_field", model: @customer, attribute: :first_name, label: Customer.human_attribute_name(:first_name) %>
+        <%= render "shared/editable_field", model: @customer, attribute: :first_surname, label: Customer.human_attribute_name(:first_surname) %>
+        <%= render "shared/editable_field", model: @customer, attribute: :second_surname, label: Customer.human_attribute_name(:second_surname) %>
+        <%= render "shared/editable_field", model: @customer, attribute: :sex, label: Customer.human_attribute_name(:sex),
+              input: :select, choices: [[t("customers.sex.male"), "Male"], [t("customers.sex.female"), "Female"]],
+              value: @customer.sex.presence && t(@customer.sex.downcase, scope: "customers.sex", default: @customer.sex) %>
+        <%= render "shared/editable_field", model: @customer, attribute: :born_on, label: Customer.human_attribute_name(:born_on),
+              input: :date_field, value: @customer.born_on && l(@customer.born_on, format: :display) %>
+        <%= render "shared/editable_field", model: @customer, attribute: :document_type, label: Customer.human_attribute_name(:document_type) %>
+        <%= render "shared/editable_field", model: @customer, attribute: :document_number, label: Customer.human_attribute_name(:document_number) %>
       </dl>
     </section>
 
     <section class="card">
       <header class="card__header">
-        <h2 class="card__title">Contact</h2>
+        <h2 class="card__title"><%= t("customers.sections.contact") %></h2>
       </header>
       <dl class="field-list">
-        <%= render "shared/editable_field", model: @customer, attribute: :email, label: "Email", input: :email_field %>
-        <%= render "shared/editable_field", model: @customer, attribute: :first_phone, label: "Phone", input: :telephone_field %>
-        <%= render "shared/editable_field", model: @customer, attribute: :second_phone, label: "Second phone", input: :telephone_field %>
+        <%= render "shared/editable_field", model: @customer, attribute: :email, label: Customer.human_attribute_name(:email), input: :email_field %>
+        <%= render "shared/editable_field", model: @customer, attribute: :first_phone, label: Customer.human_attribute_name(:first_phone), input: :telephone_field %>
+        <%= render "shared/editable_field", model: @customer, attribute: :second_phone, label: Customer.human_attribute_name(:second_phone), input: :telephone_field %>
       </dl>
     </section>
 
     <section class="card">
       <header class="card__header">
-        <h2 class="card__title">Address</h2>
+        <h2 class="card__title"><%= t("customers.sections.address") %></h2>
       </header>
       <dl class="field-list">
-        <%= render "shared/editable_field", model: @customer, attribute: :address, label: "Address" %>
-        <%= render "shared/editable_field", model: @customer, attribute: :post_code, label: "Post code" %>
-        <%= render "shared/editable_field", model: @customer, attribute: :province, label: "Province" %>
+        <%= render "shared/editable_field", model: @customer, attribute: :address, label: Customer.human_attribute_name(:address) %>
+        <%= render "shared/editable_field", model: @customer, attribute: :post_code, label: Customer.human_attribute_name(:post_code) %>
+        <%= render "shared/editable_field", model: @customer, attribute: :province, label: Customer.human_attribute_name(:province) %>
       </dl>
     </section>
   </div>

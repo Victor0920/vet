@@ -2,8 +2,8 @@
 <% if @rooms.empty? %>
   <div class="empty-state">
     <%= render "shared/paw_icon" %>
-    <p class="empty-state__title">This store has no rooms yet</p>
-    <p>Add rooms to <%= @store.name %> to see their availability here.</p>
+    <p class="empty-state__title"><%= t(".empty") %></p>
+    <p><%= t(".empty_hint", store: @store.name) %></p>
   </div>
 <% else %>
   <% slots = calendar_slots(@date) %>
@@ -16,7 +16,7 @@
       <div class="time-grid__corner"></div>
       <% rooms.each do |room| %>
         <div class="time-grid__day">
-          <span class="time-grid__weekday">Room</span>
+          <span class="time-grid__weekday"><%= t(".room") %></span>
           <span class="time-grid__room"><%= room.name %></span>
         </div>
       <% end %>
@@ -25,7 +25,7 @@
     <div class="time-grid__body">
       <div class="time-grid__hours">
         <% slots.each do |slot| %>
-          <div class="time-grid__hour"><%= slot.strftime("%H:%M") if slot.min.zero? %></div>
+          <div class="time-grid__hour"><%= l(slot, format: :hour) if slot.min.zero? %></div>
         <% end %>
       </div>
 
@@ -40,8 +40,8 @@
                     class: "cal-gap",
                     style: calendar_position(from, to, @date),
                     data: { turbo_frame: "modal" } do %>
-                <span class="cal-gap__label">Free</span>
-                <span class="cal-gap__time"><%= from.strftime("%H:%M") %>–<%= to.strftime("%H:%M") %></span>
+                <span class="cal-gap__label"><%= t(".free") %></span>
+                <span class="cal-gap__time"><%= l(from, format: :hour) %>–<%= l(to, format: :hour) %></span>
               <% end %>
             <% end %>
 

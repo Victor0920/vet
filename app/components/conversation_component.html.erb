@@ -5,6 +5,6 @@
     <% end %>
   </div>
   <% if @conversation.messages.empty? %>
-    <p class="conversation__empty">No messages yet</p>
+    <p class="conversation__empty"><%= t("components.conversation.empty") %></p>
   <% end %>
 </div>

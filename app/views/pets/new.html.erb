@@ -1,5 +1,5 @@
-<% owner_name = [@customer.first_name, @customer.first_surname].compact_blank.join(" ").presence || "Customer ##{@customer.id}" %>
-<% content_for :title, "New pet" %>
+<% owner_name = [@customer.first_name, @customer.first_surname].compact_blank.join(" ").presence || t("shared.customer_number", id: @customer.id) %>
+<% content_for :title, t(".title") %>
 
 <%# Same layout as pets/edit, but with plain inputs instead of shared/editable_field,
     all inside one form that is saved with the button in the top right corner. %>
@@ -7,12 +7,12 @@
   <div class="customer-form__toolbar">
     <%= link_to customer_path(@customer), class: "back-link" do %>
       <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-      Back to <%= owner_name %>
+      <%= t(".back_to", name: owner_name) %>
     <% end %>
 
     <div class="page-header__actions">
-      <%= link_to "Cancel", customer_path(@customer), class: "btn btn--ghost" %>
-      <%= f.submit "Create pet", class: "btn btn--primary" %>
+      <%= link_to t("shared.cancel"), customer_path(@customer), class: "btn btn--ghost" %>
+      <%= f.submit t(".submit"), class: "btn btn--primary" %>
     </div>
   </div>
 
@@ -26,7 +26,7 @@
           <span class="pet-photo__placeholder" data-image-preview-target="placeholder"><%= render "shared/paw_icon" %></span>
           <span class="pet-photo__overlay">
             <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
-            Add photo
+            <%= t("shared.add_photo") %>
           </span>
         <% end %>
         <%= f.file_field :photo, accept: "image/*", class: "sr-only", data: { action: "change->image-preview#show" } %>
@@ -34,15 +34,15 @@
 
       <div class="customer-profile__header">
         <div>
-          <h1 class="customer-profile__name">New pet</h1>
-          <p class="text-subtle text-xs">Click the image to add a photo</p>
+          <h1 class="customer-profile__name"><%= t(".heading") %></h1>
+          <p class="text-subtle text-xs"><%= t(".photo_hint") %></p>
         </div>
       </div>
 
       <div class="card__body">
         <dl class="details">
           <div>
-            <dt>Owner</dt>
+            <dt><%= t("pets.owner") %></dt>
             <dd>
               <%= link_to customer_path(@customer), class: "pet-owner" do %>
                 <% if @customer.photo.attached? %>
@@ -72,7 +72,7 @@
 
       <section class="card">
         <header class="card__header">
-          <h2 class="card__title">General</h2>
+          <h2 class="card__title"><%= t("pets.sections.general") %></h2>
         </header>
         <dl class="field-list">
           <div class="field-row">
@@ -93,11 +93,11 @@
           <div class="field-row">
             <dt class="field-row__label"><%= f.label :sex %></dt>
             <dd class="field-row__value">
-              <%= f.select :sex, ["Male", "Female"], { include_blank: "—" }, class: "select" %>
+              <%= f.select :sex, [[t("pets.sex.male"), "Male"], [t("pets.sex.female"), "Female"]], { include_blank: "—" }, class: "select" %>
             </dd>
           </div>
           <div class="field-row">
-            <dt class="field-row__label"><%= f.label :born_on, "Born" %></dt>
+            <dt class="field-row__label"><%= f.label :born_on %></dt>
             <dd class="field-row__value"><%= f.date_field :born_on, class: "input" %></dd>
           </div>
           <div class="field-row">
@@ -109,15 +109,15 @@
 
       <section class="card">
         <header class="card__header">
-          <h2 class="card__title">Identification</h2>
+          <h2 class="card__title"><%= t("pets.sections.identification") %></h2>
         </header>
         <dl class="field-list">
           <div class="field-row">
-            <dt class="field-row__label"><%= f.label :transponder_number, "Microchip number" %></dt>
+            <dt class="field-row__label"><%= f.label :transponder_number %></dt>
             <dd class="field-row__value"><%= f.text_field :transponder_number, class: "input" %></dd>
           </div>
           <div class="field-row">
-            <dt class="field-row__label"><%= f.label :transponder_location, "Microchip location" %></dt>
+            <dt class="field-row__label"><%= f.label :transponder_location %></dt>
             <dd class="field-row__value"><%= f.text_field :transponder_location, class: "input" %></dd>
           </div>
         </dl>
@@ -125,7 +125,7 @@
 
       <section class="card">
         <header class="card__header">
-          <h2 class="card__title">Notes</h2>
+          <h2 class="card__title"><%= t("pets.sections.notes") %></h2>
         </header>
         <dl class="field-list">
           <div class="field-row">

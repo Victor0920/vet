@@ -23,7 +23,7 @@
      @product = Current.enterprise.products.new(product_params)
 
      if @product.save
-       redirect_to product_path(@product), notice: "Product created"
+       redirect_to product_path(@product), notice: t("flash.products.created")
      else
        render :new, status: :unprocessable_entity
      end
@@ -34,7 +34,7 @@
 
    def update
      if @product.update(product_params)
-       redirect_to product_path(@product), notice: "Product updated"
+       redirect_to product_path(@product), notice: t("flash.products.updated")
      else
        render :edit, status: :unprocessable_entity
      end
@@ -44,7 +44,7 @@
 
    def set_product
      @product = Current.enterprise.products.find_by(id: params[:id])
-     redirect_to products_url, alert: "Product not found" if @product.nil?
+     redirect_to products_url, alert: t("flash.products.not_found") if @product.nil?
    end
 
    def set_categories
