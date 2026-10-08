@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_06_175403) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_130951) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -123,6 +123,35 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_175403) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "invoice_products", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.integer "invoice_id", null: false
+    t.decimal "price", precision: 7, scale: 2
+    t.integer "product_id"
+    t.integer "quantity"
+    t.datetime "updated_at", null: false
+    t.index ["invoice_id"], name: "index_invoice_products_on_invoice_id"
+    t.index ["product_id"], name: "index_invoice_products_on_product_id"
+  end
+
+  create_table "invoices", force: :cascade do |t|
+    t.integer "appointment_id"
+    t.datetime "created_at", null: false
+    t.integer "customer_id"
+    t.datetime "date"
+    t.integer "employee_id", null: false
+    t.integer "enterprise_id", null: false
+    t.string "invoice_id"
+    t.integer "store_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["appointment_id"], name: "index_invoices_on_appointment_id"
+    t.index ["customer_id"], name: "index_invoices_on_customer_id"
+    t.index ["employee_id"], name: "index_invoices_on_employee_id"
+    t.index ["enterprise_id"], name: "index_invoices_on_enterprise_id"
+    t.index ["store_id"], name: "index_invoices_on_store_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.integer "conversation_id"
     t.datetime "created_at", null: false
@@ -221,6 +250,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_06_175403) do
   add_foreign_key "conversations", "users"
   add_foreign_key "customers", "enterprises"
   add_foreign_key "employees", "enterprises"
+  add_foreign_key "invoice_products", "invoices"
+  add_foreign_key "invoice_products", "products"
+  add_foreign_key "invoices", "appointments"
+  add_foreign_key "invoices", "customers"
+  add_foreign_key "invoices", "employees"
+  add_foreign_key "invoices", "enterprises"
+  add_foreign_key "invoices", "stores"
   add_foreign_key "messages", "conversations"
   add_foreign_key "pets", "customers"
   add_foreign_key "product_categories", "enterprises"

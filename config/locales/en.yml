@@ -18,18 +18,18 @@ en:
   # ---------- Dates & times (used with l(value, format: :name)) ----------
   date:
     formats:
-      display: "%b %-d, %Y"            # Oct 6, 2026
-      day_month: "%B %-d"              # October 6
-      calendar_day: "%A, %-d %B %Y"    # Tuesday, 6 October 2026
-      calendar_month: "%B %Y"          # October 2026
-      calendar_week_start: "%-d %b"    # 5 Oct
-      calendar_week_end: "%-d %b %Y"   # 11 Oct 2026
+      display: "%b %-d, %Y" # Oct 6, 2026
+      day_month: "%B %-d" # October 6
+      calendar_day: "%A, %-d %B %Y" # Tuesday, 6 October 2026
+      calendar_month: "%B %Y" # October 2026
+      calendar_week_start: "%-d %b" # 5 Oct
+      calendar_week_end: "%-d %b %Y" # 11 Oct 2026
   time:
     formats:
-      display: "%b %-d, %Y"            # Oct 6, 2026
-      hour: "%H:%M"                    # 09:30
-      short_datetime: "%b %-d, %H:%M"  # Oct 6, 09:30
-      full: "%b %-d, %Y at %H:%M"      # Oct 6, 2026 at 09:30
+      display: "%b %-d, %Y" # Oct 6, 2026
+      hour: "%H:%M" # 09:30
+      short_datetime: "%b %-d, %H:%M" # Oct 6, 09:30
+      full: "%b %-d, %Y at %H:%M" # Oct 6, 2026 at 09:30
 
   # ---------- Models & attributes ----------
   activerecord:
@@ -52,6 +52,12 @@ en:
       product_category:
         one: "Category"
         other: "Categories"
+      invoice:
+        one: "Invoice"
+        other: "Invoices"
+      invoice_product:
+        one: "Invoice line"
+        other: "Invoice lines"
     attributes:
       appointment:
         title: "Title"
@@ -117,6 +123,30 @@ en:
       product_category:
         name: "Name"
         products: "Products"
+      invoice:
+        invoice_id: "Invoice number"
+        date: "Date"
+        customer: "Customer"
+        customer_id: "Customer"
+        appointment: "Appointment"
+        appointment_id: "Appointment"
+        employee: "Staff"
+        employee_id: "Staff"
+        store: "Store"
+        store_id: "Store"
+        invoice_products: "Lines"
+      invoice_product:
+        product: "Product"
+        product_id: "Product"
+        description: "Description"
+        price: "Price"
+        quantity: "Quantity"
+      # Errors on nested lines read from here: "Line description can't be blank"
+      invoice/invoice_products:
+        product: "Line product"
+        description: "Line description"
+        price: "Line price"
+        quantity: "Line quantity"
     # Custom validation messages: errors.add(:ends_at, :must_be_after_start)
     errors:
       messages:
@@ -165,6 +195,10 @@ en:
       created: "Category created"
       updated: "Category updated"
       not_found: "Category not found"
+    invoices:
+      created: "Invoice created"
+      updated: "Invoice updated"
+      not_found: "Invoice not found"
     products:
       created: "Product created"
       updated: "Product updated"
@@ -223,6 +257,7 @@ en:
       calendar: "Calendar"
       customers: "Customers"
       products: "Products"
+      invoices: "Invoices"
       sign_out: "Sign out"
 
   # ---------- Layouts ----------
@@ -348,6 +383,13 @@ en:
       microchip: "Microchip"
       no_pets: "No pets yet"
       no_pets_hint: "Pets registered to this customer will show up here."
+      invoices: "Invoices"
+      invoices_count:
+        one: "1 invoice"
+        other: "%{count} invoices"
+      new_invoice: "New invoice"
+      no_invoices: "No invoices yet"
+      no_invoices_hint: "Invoices billed to this customer will show up here."
 
   # ---------- Pets ----------
   pets:
@@ -435,6 +477,8 @@ en:
       view_customer: "View customer · %{name}"
       view_pet: "View pet · %{name}"
       delete_confirm: "Delete this appointment?"
+      create_invoice: "Create invoice"
+      view_invoice: "View invoice"
       create: "Create appointment"
     month:
       new_on: "New appointment on %{day}"
@@ -590,3 +634,77 @@ en:
       back_to_category: "Back to category"
       create: "Create category"
       details: "Details"
+
+  # ---------- Invoices ----------
+  invoices:
+    all_invoices: "All invoices"
+    number: "Invoice #%{id}"
+    no_customer: "No customer"
+    columns:
+      number: "Number"
+      date: "Date"
+      customer: "Customer"
+      employee: "Staff"
+      total: "Total"
+      product: "Product"
+      quantity: "Quantity"
+      unit_price: "Unit price"
+      subtotal: "Subtotal"
+    index:
+      title: "All invoices"
+      heading: "Invoices"
+      subtitle: "Everything billed, newest first"
+      new_invoice: "New invoice"
+      search_label: "Search invoices"
+      search_placeholder: "Search by invoice number…"
+      from: "From"
+      to: "To"
+      count:
+        one: "1 invoice"
+        other: "%{count} invoices"
+      count_matching:
+        one: "1 invoice matching “%{query}”"
+        other: "%{count} invoices matching “%{query}”"
+      no_matches: "No invoices match these filters"
+      no_matches_hint: "Try another number or widen the date range."
+      empty: "No invoices yet"
+      empty_hint: "Invoices will show up here once the first is created."
+    show:
+      edit_invoice: "Edit invoice"
+      custom_item: "Custom"
+      download_pdf: "Download PDF"
+      no_appointment: "Not linked to an appointment"
+      lines: "Products"
+      no_lines: "No products on this invoice"
+      no_lines_hint: "Products added to this invoice will show up here."
+    new:
+      title: "New invoice"
+    edit:
+      title: "Edit invoice %{number}"
+    form:
+      back_to_invoice: "Back to invoice"
+      create: "Create invoice"
+      details: "Details"
+      number_placeholder: "e.g. 2026-0001"
+      choose_store: "Choose a store…"
+      choose_employee: "Choose a staff member…"
+      billed_to: "Billed to"
+      no_customer: "No customer"
+      no_appointment: "No appointment"
+      appointment_hint: "Optional. Links this invoice to the visit it bills."
+      lines: "Products"
+      line_detail: "Description · Price"
+      add_line: "Add line"
+      lines_hint: "Pick a product, or choose “Custom item” to type a description and price."
+    pdf:
+      title: "Invoice"
+      tax_id: "Tax ID"
+      billed_to: "Billed to"
+      description: "Description"
+      footer: "Issued by %{name}. Thank you for trusting us with your pets."
+    line_fields:
+      custom_item: "Custom item"
+      per_unit: "per unit"
+      description_placeholder: "e.g. Treats, temporary product…"
+      price_placeholder: "Price €"
+      remove: "Remove line"

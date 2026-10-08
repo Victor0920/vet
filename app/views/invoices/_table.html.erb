@@ -1,0 +1,42 @@
+<%# Shared by invoices#index and customers#show. Pass show_customer: false to hide
+    the customer column (on a customer's page it's always the same person). %>
+<% show_customer = local_assigns.fetch(:show_customer, true) %>
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th><%= t("invoices.columns.number") %></th>
+        <th><%= t("invoices.columns.date") %></th>
+        <% if show_customer %>
+          <th><%= t("invoices.columns.customer") %></th>
+        <% end %>
+        <th><%= t("invoices.columns.employee") %></th>
+        <th class="invoices-table__total"><%= t("invoices.columns.total") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% invoices.each do |invoice| %>
+        <tr>
+          <td>
+            <%= link_to invoice.invoice_id.presence || t("invoices.number", id: invoice.id),
+                  invoice_path(invoice), class: "invoice-cell__number" %>
+          </td>
+          <td class="table__numeric"><%= invoice.date ? l(invoice.date, format: :display) : "—" %></td>
+          <% if show_customer %>
+            <td>
+              <% if invoice.customer %>
+                <%= link_to invoice.customer.full_name, customer_path(invoice.customer) %>
+              <% else %>
+                <span class="text-subtle"><%= t("invoices.no_customer") %></span>
+              <% end %>
+            </td>
+          <% end %>
+          <td><%= invoice.employee.display_name %></td>
+          <td class="table__numeric invoices-table__total">
+            <%= number_to_currency(invoice.total, unit: "€", format: "%n %u") %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

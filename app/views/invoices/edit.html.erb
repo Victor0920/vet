@@ -1,0 +1,3 @@
+<% content_for :title, t(".title", number: @invoice.invoice_id_was.presence || @invoice.id) %>
+
+<%= render "form", invoice: @invoice %>

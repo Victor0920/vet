@@ -8,18 +8,18 @@ es:
   # ---------- Fechas y horas (l(valor, format: :nombre)) ----------
   date:
     formats:
-      display: "%-d %b %Y"                  # 6 oct 2026
-      day_month: "%-d de %B"                # 6 de octubre
-      calendar_day: "%A, %-d de %B de %Y"   # martes, 6 de octubre de 2026
-      calendar_month: "%B de %Y"            # octubre de 2026
-      calendar_week_start: "%-d %b"         # 5 oct
-      calendar_week_end: "%-d %b %Y"        # 11 oct 2026
+      display: "%-d %b %Y" # 6 oct 2026
+      day_month: "%-d de %B" # 6 de octubre
+      calendar_day: "%A, %-d de %B de %Y" # martes, 6 de octubre de 2026
+      calendar_month: "%B de %Y" # octubre de 2026
+      calendar_week_start: "%-d %b" # 5 oct
+      calendar_week_end: "%-d %b %Y" # 11 oct 2026
   time:
     formats:
-      display: "%-d %b %Y"                  # 6 oct 2026
-      hour: "%H:%M"                         # 09:30
-      short_datetime: "%-d %b, %H:%M"       # 6 oct, 09:30
-      full: "%-d %b %Y a las %H:%M"         # 6 oct 2026 a las 09:30
+      display: "%-d %b %Y" # 6 oct 2026
+      hour: "%H:%M" # 09:30
+      short_datetime: "%-d %b, %H:%M" # 6 oct, 09:30
+      full: "%-d %b %Y a las %H:%M" # 6 oct 2026 a las 09:30
 
   # ---------- Modelos y atributos ----------
   activerecord:
@@ -42,6 +42,12 @@ es:
       product_category:
         one: "Categoría"
         other: "Categorías"
+      invoice:
+        one: "Factura"
+        other: "Facturas"
+      invoice_product:
+        one: "Línea de factura"
+        other: "Líneas de factura"
     attributes:
       appointment:
         title: "Título"
@@ -107,6 +113,30 @@ es:
       product_category:
         name: "Nombre"
         products: "Productos"
+      invoice:
+        invoice_id: "Número de factura"
+        date: "Fecha"
+        customer: "Cliente"
+        customer_id: "Cliente"
+        appointment: "Cita"
+        appointment_id: "Cita"
+        employee: "Profesional"
+        employee_id: "Profesional"
+        store: "Centro"
+        store_id: "Centro"
+        invoice_products: "Líneas"
+      invoice_product:
+        product: "Producto"
+        product_id: "Producto"
+        description: "Descripción"
+        price: "Precio"
+        quantity: "Cantidad"
+      # Los errores de las líneas se leen de aquí: "Descripción de la línea no puede estar en blanco"
+      invoice/invoice_products:
+        product: "Producto de la línea"
+        description: "Descripción de la línea"
+        price: "Precio de la línea"
+        quantity: "Cantidad de la línea"
     errors:
       messages:
         must_be_after_start: "debe ser posterior a la hora de inicio"
@@ -154,6 +184,10 @@ es:
       created: "Categoría creada"
       updated: "Categoría actualizada"
       not_found: "No se ha encontrado la categoría"
+    invoices:
+      created: "Factura creada"
+      updated: "Factura actualizada"
+      not_found: "No se ha encontrado la factura"
     products:
       created: "Producto creado"
       updated: "Producto actualizado"
@@ -212,6 +246,7 @@ es:
       calendar: "Calendario"
       customers: "Clientes"
       products: "Productos"
+      invoices: "Facturación"
       sign_out: "Cerrar sesión"
 
   # ---------- Layouts ----------
@@ -337,6 +372,13 @@ es:
       microchip: "Microchip"
       no_pets: "Todavía no hay mascotas"
       no_pets_hint: "Las mascotas de este cliente aparecerán aquí."
+      invoices: "Facturas"
+      invoices_count:
+        one: "1 factura"
+        other: "%{count} facturas"
+      new_invoice: "Nueva factura"
+      no_invoices: "Todavía no hay facturas"
+      no_invoices_hint: "Las facturas de este cliente aparecerán aquí."
 
   # ---------- Mascotas ----------
   pets:
@@ -422,6 +464,8 @@ es:
       view_customer: "Ver cliente · %{name}"
       view_pet: "Ver mascota · %{name}"
       delete_confirm: "¿Eliminar esta cita?"
+      create_invoice: "Crear factura"
+      view_invoice: "Ver factura"
       create: "Crear cita"
     month:
       new_on: "Nueva cita el %{day}"
@@ -577,3 +621,77 @@ es:
       back_to_category: "Volver a la categoría"
       create: "Crear categoría"
       details: "Detalles"
+
+  # ---------- Facturas ----------
+  invoices:
+    all_invoices: "Todas las facturas"
+    number: "Factura #%{id}"
+    no_customer: "Sin cliente"
+    columns:
+      number: "Número"
+      date: "Fecha"
+      customer: "Cliente"
+      employee: "Profesional"
+      total: "Total"
+      product: "Producto"
+      quantity: "Cantidad"
+      unit_price: "Precio unitario"
+      subtotal: "Subtotal"
+    index:
+      title: "Todas las facturas"
+      heading: "Facturas"
+      subtitle: "Todo lo facturado, de más reciente a más antiguo"
+      new_invoice: "Nueva factura"
+      search_label: "Buscar facturas"
+      search_placeholder: "Buscar por número de factura…"
+      from: "Desde"
+      to: "Hasta"
+      count:
+        one: "1 factura"
+        other: "%{count} facturas"
+      count_matching:
+        one: "1 factura coincide con “%{query}”"
+        other: "%{count} facturas coinciden con “%{query}”"
+      no_matches: "Ninguna factura coincide con estos filtros"
+      no_matches_hint: "Prueba con otro número o amplía el rango de fechas."
+      empty: "Todavía no hay facturas"
+      empty_hint: "Las facturas aparecerán aquí cuando se cree la primera."
+    show:
+      edit_invoice: "Editar factura"
+      custom_item: "Personalizado"
+      download_pdf: "Descargar PDF"
+      no_appointment: "No vinculada a ninguna cita"
+      lines: "Productos"
+      no_lines: "Esta factura no tiene productos"
+      no_lines_hint: "Los productos añadidos a esta factura aparecerán aquí."
+    new:
+      title: "Nueva factura"
+    edit:
+      title: "Editar factura %{number}"
+    form:
+      back_to_invoice: "Volver a la factura"
+      create: "Crear factura"
+      details: "Detalles"
+      number_placeholder: "p. ej. 2026-0001"
+      choose_store: "Elige un centro…"
+      choose_employee: "Elige un profesional…"
+      billed_to: "Facturar a"
+      no_customer: "Sin cliente"
+      no_appointment: "Sin cita"
+      appointment_hint: "Opcional. Vincula esta factura a la visita que cobra."
+      lines: "Productos"
+      line_detail: "Descripción · Precio"
+      add_line: "Añadir línea"
+      lines_hint: "Elige un producto, o «Artículo personalizado» para escribir una descripción y un precio."
+    pdf:
+      title: "Factura"
+      tax_id: "CIF"
+      billed_to: "Facturar a"
+      description: "Descripción"
+      footer: "Emitida por %{name}. Gracias por confiarnos a tus mascotas."
+    line_fields:
+      custom_item: "Artículo personalizado"
+      per_unit: "por unidad"
+      description_placeholder: "p. ej. Premios, producto temporal…"
+      price_placeholder: "Precio €"
+      remove: "Quitar línea"

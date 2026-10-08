@@ -16,6 +16,7 @@ class CustomersController < ApplicationController
   def show
     @pets = @customer.pets
     @new_pet = Pet.new(customer_id: @customer.id)
+    @invoices = @customer.invoices.includes(:employee, invoice_products: :product).order(date: :desc)
   end
 
   def edit

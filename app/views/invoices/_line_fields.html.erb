@@ -1,0 +1,56 @@
+<%# One invoice line (invoice_product) inside invoices/_form. `line` is the fields_for builder,
+    so every input is named invoice[invoice_products_attributes][<index>][…].
+    A line is either an existing product (pick it in the select) or a custom item
+    (leave the select on "Custom item" and type a description and price).
+    invoice_lines_controller.js shows the right fields and handles add/remove. %>
+<% item = line.object %>
+<div class="invoice-line" data-invoice-lines-target="line">
+  <%# id tells Rails which saved line to update; _destroy=1 (set by the ✕ button) deletes it %>
+  <%= line.hidden_field :id %>
+  <%= line.hidden_field :_destroy %>
+
+  <div class="invoice-line__product">
+    <%= line.label :product_id, InvoiceProduct.human_attribute_name(:product), class: "sr-only" %>
+    <%= line.select :product_id,
+          @products.map { |product|
+            [product.name.presence || t("products.unnamed"), product.id,
+             { data: { price: product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "" } }]
+          },
+          { include_blank: t("invoices.line_fields.custom_item") },
+          class: "select",
+          data: { action: "change->invoice-lines#toggle", product_select: true },
+          aria: { invalid: item.errors[:product].any? } %>
+  </div>
+
+  <div class="invoice-line__detail">
+    <%# Shown when a product is picked: its price comes from the product %>
+    <p class="invoice-line__product-price" data-product-price hidden>
+      <span data-product-price-value></span>
+      <span class="text-subtle"><%= t("invoices.line_fields.per_unit") %></span>
+    </p>
+
+    <%# Shown for custom items; disabled (so not submitted) when a product is picked %>
+    <div class="invoice-line__manual" data-manual>
+      <%= line.label :description, InvoiceProduct.human_attribute_name(:description), class: "sr-only" %>
+      <%= line.text_field :description, class: "input", required: true,
+            placeholder: t("invoices.line_fields.description_placeholder"),
+            aria: { invalid: item.errors[:description].any? } %>
+      <%= line.label :price, InvoiceProduct.human_attribute_name(:price), class: "sr-only" %>
+      <%= line.number_field :price, class: "input invoice-line__price", required: true,
+            step: 0.01, min: 0, placeholder: t("invoices.line_fields.price_placeholder"),
+            aria: { invalid: item.errors[:price].any? } %>
+    </div>
+  </div>
+
+  <div class="invoice-line__quantity">
+    <%= line.label :quantity, InvoiceProduct.human_attribute_name(:quantity), class: "sr-only" %>
+    <%= line.number_field :quantity, class: "input", required: true, min: 1, step: 1,
+          aria: { invalid: item.errors[:quantity].any? } %>
+  </div>
+
+  <button type="button" class="btn btn--ghost btn--icon btn--sm"
+          data-action="invoice-lines#remove"
+          aria-label="<%= t("invoices.line_fields.remove") %>">
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+  </button>
+</div>

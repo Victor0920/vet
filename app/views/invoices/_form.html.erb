@@ -1,0 +1,148 @@
+<%# Shared by invoices/new and invoices/edit. form_with model: picks POST /invoices
+    for a new record and PATCH /invoices/:id for an existing one.
+    Coming from an appointment ("Create invoice"), the controller has already filled in
+    appointment, customer, employee and store, so the selects below start pre-selected. %>
+<% back_path = invoice.persisted? ? invoice_path(invoice) : invoices_path %>
+<%= form_with model: invoice do |f| %>
+  <div class="resource-form__toolbar">
+    <%= link_to back_path, class: "back-link" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+      <%= invoice.persisted? ? t(".back_to_invoice") : t("invoices.all_invoices") %>
+    <% end %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), back_path, class: "btn btn--ghost" %>
+      <%= f.submit (invoice.persisted? ? t("shared.save_changes") : t(".create")), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title"><%= invoice.persisted? ? t("invoices.edit.title", number: invoice.invoice_id_was.presence || invoice.id) : t("invoices.new.title") %></h1>
+
+    <% if invoice.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% invoice.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".details") %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :invoice_id %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :invoice_id, class: "input", autofocus: true,
+                  placeholder: t(".number_placeholder"),
+                  aria: { invalid: invoice.errors[:invoice_id].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :date %></dt>
+          <dd class="field-row__value">
+            <%= f.datetime_field :date, class: "input", required: true,
+                  aria: { invalid: invoice.errors[:date].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :store_id %></dt>
+          <dd class="field-row__value">
+            <%= f.collection_select :store_id, @stores, :id, :name,
+                  { prompt: t(".choose_store") },
+                  class: "select", required: true,
+                  aria: { invalid: invoice.errors[:store].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :employee_id %></dt>
+          <dd class="field-row__value">
+            <%= f.collection_select :employee_id, @employees, :id, :display_name,
+                  { prompt: t(".choose_employee") },
+                  class: "select", required: true,
+                  aria: { invalid: invoice.errors[:employee].any? } %>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".billed_to") %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :customer_id %></dt>
+          <dd class="field-row__value">
+            <%= f.collection_select :customer_id, @customers, :id, :full_name,
+                  { include_blank: t(".no_customer") },
+                  class: "select",
+                  aria: { invalid: invoice.errors[:customer].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :appointment_id %></dt>
+          <dd class="field-row__value">
+            <%= f.select :appointment_id,
+                  @appointments.map { |appointment|
+                    [[l(appointment.starts_at, format: :short_datetime),
+                      appointment.title.presence || t("shared.untitled"),
+                      appointment.customer&.full_name].compact.join(" · "),
+                     appointment.id]
+                  },
+                  { include_blank: t(".no_appointment") },
+                  class: "select",
+                  aria: { invalid: invoice.errors[:appointment].any?, describedby: "appointment_hint" } %>
+            <p class="form-hint" id="appointment_hint"><%= t(".appointment_hint") %></p>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <%# Invoice lines. fields_for :invoice_products works because Invoice has
+        accepts_nested_attributes_for :invoice_products, so saving the invoice also
+        creates, updates and deletes its lines in one go. %>
+    <section class="card" data-controller="invoice-lines">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".lines") %></h2>
+      </header>
+
+      <div class="invoice-lines">
+        <div class="invoice-lines__head" aria-hidden="true">
+          <span><%= InvoiceProduct.human_attribute_name(:product) %></span>
+          <span><%= t(".line_detail") %></span>
+          <span><%= InvoiceProduct.human_attribute_name(:quantity) %></span>
+        </div>
+
+        <div data-invoice-lines-target="list">
+          <%= f.fields_for :invoice_products do |line| %>
+            <%= render "line_fields", line: line %>
+          <% end %>
+        </div>
+
+        <%# A blank line to copy when clicking "Add line". <template> content isn't part of
+            the form until the JS inserts it, replacing NEW_LINE with a unique index. %>
+        <template data-invoice-lines-target="template">
+          <%= f.fields_for :invoice_products, InvoiceProduct.new(quantity: 1), child_index: "NEW_LINE" do |line| %>
+            <%= render "line_fields", line: line %>
+          <% end %>
+        </template>
+      </div>
+
+      <footer class="card__footer invoice-lines__footer">
+        <button type="button" class="btn btn--secondary btn--sm" data-action="invoice-lines#add">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+              d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+            /></svg>
+          <%= t(".add_line") %>
+        </button>
+        <p class="form-hint"><%= t(".lines_hint") %></p>
+      </footer>
+    </section>
+  </div>
+<% end %>
