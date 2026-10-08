@@ -107,10 +107,24 @@
     <%# Invoice lines. fields_for :invoice_products works because Invoice has
         accepts_nested_attributes_for :invoice_products, so saving the invoice also
         creates, updates and deletes its lines in one go. %>
-    <section class="card" data-controller="invoice-lines">
+    <%# available-value: the "5 available" text, translated here because JS has no t() %>
+    <section class="card" data-controller="invoice-lines"
+             data-invoice-lines-available-value="<%= t(".available", count: "%{count}") %>">
       <header class="card__header">
         <h2 class="card__title"><%= t(".lines") %></h2>
+
+        <%# check_box sends "1" when on and a hidden "0" when off, so switching it off is saved too.
+            New invoices start on (the column defaults to true). When on, saving takes the
+            products' units out of stock, and the server refuses quantities above the stock. %>
+        <label class="switch">
+          <%= f.check_box :updates_stock, class: "switch__input", role: "switch",
+                data: { invoice_lines_target: "stockToggle", action: "invoice-lines#refresh" },
+                aria: { describedby: "updates_stock_hint" } %>
+          <span class="switch__track" aria-hidden="true"></span>
+          <span class="switch__label"><%= Invoice.human_attribute_name(:updates_stock) %></span>
+        </label>
       </header>
+      <p class="form-hint invoice-lines__stock-hint" id="updates_stock_hint"><%= t(".updates_stock_hint") %></p>
 
       <div class="invoice-lines">
         <div class="invoice-lines__head" aria-hidden="true">

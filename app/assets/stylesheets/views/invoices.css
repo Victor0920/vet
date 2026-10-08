@@ -151,6 +151,21 @@ turbo-frame#invoices {
   font-variant-numeric: tabular-nums;
 }
 
+/* "· 5 available"; red when the product has run out */
+.invoice-line__stock {
+  color: var(--color-text-muted);
+}
+
+.invoice-line__stock--out {
+  color: var(--color-danger);
+  font-weight: var(--weight-medium);
+}
+
+/* Explains the "Update stock" switch, right under the card header */
+.invoice-lines__stock-hint {
+  padding: var(--space-3) var(--space-4) 0;
+}
+
 .invoice-line__quantity .input {
   text-align: right;
 }

@@ -4,7 +4,12 @@
     (leave the select on "Custom item" and type a description and price).
     invoice_lines_controller.js shows the right fields and handles add/remove. %>
 <% item = line.object %>
-<div class="invoice-line" data-invoice-lines-target="line">
+<%# A saved line that already took units out of stock "holds" them: when editing, it may use
+    the product's stock plus those units. The JS adds them back when computing the max. %>
+<% holds_stock = item.persisted? && item.invoice.updates_stock_in_database %>
+<div class="invoice-line" data-invoice-lines-target="line"
+     data-saved-product-id="<%= item.product_id_in_database if holds_stock %>"
+     data-saved-quantity="<%= item.quantity_in_database if holds_stock %>">
   <%# id tells Rails which saved line to update; _destroy=1 (set by the ✕ button) deletes it %>
   <%= line.hidden_field :id %>
   <%= line.hidden_field :_destroy %>
@@ -14,7 +19,8 @@
     <%= line.select :product_id,
           @products.map { |product|
             [product.name.presence || t("products.unnamed"), product.id,
-             { data: { price: product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "" } }]
+             { data: { price: product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "",
+                       stock: product.stock } }]
           },
           { include_blank: t("invoices.line_fields.custom_item") },
           class: "select",
@@ -27,6 +33,8 @@
     <p class="invoice-line__product-price" data-product-price hidden>
       <span data-product-price-value></span>
       <span class="text-subtle"><%= t("invoices.line_fields.per_unit") %></span>
+      <%# "· 5 available", filled in by the JS while "Update stock" is on %>
+      <span class="invoice-line__stock" data-product-stock hidden></span>
     </p>
 
     <%# Shown for custom items; disabled (so not submitted) when a product is picked %>

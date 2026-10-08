@@ -2,13 +2,17 @@ import { Controller } from "@hotwired/stimulus"
 
 // Adds and removes invoice lines on the invoice form, and switches each line
 // between "existing product" and "custom item" (description + price).
-// <section data-controller="invoice-lines">
+// While the "Update stock" switch is on, each product line shows how many units
+// are available and its quantity can't go above that (the server checks it too).
+// <section data-controller="invoice-lines" data-invoice-lines-available-value="%{count} available">
+//   <input type="checkbox" data-invoice-lines-target="stockToggle" data-action="invoice-lines#refresh">
 //   <div data-invoice-lines-target="list">…one data-invoice-lines-target="line" per row…</div>
 //   <template data-invoice-lines-target="template">…a blank row using NEW_LINE as its index…</template>
 //   <button type="button" data-action="invoice-lines#add">
 // </section>
 export default class extends Controller {
-  static targets = ["list", "template", "line"]
+  static targets = ["list", "template", "line", "stockToggle"]
+  static values = { available: String }
 
   // Stimulus calls this for every row: the ones rendered by Rails and the ones added later
   lineTargetConnected(line) {
@@ -44,6 +48,11 @@ export default class extends Controller {
     this.update(event.target.closest("[data-invoice-lines-target='line']"))
   }
 
+  // The "Update stock" switch changed: every line's limit changes with it
+  refresh() {
+    this.lineTargets.forEach((line) => this.update(line))
+  }
+
   // Product picked → show its price, hide and disable description/price.
   // "Custom item" picked → the other way round. Disabled inputs aren't submitted.
   update(line) {
@@ -58,5 +67,30 @@ export default class extends Controller {
     productPrice.hidden = custom
     productPrice.querySelector("[data-product-price-value]").textContent =
       select.selectedOptions[0]?.dataset.price || "—"
+
+    this.updateStock(line, custom ? null : select.selectedOptions[0])
+  }
+
+  // Shows "· 5 available" and sets the quantity's max, or removes both when the line
+  // is a custom item or the "Update stock" switch is off.
+  updateStock(line, option) {
+    const quantity = line.querySelector("input[name$='[quantity]']")
+    const label = line.querySelector("[data-product-stock]")
+    const tracking = this.hasStockToggleTarget && this.stockToggleTarget.checked
+
+    if (!option || !tracking) {
+      quantity.removeAttribute("max")
+      label.hidden = true
+      return
+    }
+
+    // A saved line already took its units out of stock, so editing it may use them again
+    let available = Number(option.dataset.stock)
+    if (line.dataset.savedProductId === option.value) available += Number(line.dataset.savedQuantity)
+
+    quantity.max = available
+    label.textContent = `· ${this.availableValue.replace("%{count}", available)}`
+    label.classList.toggle("invoice-line__stock--out", available < 1)
+    label.hidden = false
   }
 }

@@ -80,6 +80,11 @@
   <section class="card">
     <header class="card__header">
       <h2 class="card__title"><%= t(".lines") %></h2>
+      <% if @invoice.updates_stock %>
+        <span class="badge badge--success"><%= t(".stock_updated") %></span>
+      <% else %>
+        <span class="badge"><%= t(".stock_not_updated") %></span>
+      <% end %>
     </header>
     <% if @invoice.invoice_products.any? %>
       <div class="table-wrapper">

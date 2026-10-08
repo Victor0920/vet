@@ -135,6 +135,7 @@ en:
         store: "Store"
         store_id: "Store"
         invoice_products: "Lines"
+        updates_stock: "Update stock"
       invoice_product:
         product: "Product"
         product_id: "Product"
@@ -154,6 +155,7 @@ en:
         already_booked: "is already booked at that time"
         not_this_customers_pet: "doesn't belong to this customer"
         must_match_customer_enterprise: "must match the customer's enterprise"
+        not_enough_stock: "Not enough stock for %{product}: only %{stock} more in stock"
       # Per-model wording, used instead of the generic message above
       models:
         invoice:
@@ -714,6 +716,8 @@ en:
       lines: "Products"
       no_lines: "No products on this invoice"
       no_lines_hint: "Products added to this invoice will show up here."
+      stock_updated: "Stock updated"
+      stock_not_updated: "Stock not updated"
     new:
       title: "New invoice"
     edit:
@@ -733,6 +737,8 @@ en:
       line_detail: "Description · Price"
       add_line: "Add line"
       lines_hint: "Pick a product, or choose “Custom item” to type a description and price."
+      available: "%{count} available"
+      updates_stock_hint: "When on, saving takes these units out of stock and puts them back if you remove them later. You can't invoice more units than are in stock."
     emails:
       new:
         title: "Send invoice by email"

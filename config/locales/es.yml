@@ -125,6 +125,7 @@ es:
         store: "Centro"
         store_id: "Centro"
         invoice_products: "Líneas"
+        updates_stock: "Actualizar stock"
       invoice_product:
         product: "Producto"
         product_id: "Producto"
@@ -143,6 +144,7 @@ es:
         already_booked: "ya está reservada a esa hora"
         not_this_customers_pet: "no pertenece a este cliente"
         must_match_customer_enterprise: "debe coincidir con la empresa del cliente"
+        not_enough_stock: "No hay suficiente stock de %{product}: solo quedan %{stock} más"
       # Mensajes por modelo, usados en lugar del genérico de arriba
       models:
         invoice:
@@ -701,6 +703,8 @@ es:
       lines: "Productos"
       no_lines: "Esta factura no tiene productos"
       no_lines_hint: "Los productos añadidos a esta factura aparecerán aquí."
+      stock_updated: "Stock actualizado"
+      stock_not_updated: "Stock sin actualizar"
     new:
       title: "Nueva factura"
     edit:
@@ -720,6 +724,8 @@ es:
       line_detail: "Descripción · Precio"
       add_line: "Añadir línea"
       lines_hint: "Elige un producto, o «Artículo personalizado» para escribir una descripción y un precio."
+      available: "%{count} disponibles"
+      updates_stock_hint: "Si está activado, al guardar se descuentan estas unidades del stock y se devuelven si luego las quitas. No puedes facturar más unidades de las que hay en stock."
     emails:
       new:
         title: "Enviar factura por email"
