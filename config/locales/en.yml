@@ -404,6 +404,21 @@ en:
       microchip: "Microchip"
       no_pets: "No pets yet"
       no_pets_hint: "Pets registered to this customer will show up here."
+      appointments: "Appointments"
+      appointments_count:
+        one: "1 appointment"
+        other: "%{count} appointments"
+      upcoming: "Upcoming"
+      create_invoice: "Create invoice"
+      no_appointments: "No appointments yet"
+      no_appointments_hint: "Appointments booked for this customer will show up here."
+      columns:
+        when: "When"
+        appointment: "Appointment"
+        pet: "Pet"
+        staff: "Staff"
+        room: "Room"
+        invoice: "Invoice"
       invoices: "Invoices"
       invoices_count:
         one: "1 invoice"

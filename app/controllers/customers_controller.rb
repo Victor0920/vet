@@ -17,6 +17,7 @@ class CustomersController < ApplicationController
     @pets = @customer.pets
     @new_pet = Pet.new(customer_id: @customer.id)
     @invoices = @customer.invoices.includes(:employee, invoice_products: :product).order(date: :desc)
+    @appointments = @customer.appointments.includes(:pet, :employee, :room, :invoice).order(starts_at: :desc)
   end
 
   def edit

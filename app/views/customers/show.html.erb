@@ -173,6 +173,77 @@
 
     <header class="customer-profile__section-header customer-profile__section-header--spaced">
       <div>
+        <h2 class="section__title"><%= t(".appointments") %></h2>
+        <p class="text-muted"><%= t(".appointments_count", count: @appointments.size) %></p>
+      </div>
+      <%# Same calendar "booking for this customer" mode as the sidebar button %>
+      <%= link_to appointments_path(customer_id: @customer.id), class: "btn btn--secondary" do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+            d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+          /></svg>
+        <%= t(".new_appointment") %>
+      <% end %>
+    </header>
+
+    <% if @appointments.any? %>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%= t(".columns.when") %></th>
+              <th><%= t(".columns.appointment") %></th>
+              <th><%= t(".columns.pet") %></th>
+              <th><%= t(".columns.staff") %></th>
+              <th><%= t(".columns.room") %></th>
+              <th><%= t(".columns.invoice") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @appointments.each do |appointment| %>
+              <tr>
+                <td class="table__numeric">
+                  <%= l(appointment.starts_at, format: :display) %><br>
+                  <span class="text-subtle"><%= l(appointment.starts_at, format: :hour) %>–<%= l(appointment.ends_at, format: :hour) %></span>
+                </td>
+                <td class="table__truncate">
+                  <%= link_to appointment.title.presence || t("shared.untitled"), edit_appointment_path(appointment) %>
+                  <% if appointment.starts_at.future? %>
+                    <span class="badge badge--info"><%= t(".upcoming") %></span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if appointment.pet %>
+                    <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"), customer_pet_path(@customer, appointment.pet) %>
+                  <% else %>
+                    <span class="text-subtle">—</span>
+                  <% end %>
+                </td>
+                <td><%= appointment.employee.display_name %></td>
+                <td><%= appointment.room.name %></td>
+                <td>
+                  <%# One invoice per appointment: link to it, or offer to create it %>
+                  <% if appointment.invoice %>
+                    <%= link_to appointment.invoice.invoice_id.presence || t("invoices.number", id: appointment.invoice.id),
+                          invoice_path(appointment.invoice), class: "badge badge--success" %>
+                  <% else %>
+                    <%= link_to t(".create_invoice"), new_invoice_path(appointment_id: appointment.id), class: "btn btn--ghost btn--sm" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <%= render "shared/icons/calendar" %>
+        <p class="empty-state__title"><%= t(".no_appointments") %></p>
+        <p><%= t(".no_appointments_hint") %></p>
+      </div>
+    <% end %>
+
+    <header class="customer-profile__section-header customer-profile__section-header--spaced">
+      <div>
         <h2 class="section__title"><%= t(".invoices") %></h2>
         <p class="text-muted"><%= t(".invoices_count", count: @invoices.size) %></p>
       </div>

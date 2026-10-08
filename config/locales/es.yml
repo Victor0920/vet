@@ -393,6 +393,21 @@ es:
       microchip: "Microchip"
       no_pets: "Todavía no hay mascotas"
       no_pets_hint: "Las mascotas de este cliente aparecerán aquí."
+      appointments: "Citas"
+      appointments_count:
+        one: "1 cita"
+        other: "%{count} citas"
+      upcoming: "Próxima"
+      create_invoice: "Crear factura"
+      no_appointments: "Todavía no hay citas"
+      no_appointments_hint: "Las citas reservadas para este cliente aparecerán aquí."
+      columns:
+        when: "Cuándo"
+        appointment: "Cita"
+        pet: "Mascota"
+        staff: "Profesional"
+        room: "Sala"
+        invoice: "Factura"
       invoices: "Facturas"
       invoices_count:
         one: "1 factura"
