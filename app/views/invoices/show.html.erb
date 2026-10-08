@@ -15,6 +15,11 @@
     <span class="invoice-total__amount"><%= number_to_currency(@invoice.total, unit: "€", format: "%n %u") %></span>
   </div>
   <div class="page-header__actions">
+    <%# Loads invoices/emails/new into the "modal" frame at the bottom of this page %>
+    <%= link_to new_invoice_email_path(@invoice), class: "btn btn--secondary", data: { turbo_frame: "modal" } do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z"/><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z"/></svg>
+      <%= t(".send_email") %>
+    <% end %>
     <%# /invoices/:id.pdf → the same show action answers with a PDF (format.pdf).
         turbo: false makes it a normal browser download instead of a Turbo page visit. %>
     <%= link_to invoice_path(@invoice, format: :pdf), class: "btn btn--secondary", data: { turbo: false } do %>
@@ -133,3 +138,6 @@
     <% end %>
   </section>
 </div>
+
+<%# Popups (e.g. "Send by email") load into this frame %>
+<%= turbo_frame_tag "modal" %>

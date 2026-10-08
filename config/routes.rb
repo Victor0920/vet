@@ -36,7 +36,9 @@ Rails.application.routes.draw do
     resource :stock, only: :update, module: :products
   end
 
-  resources :invoices
+  resources :invoices do
+    resource :email, only: %i[ new create ], module: :invoices
+  end
 
   post "/conversations/:id/messages", to: "conversations#create_message"
 

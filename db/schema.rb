@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_130951) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_134724) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -148,6 +148,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_130951) do
     t.index ["appointment_id"], name: "index_invoices_on_appointment_id"
     t.index ["customer_id"], name: "index_invoices_on_customer_id"
     t.index ["employee_id"], name: "index_invoices_on_employee_id"
+    t.index ["enterprise_id", "invoice_id"], name: "index_invoices_on_enterprise_id_and_invoice_id", unique: true
     t.index ["enterprise_id"], name: "index_invoices_on_enterprise_id"
     t.index ["store_id"], name: "index_invoices_on_store_id"
   end

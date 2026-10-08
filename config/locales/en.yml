@@ -154,6 +154,12 @@ en:
         already_booked: "is already booked at that time"
         not_this_customers_pet: "doesn't belong to this customer"
         must_match_customer_enterprise: "must match the customer's enterprise"
+      # Per-model wording, used instead of the generic message above
+      models:
+        invoice:
+          attributes:
+            invoice_id:
+              taken: "is already used by another invoice"
 
   # ---------- Flash messages (controllers) ----------
   flash:
@@ -199,6 +205,8 @@ en:
       created: "Invoice created"
       updated: "Invoice updated"
       not_found: "Invoice not found"
+      email_sent: "Invoice sent to %{email}"
+      email_invalid: "Enter a valid email address"
     products:
       created: "Product created"
       updated: "Product updated"
@@ -320,6 +328,19 @@ en:
       expires_short: "This link will expire in %{time}."
       ignore: "If you didn't ask to reset your password, you can safely ignore this email."
       fallback: "Button not working? Copy and paste this link into your browser:"
+
+  invoice_mailer:
+    invoice:
+      subject: "Invoice %{number} from %{name}"
+      heading: "Invoice %{number}"
+      greeting: "Hi %{name},"
+      greeting_anonymous: "Hello,"
+      intro: "here is your invoice from %{name}."
+      number: "Invoice number"
+      date: "Date"
+      total: "Total"
+      attached: "You'll find the full invoice attached as a PDF."
+      signature: "Thank you, %{name}"
 
   # ---------- Customers ----------
   customers:
@@ -673,6 +694,7 @@ en:
       edit_invoice: "Edit invoice"
       custom_item: "Custom"
       download_pdf: "Download PDF"
+      send_email: "Send by email"
       no_appointment: "Not linked to an appointment"
       lines: "Products"
       no_lines: "No products on this invoice"
@@ -696,6 +718,17 @@ en:
       line_detail: "Description · Price"
       add_line: "Add line"
       lines_hint: "Pick a product, or choose “Custom item” to type a description and price."
+    emails:
+      new:
+        title: "Send invoice by email"
+        to: "Send to"
+        to_placeholder: "customer@example.com"
+        to_hint: "This customer has no email saved. Type one in."
+        to_hint_customer: "Taken from %{name}'s details. You can change it for this email only."
+        message: "Message (optional)"
+        message_placeholder: "Added to the email above the invoice summary."
+        attachment: "%{file} will be attached"
+        send: "Send invoice"
     pdf:
       title: "Invoice"
       tax_id: "Tax ID"

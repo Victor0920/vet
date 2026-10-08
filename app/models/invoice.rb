@@ -6,6 +6,9 @@ class Invoice < ApplicationRecord
   has_many :invoice_products, dependent: :destroy
   accepts_nested_attributes_for :invoice_products, allow_destroy: true, reject_if: :blank_line?
   belongs_to :appointment, optional: true
+  normalizes :invoice_id, with: ->(number) { number.strip.presence }
+
+  validates :invoice_id, uniqueness: { scope: :enterprise_id }, allow_nil: true
 
   scope :search, ->(query) {
     query.present? ? where("invoices.invoice_id LIKE ?", "%#{sanitize_sql_like(query)}%") : all

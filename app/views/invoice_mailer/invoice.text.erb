@@ -1,0 +1,18 @@
+<% issuer = @invoice.enterprise.legal_name.presence || @invoice.enterprise.name %>
+<%= t(".heading", number: @number) %>
+===================
+
+<% if @invoice.customer %><%= t(".greeting", name: @invoice.customer.first_name.presence || @invoice.customer.full_name) %><% else %><%= t(".greeting_anonymous") %><% end %>
+<%= t(".intro", name: issuer) %>
+<% if @message.present? %>
+
+<%= @message %>
+<% end %>
+
+<%= t(".number") %>: <%= @number %>
+<%= t(".date") %>: <%= @invoice.date ? l(@invoice.date.to_date, format: :display) : "—" %>
+<%= t(".total") %>: <%= number_to_currency(@invoice.total, unit: "€", format: "%n %u") %>
+
+<%= t(".attached") %>
+
+<%= t(".signature", name: issuer) %>

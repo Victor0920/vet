@@ -143,6 +143,12 @@ es:
         already_booked: "ya está reservada a esa hora"
         not_this_customers_pet: "no pertenece a este cliente"
         must_match_customer_enterprise: "debe coincidir con la empresa del cliente"
+      # Mensajes por modelo, usados en lugar del genérico de arriba
+      models:
+        invoice:
+          attributes:
+            invoice_id:
+              taken: "ya lo usa otra factura"
 
   # ---------- Mensajes flash (controladores) ----------
   flash:
@@ -188,6 +194,8 @@ es:
       created: "Factura creada"
       updated: "Factura actualizada"
       not_found: "No se ha encontrado la factura"
+      email_sent: "Factura enviada a %{email}"
+      email_invalid: "Introduce un email válido"
     products:
       created: "Producto creado"
       updated: "Producto actualizado"
@@ -309,6 +317,19 @@ es:
       expires_short: "Este enlace caduca en %{time}."
       ignore: "Si no has pedido restablecer tu contraseña, puedes ignorar este correo."
       fallback: "¿No funciona el botón? Copia y pega este enlace en tu navegador:"
+
+  invoice_mailer:
+    invoice:
+      subject: "Factura %{number} de %{name}"
+      heading: "Factura %{number}"
+      greeting: "Hola, %{name}:"
+      greeting_anonymous: "Hola:"
+      intro: "te enviamos tu factura de %{name}."
+      number: "Número de factura"
+      date: "Fecha"
+      total: "Total"
+      attached: "Encontrarás la factura completa adjunta en PDF."
+      signature: "Gracias, %{name}"
 
   # ---------- Clientes ----------
   customers:
@@ -660,6 +681,7 @@ es:
       edit_invoice: "Editar factura"
       custom_item: "Personalizado"
       download_pdf: "Descargar PDF"
+      send_email: "Enviar por email"
       no_appointment: "No vinculada a ninguna cita"
       lines: "Productos"
       no_lines: "Esta factura no tiene productos"
@@ -683,6 +705,17 @@ es:
       line_detail: "Descripción · Precio"
       add_line: "Añadir línea"
       lines_hint: "Elige un producto, o «Artículo personalizado» para escribir una descripción y un precio."
+    emails:
+      new:
+        title: "Enviar factura por email"
+        to: "Enviar a"
+        to_placeholder: "cliente@ejemplo.com"
+        to_hint: "Este cliente no tiene email guardado. Escribe uno."
+        to_hint_customer: "Tomado de los datos de %{name}. Puedes cambiarlo solo para este envío."
+        message: "Mensaje (opcional)"
+        message_placeholder: "Se añade al email, encima del resumen de la factura."
+        attachment: "Se adjuntará %{file}"
+        send: "Enviar factura"
     pdf:
       title: "Factura"
       tax_id: "CIF"

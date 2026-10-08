@@ -189,3 +189,45 @@ turbo-frame#invoices {
     flex-wrap: wrap;
   }
 }
+
+/* ---------- invoices#show: "Send by email" popup ---------- */
+
+/* The calendar's .modal only overlays inside .calendar; --overlay does the same anywhere */
+.modal--overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+
+  /* Here the backdrop is a link back to the invoice: clicking outside closes the popup */
+  .modal__backdrop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: var(--color-overlay);
+  }
+
+  .modal__panel {
+    width: min(32rem, 100%);
+    max-height: calc(100dvh - var(--space-8));
+    overflow-y: auto;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+.invoice-email__attachment {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+
+  svg {
+    width: var(--icon-sm);
+    height: var(--icon-sm);
+    flex-shrink: 0;
+  }
+}
