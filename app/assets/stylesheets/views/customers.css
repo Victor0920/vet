@@ -212,3 +212,44 @@
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+
+/* New customer page: back link on the left, save button on the right */
+.customer-form__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+
+  .back-link {
+    margin-bottom: 0;
+  }
+}
+
+/* .avatar sets display: inline-grid, which would override the hidden attribute */
+.avatar-upload [hidden] {
+  display: none;
+}
+
+/* ---------- customers#index search ---------- */
+
+.customers-search {
+  max-width: 28rem;
+  margin-bottom: var(--space-3);
+}
+
+.customers-search__count {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Turbo sets aria-busy while the frame loads: dim the old results meanwhile */
+turbo-frame#customers {
+  display: block;
+  transition: opacity var(--duration-fast) var(--ease-out);
+
+  &[aria-busy="true"] {
+    opacity: 0.6;
+  }
+}

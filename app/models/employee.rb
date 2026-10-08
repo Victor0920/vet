@@ -1,8 +1,10 @@
 class Employee < ApplicationRecord
   has_secure_password
   has_many :sessions, dependent: :destroy
+  has_many :appointments
 
   belongs_to :enterprise
+  has_one_attached :photo
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

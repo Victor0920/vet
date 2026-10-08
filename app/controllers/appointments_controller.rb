@@ -12,15 +12,19 @@ class AppointmentsController < ApplicationController
     @date = requested_date
     @days = calendar_days
     @rooms = @store.rooms.order(:name)
+    @room = @rooms.find_by(id: params[:room_id])
+    @customer = Current.enterprise.customers.find_by(id: params[:customer_id])
     @appointments = @store.appointments
                           .overlapping(@days.first.beginning_of_day, @days.last.end_of_day)
                           .includes(:room, :customer, pet: :customer)
                           .order(:starts_at)
+    @appointments = @appointments.where(room: @room) if @room
   end
 
   def new
     starts_at = requested_start
-    @appointment = Appointment.new(starts_at: starts_at, ends_at: starts_at + 30.minutes, room_id: params[:room_id])
+    customer = Current.enterprise.customers.find_by(id: params[:customer_id])
+    @appointment = Appointment.new(starts_at: starts_at, ends_at: starts_at + 30.minutes, room_id: params[:room_id], customer: customer)
   end
 
   def create
@@ -73,7 +77,8 @@ class AppointmentsController < ApplicationController
   def calendar_return_params
     { view: params[:view].presence_in(VIEWS) || "week",
       date: (@appointment&.starts_at || Time.current).to_date,
-      store_id: @store.id }
+      store_id: @store.id,
+      room_id: params[:filter_room_id].presence }.compact
   end
 
   def calendar_days

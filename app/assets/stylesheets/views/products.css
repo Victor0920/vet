@@ -1,0 +1,102 @@
+/* ---------- products#index filters ---------- */
+
+/* Search box grows, category select keeps its natural width */
+.products-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  max-width: 40rem;
+  margin-bottom: var(--space-3);
+}
+
+.products-filters__search {
+  flex: 1 1 18rem;
+}
+
+.products-filters__category {
+  flex: 0 1 14rem;
+}
+
+.products-filters__count {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Turbo sets aria-busy while the frame loads: dim the old results meanwhile */
+turbo-frame#products {
+  display: block;
+  transition: opacity var(--duration-fast) var(--ease-out);
+
+  &[aria-busy="true"] {
+    opacity: 0.6;
+  }
+}
+
+/* ---------- product tables (products#index, product_categories#show) ---------- */
+
+.product-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.product-cell__name {
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.product-cell__meta {
+  max-width: 32rem;
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Prices line up on the decimal point when right-aligned */
+.table .products-table__price {
+  text-align: right;
+  color: var(--color-text);
+}
+
+/* ---------- products#show ---------- */
+
+.product-card {
+  max-width: 48rem;
+}
+
+/* 2-column version of .details; .details__wide spans both columns */
+.details--grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  .details__wide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 40rem) {
+  .details--grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- products & categories new/edit ---------- */
+
+/* Back link on the left, save button on the right (like customers#new) */
+.resource-form__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+
+  .back-link {
+    margin-bottom: 0;
+  }
+}
+
+.resource-form {
+  max-width: 48rem;
+}

@@ -8,11 +8,13 @@
 <% else %>
   <% slots = calendar_slots(@date) %>
   <% day_appointments = appointments_on(@date) %>
+  <%# Only the filtered room's column when one is picked in the toolbar %>
+  <% rooms = @room ? [@room] : @rooms %>
 
-  <div class="time-grid time-grid--rooms card" style="--columns: <%= @rooms.size %>; --slots: <%= slots.size %>;">
+  <div class="time-grid time-grid--rooms card" style="--columns: <%= rooms.size %>; --slots: <%= slots.size %>;">
     <div class="time-grid__head">
       <div class="time-grid__corner"></div>
-      <% @rooms.each do |room| %>
+      <% rooms.each do |room| %>
         <div class="time-grid__day">
           <span class="time-grid__weekday">Room</span>
           <span class="time-grid__room"><%= room.name %></span>
@@ -27,13 +29,14 @@
         <% end %>
       </div>
 
-      <% @rooms.each do |room| %>
+      <% rooms.each do |room| %>
         <% room_appointments = day_appointments.select { |appointment| appointment.room_id == room.id } %>
 
         <div class="time-grid__column">
           <div class="time-grid__events">
             <% room_gaps(room_appointments, @date).each do |from, to| %>
-              <%= link_to new_appointment_path(store_id: @store.id, view: @view, room_id: room.id, starts_at: from.iso8601),
+              <%= link_to new_appointment_path(store_id: @store.id, view: @view, room_id: room.id, starts_at: from.iso8601,
+                                         filter_room_id: @room&.id, customer_id: @customer&.id),
                     class: "cal-gap",
                     style: calendar_position(from, to, @date),
                     data: { turbo_frame: "modal" } do %>

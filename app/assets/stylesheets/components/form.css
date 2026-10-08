@@ -91,6 +91,58 @@
   font-size: var(--text-md);
 }
 
+/*
+ * Date / datetime inputs. The calendar popup itself is drawn by the browser and
+ * can't be styled; these rules cover the field (Chrome, Edge and Safari).
+ */
+.input[type="date"],
+.input[type="datetime-local"] {
+  /* Calendar icon: same chevron-style mask trick as .select::picker-icon, so it
+     takes our colours instead of the browser's black/blue icon */
+  &::-webkit-calendar-picker-indicator {
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-right: calc(var(--space-1) * -1);
+    padding: 0;
+    border-radius: var(--radius-sm);
+    background: var(--color-text-subtle);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill-rule='evenodd' d='M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z' clip-rule='evenodd'/%3E%3C/svg%3E") center / 1rem no-repeat;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+
+  &:hover::-webkit-calendar-picker-indicator,
+  &:focus::-webkit-calendar-picker-indicator {
+    background: var(--color-primary);
+  }
+
+  /* Each part (day, month, hour…) highlights in teal instead of the default blue */
+  &::-webkit-datetime-edit-day-field,
+  &::-webkit-datetime-edit-month-field,
+  &::-webkit-datetime-edit-year-field,
+  &::-webkit-datetime-edit-hour-field,
+  &::-webkit-datetime-edit-minute-field,
+  &::-webkit-datetime-edit-ampm-field {
+    padding: 0 var(--space-0-5);
+    border-radius: var(--radius-xs);
+  }
+
+  &::-webkit-datetime-edit-day-field:focus,
+  &::-webkit-datetime-edit-month-field:focus,
+  &::-webkit-datetime-edit-year-field:focus,
+  &::-webkit-datetime-edit-hour-field:focus,
+  &::-webkit-datetime-edit-minute-field:focus,
+  &::-webkit-datetime-edit-ampm-field:focus {
+    background: var(--color-primary-subtle-hover);
+    color: var(--color-primary-text);
+  }
+
+  /* The "/" and ":" between the parts */
+  &::-webkit-datetime-edit-text {
+    color: var(--color-text-subtle);
+  }
+}
+
 .textarea {
   height: auto;
   min-height: 6rem;
@@ -113,4 +165,134 @@
   width: auto;
   height: var(--control-height-sm);
   font-size: var(--text-xs);
+}
+
+/*
+ * Customizable select: browsers that support appearance: base-select draw the
+ * dropdown list in the page instead of using the OS menu, so it can follow our
+ * tokens. Others (Safari, Firefox for now) keep the native select above.
+ * Only on mouse/trackpad devices: phones keep their native wheel/sheet picker.
+ */
+@supports (appearance: base-select) {
+  @media (hover: hover) and (pointer: fine) {
+    /* The opt-in on its own: an unknown ::picker() would drop the whole rule */
+    .select,
+    .select::picker(select) {
+      appearance: base-select;
+    }
+
+    .select {
+      display: flex;
+      align-items: center;
+      padding-right: var(--space-2);
+      background-image: none; /* ::picker-icon replaces the background chevron */
+    }
+
+    .select::picker-icon {
+      content: "";
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-left: auto;
+      background: var(--color-text-subtle);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E") center / contain no-repeat;
+      transition: rotate var(--duration-normal) var(--ease-out);
+    }
+
+    .select:open::picker-icon {
+      rotate: 180deg;
+    }
+
+    /* The dropdown panel */
+    .select::picker(select) {
+      max-height: 16rem;
+      margin-block: var(--space-1);
+      padding: var(--space-1);
+      overflow-y: auto;
+      background: var(--color-surface);
+      border: var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .select option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-1-5) var(--space-2);
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      cursor: pointer;
+
+      &:hover,
+      &:focus-visible {
+        outline: none;
+        background: var(--color-surface-hover);
+      }
+
+      &:checked {
+        color: var(--color-primary-text);
+        font-weight: var(--weight-medium);
+      }
+
+      &:disabled {
+        color: var(--color-text-disabled);
+        cursor: not-allowed;
+      }
+
+      /* Tick on the right of the selected option */
+      &::checkmark {
+        order: 1;
+        margin-left: auto;
+        color: var(--color-primary);
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .select::picker(select) {
+        opacity: 0;
+        translate: 0 -0.25rem;
+        transition:
+          opacity var(--duration-fast) var(--ease-out),
+          translate var(--duration-fast) var(--ease-out),
+          display var(--duration-fast) allow-discrete,
+          overlay var(--duration-fast) allow-discrete;
+      }
+
+      .select:open::picker(select) {
+        opacity: 1;
+        translate: 0 0;
+      }
+
+      /* Where the opening animation starts from */
+      @starting-style {
+        .select:open::picker(select) {
+          opacity: 0;
+          translate: 0 -0.25rem;
+        }
+      }
+    }
+  }
+}
+
+/*
+ * Search field: input with a magnifying glass on the left
+ * <div class="search-field"><svg>…</svg><input class="input" type="search"></div>
+ */
+.search-field {
+  position: relative;
+
+  svg {
+    position: absolute;
+    top: 50%;
+    left: var(--space-3);
+    width: var(--icon-sm);
+    height: var(--icon-sm);
+    color: var(--color-text-subtle);
+    translate: 0 -50%;
+    pointer-events: none; /* clicks go through to the input */
+  }
+
+  .input {
+    padding-left: calc(var(--space-3) + var(--icon-sm) + var(--space-2));
+  }
 }

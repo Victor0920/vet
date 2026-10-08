@@ -1,0 +1,108 @@
+<%# Same layout as customers/show: profile card on the left, related records on the right %>
+<% content_for :title, @employee.display_name %>
+
+<div class="customer-profile">
+  <aside class="card customer-profile__sidebar">
+    <div class="customer-profile__header">
+      <% if @employee.photo.attached? %>
+        <%= image_tag @employee.photo.variant(resize_to_fill: [192, 192]),
+        alt: @employee.display_name,
+        class: "avatar avatar--xl avatar--photo" %>
+      <% else %>
+        <span class="avatar avatar--xl"><%= (
+            @employee.first_name.to_s.first.to_s + @employee.last_name.to_s.first.to_s
+          ).presence || @employee.email_address.first.upcase %></span>
+      <% end %>
+      <div>
+        <h1 class="customer-profile__name"><%= @employee.display_name %></h1>
+        <p class="text-subtle text-xs">Employee #<%= @employee.id %></p>
+      </div>
+      <div class="row">
+        <% if @employee.role.present? %>
+          <span class="badge badge--primary"><%= @employee.role.humanize %></span>
+        <% end %>
+        <%# active is nil for employees created before the column existed, so only false counts as inactive %>
+        <% if @employee.active == false %>
+          <span class="badge badge--danger">Inactive</span>
+        <% else %>
+          <span class="badge badge--success">Active</span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card__body">
+      <dl class="details">
+        <div>
+          <dt>Email</dt>
+          <dd><%= mail_to @employee.email_address %></dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
+          <dd><%= @employee.phone.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt>Role</dt>
+          <dd><%= @employee.role&.humanize.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt>Enterprise</dt>
+          <dd><%= @employee.enterprise.name.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt>Employee since</dt>
+          <dd><%= @employee.created_at.strftime("%b %-d, %Y") %></dd>
+        </div>
+      </dl>
+    </div>
+  </aside>
+
+  <section class="customer-profile__main">
+    <header class="customer-profile__section-header">
+      <div>
+        <h2 class="section__title">Appointments</h2>
+        <p class="text-muted"><%= pluralize(@appointments.size, "appointment") %> assigned</p>
+      </div>
+    </header>
+
+    <% if @appointments.any? %>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>When</th>
+              <th>Appointment</th>
+              <th>Customer</th>
+              <th>Pet</th>
+              <th>Room</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @appointments.each do |appointment| %>
+              <tr>
+                <td class="table__numeric">
+                  <%= appointment.starts_at.strftime("%b %-d, %Y") %><br>
+                  <%= appointment.starts_at.strftime("%H:%M") %>–<%= appointment.ends_at.strftime("%H:%M") %>
+                </td>
+                <td class="table__truncate">
+                  <%= link_to appointment.title.presence || "Untitled", edit_appointment_path(appointment) %>
+                </td>
+                <td><%= link_to appointment.customer.full_name, customer_path(appointment.customer) %></td>
+                <td>
+                  <%= link_to appointment.pet.name.presence || "Unnamed pet",
+                        customer_pet_path(appointment.pet.customer, appointment.pet) %>
+                </td>
+                <td><%= appointment.room.name %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/></svg>
+        <p class="empty-state__title">No appointments yet</p>
+        <p>Appointments assigned to this employee will show up here.</p>
+      </div>
+    <% end %>
+  </section>
+</div>

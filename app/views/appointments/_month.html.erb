@@ -16,7 +16,8 @@
            <%= "aria-current=date" if day == Date.current %>>
         <div class="month-grid__cell-head">
           <%= link_to day.day, appointments_path(calendar_params(view: "day", date: day)), class: "month-grid__date" %>
-          <%= link_to new_appointment_path(store_id: @store.id, view: @view, starts_at: day.in_time_zone.change(hour: CalendarHelper::DAY_START_HOUR).iso8601),
+          <%= link_to new_appointment_path(store_id: @store.id, view: @view, starts_at: day.in_time_zone.change(hour: CalendarHelper::DAY_START_HOUR).iso8601,
+                                     filter_room_id: @room&.id, customer_id: @customer&.id),
                 class: "month-grid__add",
                 data: { turbo_frame: "modal" },
                 aria: { label: "New appointment on #{day.strftime('%-d %B')}" } do %>
@@ -27,7 +28,7 @@
         <ul class="month-grid__events">
           <% day_appointments.first(max_visible).each do |appointment| %>
             <li>
-              <%= link_to edit_appointment_path(appointment, view: @view), class: "month-event", data: { turbo_frame: "modal" } do %>
+              <%= link_to edit_appointment_path(appointment, view: @view, filter_room_id: @room&.id), class: "month-event", data: { turbo_frame: "modal" } do %>
                 <span class="month-event__time"><%= appointment.starts_at.strftime("%H:%M") %></span>
                 <span class="month-event__title"><%= appointment.title %></span>
               <% end %>

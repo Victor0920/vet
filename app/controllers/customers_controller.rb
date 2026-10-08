@@ -2,7 +2,15 @@ class CustomersController < ApplicationController
   before_action :set_customer, only: %i[ show edit update ]
 
   def index
-    @customers = Customer.all
+    @query = params[:q].to_s.strip
+    @customers = Current.enterprise.customers
+      .search(@query)
+      .includes(:pets, photo_attachment: :blob)
+      .order(:first_name)
+  end
+
+  def new
+    @customer = Current.enterprise.customers.new
   end
 
   def show
@@ -11,6 +19,16 @@ class CustomersController < ApplicationController
   end
 
   def edit
+  end
+
+  def create
+    @customer = Current.enterprise.customers.new(customer_params)
+
+    if @customer.save
+      redirect_to customer_path(@customer), notice: "Customer created"
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   def update
@@ -25,15 +43,14 @@ class CustomersController < ApplicationController
   private
 
   def set_customer
-    @customer = Customer.find_by(id: params[:id])
-    # NOTE: Add validation to show customers only of current enterprise
+    @customer = Current.enterprise.customers.find_by(id: params[:id])
     redirect_to customers_url, alert: "Customer not found" if @customer.nil?
   end
 
   # Strong parameters: only these fields can be changed from a form
   def customer_params
-    params.expect(customer: [ :first_name, :first_surname, :second_surname, :sex, :born_on,
-                              :document_type, :document_number, :email, :first_phone, :second_phone,
-                              :address, :post_code, :province, :photo ])
+    params.expect(customer: [ :first_name, :first_surname, :second_surname, :sex,
+      :document_type, :document_number, :email, :first_phone, :second_phone,
+      :born_on, :address, :post_code, :province, :photo ])
   end
 end

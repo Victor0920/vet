@@ -1,0 +1,3 @@
+<% content_for :title, "Edit #{@category.name_was.presence || "category ##{@category.id}"}" %>
+
+<%= render "form", category: @category %>

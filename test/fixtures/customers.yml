@@ -14,6 +14,7 @@ one:
   first_phone: MyString
   second_phone: MyString
   email: MyString
+  enterprise: MyString
 
 two:
   first_name: MyString
@@ -29,3 +30,4 @@ two:
   first_phone: MyString
   second_phone: MyString
   email: MyString
+  enterprise: MyString

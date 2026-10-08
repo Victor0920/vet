@@ -33,14 +33,21 @@
     <% end %>
     <%= link_to helpers.customers_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/customers")) } do %>
       <%= render "shared/icons/customers" %>
-      <span>All Customers</span>
+      <span>Customers</span>
+    <% end %>
+    <%= link_to helpers.products_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/product")) } do %>
+      <%= render "shared/icons/shopping_bag" %>
+      <span>Products</span>
     <% end %>
   </nav>
 
   <% employee = Current.session&.employee %>
   <div class="sidebar__footer">
-    <span class="avatar avatar--sm"><%= employee&.email_address.to_s.first %></span>
-    <span class="sidebar__user" title="<%= employee&.email_address %>"><%= employee&.email_address %></span>
+
+    <%= link_to helpers.employee_path(employee) do %>
+      <span class="avatar avatar--sm"><%= employee&.email_address.to_s.first %></span>
+      <span class="sidebar__user" title="<%= employee&.email_address %>"><%= employee&.email_address %></span>
+    <% end %>
     <%= button_to helpers.session_path, method: :delete, class: "btn btn--ghost btn--sm", title: "Sign out", aria: { label: "Sign out" } do %>
       <svg
         viewBox="0 0 24 24"

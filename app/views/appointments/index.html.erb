@@ -7,12 +7,22 @@
       <p class="page-header__subtitle"><%= calendar_title %> · <%= pluralize(@appointments.size, "appointment") %></p>
     </div>
     <div class="page-header__actions">
-      <%= link_to new_appointment_path(store_id: @store.id, view: @view), class: "btn btn--primary", data: { turbo_frame: "modal" } do %>
+      <%= link_to new_appointment_path(store_id: @store.id, view: @view, room_id: @room&.id,
+                                         filter_room_id: @room&.id, customer_id: @customer&.id), class: "btn btn--primary", data: { turbo_frame: "modal" } do %>
         <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
         New appointment
       <% end %>
     </div>
   </div>
+
+  <%# Opened from a customer's page: new appointments get this customer pre-filled %>
+  <% if @customer %>
+    <div class="alert alert--info calendar-booking" role="status">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"/></svg>
+      <span>Booking for <strong><%= @customer.full_name %></strong>. Pick a free slot to create the appointment.</span>
+      <%= link_to "Cancel", appointments_path(calendar_params(customer_id: nil)), class: "calendar-booking__cancel" %>
+    </div>
+  <% end %>
 
   <div class="calendar-toolbar">
     <div class="calendar-toolbar__nav">
@@ -31,9 +41,27 @@
         <%= form_with url: appointments_path, method: :get, data: { controller: "auto-submit", turbo_action: "advance" } do %>
           <%= hidden_field_tag :view, @view %>
           <%= hidden_field_tag :date, @date %>
+          <%= hidden_field_tag :customer_id, @customer&.id, id: nil %>
           <%= label_tag :store_id, "Store", class: "sr-only" %>
           <%= select_tag :store_id,
                 options_from_collection_for_select(@stores, :id, :name, @store.id),
+                class: "select select--sm",
+                data: { action: "change->auto-submit#submit" } %>
+        <% end %>
+      <% end %>
+
+      <% if @rooms.any? %>
+        <%# Changing store above doesn't send room_id, so the room filter resets with it %>
+        <%= form_with url: appointments_path, method: :get, data: { controller: "auto-submit", turbo_action: "advance" } do %>
+          <%# id: nil because the store form above already uses these ids %>
+          <%= hidden_field_tag :view, @view, id: nil %>
+          <%= hidden_field_tag :date, @date, id: nil %>
+          <%= hidden_field_tag :store_id, @store.id, id: nil %>
+          <%= hidden_field_tag :customer_id, @customer&.id, id: nil %>
+          <%= label_tag :room_id, "Room", class: "sr-only" %>
+          <%= select_tag :room_id,
+                options_from_collection_for_select(@rooms, :id, :name, @room&.id),
+                include_blank: "All rooms",
                 class: "select select--sm",
                 data: { action: "change->auto-submit#submit" } %>
         <% end %>

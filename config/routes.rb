@@ -26,7 +26,10 @@ Rails.application.routes.draw do
     resources :pets
   end
 
+  resources :employees
   resources :appointments
+  resources :products
+  resources :product_categories
   post "/conversations/:id/messages", to: "conversations#create_message"
 
   get "/auth", to: "auth#index"
