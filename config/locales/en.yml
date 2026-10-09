@@ -255,6 +255,8 @@ en:
   shared:
     # Category colour palette (see Colorable::COLORS)
     no_color: "No colour"
+    preview: "Preview"
+    category_name_placeholder: "Category name"
     colors:
       red: "Red"
       orange: "Orange"

@@ -244,6 +244,8 @@ es:
   shared:
     # Paleta de colores de las categorías (ver Colorable::COLORS)
     no_color: "Sin color"
+    preview: "Vista previa"
+    category_name_placeholder: "Nombre de la categoría"
     colors:
       red: "Rojo"
       orange: "Naranja"

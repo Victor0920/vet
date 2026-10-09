@@ -1,23 +1,33 @@
-<%# A row of colour swatches for a Colorable record (product/service categories).
+<%# A row of colour swatches for a Colorable record (product/service categories),
+    plus a preview of the category's pill in the selected colour.
     Each swatch is a real radio button, hidden behind a styled <label>, so it works
     without JavaScript and with the keyboard (arrow keys move between colours).
+    The preview follows the checked radio with CSS only (:has(), see color_picker.css).
     Locals:
       f - the form builder %>
 
-<fieldset class="color-picker">
-  <legend class="sr-only"><%= f.object.class.human_attribute_name(:color) %></legend>
+<div class="color-picker">
+  <fieldset class="color-picker__options">
+    <legend class="sr-only"><%= f.object.class.human_attribute_name(:color) %></legend>
 
-  <%# Blank value = no colour: the model's normalizes turns "" into nil %>
-  <%= f.radio_button :color, "", checked: f.object.color.blank?, class: "color-picker__input" %>
-  <%= f.label :color, value: "", title: t("shared.no_color"), class: "color-picker__swatch color-swatch" do %>
-    <span class="sr-only"><%= t("shared.no_color") %></span>
-  <% end %>
-
-  <% Colorable::COLORS.each do |color| %>
-    <%= f.radio_button :color, color, class: "color-picker__input" %>
-    <%= f.label :color, value: color, title: t(color, scope: "shared.colors"),
-          class: "color-picker__swatch color-swatch color-swatch--#{color}" do %>
-      <span class="sr-only"><%= t(color, scope: "shared.colors") %></span>
+    <%# Blank value = no colour: the model's normalizes turns "" into nil %>
+    <%= f.radio_button :color, "", checked: f.object.color.blank?, class: "color-picker__input" %>
+    <%= f.label :color, value: "", title: t("shared.no_color"), class: "color-swatch color-swatch--none" do %>
+      <span class="sr-only"><%= t("shared.no_color") %></span>
     <% end %>
-  <% end %>
-</fieldset>
+
+    <% Colorable::COLORS.each do |color| %>
+      <%= f.radio_button :color, color, class: "color-picker__input" %>
+      <%= f.label :color, value: color, title: t(color, scope: "shared.colors"),
+            class: "color-swatch color-swatch--#{color}" do %>
+        <span class="sr-only"><%= t(color, scope: "shared.colors") %></span>
+      <% end %>
+    <% end %>
+  </fieldset>
+
+  <%# aria-hidden: it only repeats the name and colour already in the form %>
+  <div class="color-picker__preview" aria-hidden="true">
+    <span class="color-picker__preview-label"><%= t("shared.preview") %></span>
+    <span class="badge color-picker__badge"><%= f.object.name.presence || t("shared.category_name_placeholder") %></span>
+  </div>
+</div>
