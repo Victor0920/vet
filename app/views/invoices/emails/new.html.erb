@@ -1,0 +1,71 @@
+<% content_for :title, t(".title") %>
+
+<%# Loaded into the empty <turbo-frame id="modal"> at the bottom of invoices/show,
+    so it appears over the invoice. modal#close (Esc, ✕, Cancel, backdrop) empties the
+    frame; if this page was opened on its own, the close links lead back to the invoice.
+    modal#submitEnd: after sending, show the invoice page (with the flash) in full. %>
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal modal--overlay" data-controller="modal"
+       data-action="keydown.esc@window->modal#close turbo:submit-end->modal#submitEnd">
+    <%= link_to "", invoice_path(@invoice), class: "modal__backdrop", tabindex: -1,
+          aria: { hidden: true }, data: { action: "modal#close", turbo_frame: "_top" } %>
+
+    <div class="modal__panel card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="card__header">
+        <h2 class="card__title" id="modal-title"><%= t(".title") %></h2>
+        <%= link_to invoice_path(@invoice), class: "btn btn--ghost btn--icon btn--sm", aria: { label: t("shared.close") },
+              data: { action: "modal#close", turbo_frame: "_top" } do %>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+        <% end %>
+      </header>
+
+      <%# POST /invoices/:invoice_id/email → Invoices::EmailsController#create %>
+      <%= form_with url: invoice_email_path(@invoice), id: "invoice-email-form" do %>
+        <div class="card__body form">
+          <% if @error %>
+            <div class="alert alert--danger" role="alert">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+              <p><%= @error %></p>
+            </div>
+          <% end %>
+
+          <div class="form-field">
+            <%= label_tag :email, t(".to"), class: "label" %>
+            <%= email_field_tag :email, @email, class: "input", required: true, autofocus: true,
+                  autocomplete: "email", placeholder: t(".to_placeholder"),
+                  aria: { invalid: @error.present?, describedby: "email_hint" } %>
+            <p class="form-hint" id="email_hint">
+              <% if @invoice.customer&.email.present? %>
+                <%= t(".to_hint_customer", name: @invoice.customer.full_name) %>
+              <% else %>
+                <%= t(".to_hint") %>
+              <% end %>
+            </p>
+          </div>
+
+          <div class="form-field">
+            <%= label_tag :message, t(".message"), class: "label" %>
+            <%= text_area_tag :message, @message, class: "textarea", rows: 4,
+                  placeholder: t(".message_placeholder") %>
+          </div>
+
+          <p class="invoice-email__attachment">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.243Z" clip-rule="evenodd"/></svg>
+            <%= t(".attachment", file: "invoice-#{(@invoice.invoice_id.presence || @invoice.id).to_s.parameterize}.pdf") %>
+          </p>
+        </div>
+      <% end %>
+
+      <footer class="card__footer modal__footer">
+        <div class="modal__footer-actions">
+          <%= link_to t("shared.cancel"), invoice_path(@invoice), class: "btn btn--ghost",
+                data: { action: "modal#close", turbo_frame: "_top" } %>
+          <%= button_tag type: "submit", form: "invoice-email-form", class: "btn btn--primary" do %>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M3.105 2.288a.75.75 0 0 0-.826.95l1.414 4.926A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95 28.897 28.897 0 0 0 15.293-7.155.75.75 0 0 0 0-1.114A28.897 28.897 0 0 0 3.105 2.288Z"/></svg>
+            <%= t(".send") %>
+          <% end %>
+        </div>
+      </footer>
+    </div>
+  </div>
+<% end %>

@@ -82,8 +82,18 @@
       <%= f.text_area :description, class: "textarea", rows: 3 %>
     </div>
 
-    <% if appointment.persisted? && (appointment.customer || appointment.pet) %>
+    <% if appointment.persisted? %>
       <div class="modal__shortcuts">
+        <%# One invoice per appointment: once it's billed, link to that invoice instead %>
+        <% if appointment.invoice %>
+          <%= link_to invoice_path(appointment.invoice), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
+            <%= t(".view_invoice") %>
+          <% end %>
+        <% else %>
+          <%= link_to new_invoice_path(appointment_id: appointment.id), class: "btn btn--primary btn--sm", data: { turbo_frame: "_top" } do %>
+            <%= t(".create_invoice") %>
+          <% end %>
+        <% end %>
         <% if appointment.customer %>
           <%= link_to customer_path(appointment.customer), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
             <%= t(".view_customer", name: appointment.customer.full_name) %>

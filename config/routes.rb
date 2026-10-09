@@ -29,10 +29,17 @@ Rails.application.routes.draw do
   resources :employees
   resources :appointments
 
+  scope "products" do
+    resources :product_categories, path: "categories"
+  end
   resources :products do
     resource :stock, only: :update, module: :products
   end
-  resources :product_categories
+
+  resources :invoices do
+    resource :email, only: %i[ new create ], module: :invoices
+  end
+
   post "/conversations/:id/messages", to: "conversations#create_message"
 
   get "/auth", to: "auth#index"

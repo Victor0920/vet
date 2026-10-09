@@ -6,16 +6,18 @@ The user is learning Ruby on Rails and wants to understand how to build features
 
 ## Working Style
 
-- **Only edit markup and styles directly** — HTML/ERB views and CSS may be changed with Edit/Write; everything else is suggest-only (see Code Changes)
+- **Only edit markup, styles and translations directly** — HTML/ERB views, CSS and locale files may be changed with Edit/Write; everything else is suggest-only (see Code Changes)
 - **Provide clear instructions** — explain exactly what files to modify and what code to write
 - **Use line numbers and file paths** — make it easy to navigate to the right locations
 - **Explain the "why"** — help the user understand Rails conventions and patterns
 
 ## Code Changes
 
-### Claude may edit directly: HTML/ERB and CSS
+### Claude may edit directly: HTML/ERB, CSS and locale files
 
 - View templates (`app/views/**/*.html.erb`) and stylesheets (`app/assets/stylesheets/**/*.css`)
+- Locale files (`config/locales/**/*.yml`): keep every language file (`en.yml`, `es.yml`, …) in sync
+  when adding or changing keys
 - Inside ERB, keep Ruby to presentation only: outputting values, `link_to`/`form_with`/form helpers,
   route helpers, `render` partials, and simple `if`/`each` over data the controller already provides
 - After editing, summarize what changed and why, so the user can learn from it
