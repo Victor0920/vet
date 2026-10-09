@@ -46,6 +46,6 @@ class PetsController < ApplicationController
   # Strong parameters: only these fields can be changed from a form
   def pet_params
     params.expect(pet: [ :name, :species, :breed, :sex, :born_on, :color,
-                         :transponder_number, :transponder_location, :notes, :photo ])
+                         :transponder_number, :transponder_location, :notes, :photo, :sterilized ])
   end
 end

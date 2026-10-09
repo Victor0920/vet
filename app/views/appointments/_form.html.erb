@@ -55,11 +55,17 @@
     <div class="form-grid" data-controller="pet-filter">
       <div class="form-field">
         <%= f.label :customer_id, class: "label" %>
-        <%= f.collection_select :customer_id, @customers, :id, :full_name,
-              { include_blank: t(".no_customer") },
-              class: "select",
-              data: { pet_filter_target: "customer", action: "change->pet-filter#filter" },
-              aria: { invalid: appointment.errors[:customer].any? } %>
+        <%# item_picker_controller.js adds the searchable dropdown. Picking a customer fires
+            "change" on this (hidden) select, so pet-filter still updates the Pet list. %>
+        <div class="item-picker" data-controller="item-picker"
+             data-item-picker-placeholder-value="<%= t(".search_customers") %>"
+             data-item-picker-empty-value="<%= t(".no_customers_match") %>">
+          <%= f.collection_select :customer_id, @customers, :id, :full_name,
+                { include_blank: t(".no_customer") },
+                class: "select",
+                data: { pet_filter_target: "customer", action: "change->pet-filter#filter", item_picker_target: "select" },
+                aria: { invalid: appointment.errors[:customer].any? } %>
+        </div>
       </div>
       <div class="form-field">
         <%= f.label :pet_id, class: "label" %>

@@ -1,0 +1,166 @@
+/*
+ * Searchable dropdown built by item_picker_controller.js (invoice line products/services).
+ * The button looks like .select; the panel looks like the .select::picker() list in form.css.
+ */
+
+.item-picker {
+  position: relative;
+  min-width: 0;
+
+  /* The JS hides the real <select> with the hidden attribute, but .select sets its own
+     display (flex, in browsers with appearance: base-select), which beats [hidden] */
+  select[hidden] {
+    display: none;
+  }
+}
+
+/* .input gives the border, height and focus ring; this adds the .select chevron */
+.item-picker__button {
+  display: block;
+  padding-right: var(--space-8);
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2364748b'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  background-size: 1.25rem;
+  cursor: pointer;
+
+  &[aria-expanded="true"] {
+    border-color: var(--color-focus);
+    box-shadow: var(--focus-ring);
+  }
+}
+
+/* Wider than the column when it needs to be, but never off a phone screen */
+.item-picker__panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--z-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 100%;
+  width: max-content;
+  max-width: min(26rem, calc(100vw - var(--space-8)));
+  margin-top: var(--space-1);
+  padding: var(--space-1);
+  background: var(--color-surface);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Popover version (see place() in the JS): the browser's [popover] defaults centre it on
+   the screen with its own colours, so undo those; the JS sets top/bottom/left */
+.item-picker__panel:popover-open {
+  inset: auto;
+  margin: 0;
+  overflow: visible;
+  color: inherit;
+}
+
+/* Set by the JS when the button is in the lower half of the window */
+.item-picker__panel--above {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: var(--space-1);
+}
+
+/* Fade in when it opens (nothing on close: the JS removes it straight away).
+   It slides a few pixels away from the button: down when below, up when above. */
+@keyframes item-picker-in {
+  from {
+    opacity: 0;
+    translate: 0 -0.25rem;
+  }
+}
+
+@keyframes item-picker-in-above {
+  from {
+    opacity: 0;
+    translate: 0 0.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .item-picker__panel {
+    animation: item-picker-in var(--duration-fast) var(--ease-out);
+  }
+
+  .item-picker__panel--above {
+    animation-name: item-picker-in-above;
+  }
+}
+
+.item-picker__search {
+  height: var(--control-height-sm);
+}
+
+/* Only the groups scroll: "Custom item" and the search box stay in view */
+.item-picker__list {
+  max-height: 18rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.item-picker__group[hidden],
+.item-picker__option[hidden],
+.item-picker__empty[hidden] {
+  display: none;
+}
+
+/* Same look as .invoice-lines__head */
+.item-picker__group-label {
+  padding: var(--space-2) var(--space-2) var(--space-1);
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.item-picker__option {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-1-5) var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+
+  &[aria-selected="true"] {
+    color: var(--color-primary-text);
+    font-weight: var(--weight-medium);
+  }
+}
+
+/* Highlighted by the mouse or the arrow keys */
+.item-picker__option--active {
+  background: var(--color-surface-hover);
+}
+
+.item-picker__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-picker__price {
+  margin-left: auto;
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.item-picker__empty {
+  padding: var(--space-3) var(--space-2);
+  color: var(--color-text-subtle);
+  text-align: center;
+}

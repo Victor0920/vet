@@ -79,25 +79,38 @@
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :customer_id %></dt>
           <dd class="field-row__value">
-            <%= f.collection_select :customer_id, @customers, :id, :full_name,
-                  { include_blank: t(".no_customer") },
-                  class: "select",
-                  aria: { invalid: invoice.errors[:customer].any? } %>
+            <%# item_picker_controller.js: "No customer" on top, then a search box for the customers %>
+            <div class="item-picker" data-controller="item-picker"
+                 data-item-picker-placeholder-value="<%= t(".search_customers") %>"
+                 data-item-picker-empty-value="<%= t(".no_customers_match") %>">
+              <%= f.collection_select :customer_id, @customers, :id, :full_name,
+                    { include_blank: t(".no_customer") },
+                    class: "select",
+                    data: { item_picker_target: "select" },
+                    aria: { invalid: invoice.errors[:customer].any? } %>
+            </div>
           </dd>
         </div>
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :appointment_id %></dt>
           <dd class="field-row__value">
-            <%= f.select :appointment_id,
-                  @appointments.map { |appointment|
-                    [[l(appointment.starts_at, format: :short_datetime),
-                      appointment.title.presence || t("shared.untitled"),
-                      appointment.customer&.full_name].compact.join(" · "),
-                     appointment.id]
-                  },
-                  { include_blank: t(".no_appointment") },
-                  class: "select",
-                  aria: { invalid: invoice.errors[:appointment].any?, describedby: "appointment_hint" } %>
+            <%# item_picker_controller.js: "No appointment" on top, then a search box that
+                matches the whole option text (date · title · customer) %>
+            <div class="item-picker" data-controller="item-picker"
+                 data-item-picker-placeholder-value="<%= t(".search_appointments") %>"
+                 data-item-picker-empty-value="<%= t(".no_appointments_match") %>">
+              <%= f.select :appointment_id,
+                    @appointments.map { |appointment|
+                      [[l(appointment.starts_at, format: :short_datetime),
+                        appointment.title.presence || t("shared.untitled"),
+                        appointment.customer&.full_name].compact.join(" · "),
+                       appointment.id]
+                    },
+                    { include_blank: t(".no_appointment") },
+                    class: "select",
+                    data: { item_picker_target: "select" },
+                    aria: { invalid: invoice.errors[:appointment].any?, describedby: "appointment_hint" } %>
+            </div>
             <p class="form-hint" id="appointment_hint"><%= t(".appointment_hint") %></p>
           </dd>
         </div>

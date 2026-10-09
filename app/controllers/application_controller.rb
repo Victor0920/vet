@@ -15,4 +15,11 @@ class ApplicationController < ActionController::Base
     locale = resume_session&.employee&.locale.presence || I18n.default_locale
     I18n.with_locale(locale, &action)
   end
+
+  # "2026-10-09" → Date; blank or invalid → nil (so a filter is simply skipped)
+  def date_param(key)
+    Date.parse(params[key].to_s)
+  rescue Date::Error
+    nil
+  end
 end

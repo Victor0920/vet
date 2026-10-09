@@ -7,7 +7,7 @@
      @category_id = params[:category_id].presence
      @products = Current.enterprise.products
        .search(@query)
-       .includes(:product_category) # avoids one query per row for the category badge
+       .includes(:product_category, photo_attachment: :blob) # avoids one query per row for the category badge
        .order(:name)
      @products = @products.where(product_category_id: @category_id) if @category_id
    end
@@ -52,6 +52,6 @@
    end
 
    def product_params
-     params.expect(product: [ :name, :description, :price, :product_category_id ])
+     params.expect(product: [ :name, :description, :price, :product_category_id, :photo ])
    end
  end

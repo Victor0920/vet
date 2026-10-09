@@ -19,7 +19,7 @@ class ProductCategoriesController < ApplicationController
     @category = Current.enterprise.product_categories.new(category_params)
 
     if @category.save
-      redirect_to product_category_path(@category), notice: t("flash.product_categories.created")
+      redirect_to product_categories_path(), notice: t("flash.product_categories.created")
     else
       render :new, status: :unprocessable_entity
     end
@@ -45,6 +45,6 @@ class ProductCategoriesController < ApplicationController
 
   # The form is built from a ProductCategory, so its params arrive under :product_category
   def category_params
-    params.expect(product_category: [ :name ])
+    params.expect(product_category: [ :name, :color ])
   end
 end

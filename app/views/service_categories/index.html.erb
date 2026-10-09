@@ -1,0 +1,59 @@
+<% content_for :title, t(".title") %>
+
+<%= link_to services_path, class: "back-link" do %>
+  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+  <%= t("services.all_services") %>
+<% end %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+  <div class="page-header__actions">
+    <%= link_to new_service_category_path, class: "btn btn--primary" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+          d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+        /></svg>
+      <%= t(".new_category") %>
+    <% end %>
+  </div>
+</div>
+
+<p class="products-filters__count"><%= t(".count", count: @categories.size) %></p>
+
+<% if @categories.any? %>
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= t("services.columns.id") %></th>
+          <th><%= t("services.columns.category") %></th>
+          <th><%= t(".columns.services") %></th>
+          <th><%= t(".columns.created") %></th>
+          <th><%= t(".columns.updated_by") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @categories.each do |category| %>
+          <tr>
+            <td class="table__numeric">#<%= category.id %></td>
+            <td>
+              <%= link_to category.name.presence || t("service_categories.unnamed"), service_category_path(category),
+                    class: "product-cell__name" %>
+            </td>
+            <td class="table__numeric"><%= t("service_categories.services_count", count: category.services.size) %></td>
+            <td class="table__numeric"><%= l(category.created_at, format: :display) %></td>
+            <%= render "shared/updated_by_cell", record: category %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <%= render "shared/paw_icon" %>
+    <p class="empty-state__title"><%= t(".empty") %></p>
+    <p><%= t(".empty_hint") %></p>
+  </div>
+<% end %>

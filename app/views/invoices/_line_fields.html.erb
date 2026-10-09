@@ -1,35 +1,51 @@
 <%# One invoice line (invoice_product) inside invoices/_form. `line` is the fields_for builder,
     so every input is named invoice[invoice_products_attributes][<index>][…].
-    A line is either an existing product (pick it in the select) or a custom item
+    A line is a product or a service (pick it in the select) or a custom item
     (leave the select on "Custom item" and type a description and price).
+    The select sends `item` ("product-5", "service-3" or ""), a virtual attribute
+    that InvoiceProduct#item= splits into product_id / service_id.
     invoice_lines_controller.js shows the right fields and handles add/remove. %>
 <% item = line.object %>
 <%# A saved line that already took units out of stock "holds" them: when editing, it may use
-    the product's stock plus those units. The JS adds them back when computing the max. %>
-<% holds_stock = item.persisted? && item.invoice.updates_stock_in_database %>
+    the product's stock plus those units. The JS adds them back when computing the max.
+    data-saved-item uses the same "product-5" format as the select's values, so the JS can compare them. %>
+<% holds_stock = item.persisted? && item.invoice.updates_stock_in_database && item.product_id_in_database %>
 <div class="invoice-line" data-invoice-lines-target="line"
-     data-saved-product-id="<%= item.product_id_in_database if holds_stock %>"
+     data-saved-item="<%= "product-#{item.product_id_in_database}" if holds_stock %>"
      data-saved-quantity="<%= item.quantity_in_database if holds_stock %>">
   <%# id tells Rails which saved line to update; _destroy=1 (set by the ✕ button) deletes it %>
   <%= line.hidden_field :id %>
   <%= line.hidden_field :_destroy %>
 
-  <div class="invoice-line__product">
-    <%= line.label :product_id, InvoiceProduct.human_attribute_name(:product), class: "sr-only" %>
-    <%= line.select :product_id,
-          @products.map { |product|
-            [product.name.presence || t("products.unnamed"), product.id,
-             { data: { price: product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "",
-                       stock: product.stock } }]
-          },
+  <%# item_picker_controller.js hides this select and shows a searchable dropdown instead:
+      "Custom item", then a search box, then the Products and Services groups.
+      The select is still what the form submits. %>
+  <div class="invoice-line__product item-picker" data-controller="item-picker"
+       data-item-picker-placeholder-value="<%= t("invoices.line_fields.search_placeholder") %>"
+       data-item-picker-empty-value="<%= t("invoices.line_fields.no_matches") %>">
+    <%= line.label :item, InvoiceProduct.human_attribute_name(:item), class: "sr-only" %>
+    <%# Grouped choices ([label, [options]]) render as <optgroup>s. Only products carry
+        data-stock: services have none, so the JS shows no "available" count for them. %>
+    <%= line.select :item,
+          [
+            [t("invoices.line_fields.products_group"), @products.map { |product|
+              [product.name.presence || t("products.unnamed"), "product-#{product.id}",
+               { data: { price: product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "",
+                         stock: product.stock } }]
+            }],
+            [t("invoices.line_fields.services_group"), @services.map { |service|
+              [service.name.presence || t("services.unnamed"), "service-#{service.id}",
+               { data: { price: service.price ? number_to_currency(service.price, unit: "€", format: "%n %u") : "" } }]
+            }]
+          ].reject { |_label, options| options.empty? },
           { include_blank: t("invoices.line_fields.custom_item") },
           class: "select",
-          data: { action: "change->invoice-lines#toggle", product_select: true },
-          aria: { invalid: item.errors[:product].any? } %>
+          data: { action: "change->invoice-lines#toggle", item_select: true, item_picker_target: "select" },
+          aria: { invalid: item.errors[:product].any? || item.errors[:service].any? } %>
   </div>
 
   <div class="invoice-line__detail">
-    <%# Shown when a product is picked: its price comes from the product %>
+    <%# Shown when a product or service is picked: the price comes from it %>
     <p class="invoice-line__product-price" data-product-price hidden>
       <span data-product-price-value></span>
       <span class="text-subtle"><%= t("invoices.line_fields.per_unit") %></span>
@@ -37,7 +53,7 @@
       <span class="invoice-line__stock" data-product-stock hidden></span>
     </p>
 
-    <%# Shown for custom items; disabled (so not submitted) when a product is picked %>
+    <%# Shown for custom items; disabled (so not submitted) when a product or service is picked %>
     <div class="invoice-line__manual" data-manual>
       <%= line.label :description, InvoiceProduct.human_attribute_name(:description), class: "sr-only" %>
       <%= line.text_field :description, class: "input", required: true,

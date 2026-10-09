@@ -1,0 +1,120 @@
+/*
+ * Colour picker (app/views/shared/_color_picker.html.erb)
+ * Each colour is a hidden radio + a square <label> swatch that looks like a tiny
+ * pill: the highlight as background, "Aa" in the colour. Below it, a preview of
+ * the category's pill follows whichever radio is checked.
+ */
+.color-picker {
+  /* The preview's colours; the :has() rules at the bottom swap them */
+  --picked: var(--color-primary-text);
+  --picked-highlight: var(--color-primary-subtle);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.color-picker__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* Visually hidden but still focusable and clickable through its label */
+.color-picker__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.color-swatch {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--swatch-highlight);
+  color: var(--swatch);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+
+  /* Decorative sample text; the "/ ''" gives it empty alt text for screen readers */
+  &::before {
+    content: "Aa" / "";
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+  }
+
+  &:hover {
+    border-color: var(--swatch);
+  }
+}
+
+/* "No colour": dashed outline, keeps the default teal pill */
+.color-swatch--none {
+  --swatch: var(--color-text-subtle);
+  --swatch-highlight: var(--color-surface);
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+}
+
+/* Selected: a ring in the swatch's own colour, with a gap (the label comes right after its radio) */
+.color-picker__input:checked + .color-swatch {
+  border-color: var(--swatch);
+  box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--swatch);
+}
+
+.color-picker__input:focus-visible + .color-swatch {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.color-swatch--red    { --swatch: var(--category-red);    --swatch-highlight: var(--category-red-highlight); }
+.color-swatch--orange { --swatch: var(--category-orange); --swatch-highlight: var(--category-orange-highlight); }
+.color-swatch--amber  { --swatch: var(--category-amber);  --swatch-highlight: var(--category-amber-highlight); }
+.color-swatch--green  { --swatch: var(--category-green);  --swatch-highlight: var(--category-green-highlight); }
+.color-swatch--teal   { --swatch: var(--category-teal);   --swatch-highlight: var(--category-teal-highlight); }
+.color-swatch--blue   { --swatch: var(--category-blue);   --swatch-highlight: var(--category-blue-highlight); }
+.color-swatch--indigo { --swatch: var(--category-indigo); --swatch-highlight: var(--category-indigo-highlight); }
+.color-swatch--purple { --swatch: var(--category-purple); --swatch-highlight: var(--category-purple-highlight); }
+.color-swatch--pink   { --swatch: var(--category-pink);   --swatch-highlight: var(--category-pink-highlight); }
+.color-swatch--gray   { --swatch: var(--category-gray);   --swatch-highlight: var(--category-gray-highlight); }
+
+/* ---------- Preview ---------- */
+
+.color-picker__preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.color-picker__preview-label {
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+}
+
+.color-picker__badge {
+  background: var(--picked-highlight);
+  color: var(--picked);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+/* "When the pink radio is checked, the preview is pink" — no JavaScript needed */
+.color-picker:has(.color-picker__input[value="red"]:checked)    { --picked: var(--category-red);    --picked-highlight: var(--category-red-highlight); }
+.color-picker:has(.color-picker__input[value="orange"]:checked) { --picked: var(--category-orange); --picked-highlight: var(--category-orange-highlight); }
+.color-picker:has(.color-picker__input[value="amber"]:checked)  { --picked: var(--category-amber);  --picked-highlight: var(--category-amber-highlight); }
+.color-picker:has(.color-picker__input[value="green"]:checked)  { --picked: var(--category-green);  --picked-highlight: var(--category-green-highlight); }
+.color-picker:has(.color-picker__input[value="teal"]:checked)   { --picked: var(--category-teal);   --picked-highlight: var(--category-teal-highlight); }
+.color-picker:has(.color-picker__input[value="blue"]:checked)   { --picked: var(--category-blue);   --picked-highlight: var(--category-blue-highlight); }
+.color-picker:has(.color-picker__input[value="indigo"]:checked) { --picked: var(--category-indigo); --picked-highlight: var(--category-indigo-highlight); }
+.color-picker:has(.color-picker__input[value="purple"]:checked) { --picked: var(--category-purple); --picked-highlight: var(--category-purple-highlight); }
+.color-picker:has(.color-picker__input[value="pink"]:checked)   { --picked: var(--category-pink);   --picked-highlight: var(--category-pink-highlight); }
+.color-picker:has(.color-picker__input[value="gray"]:checked)   { --picked: var(--category-gray);   --picked-highlight: var(--category-gray-highlight); }

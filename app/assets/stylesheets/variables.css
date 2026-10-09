@@ -257,6 +257,18 @@
   --z-overlay: 40;
   --z-modal: 50;
   --z-toast: 60;
+  /* Category colours (see Colorable::COLORS). Each has a "colour" (pill text and
+     picker swatch) and a "highlight" (pill background) */
+  --category-red: #b91c1c;        --category-red-highlight: #fee2e2;
+  --category-orange: #c2410c;     --category-orange-highlight: #ffedd5;
+  --category-amber: #b45309;      --category-amber-highlight: #fef3c7;
+  --category-green: #15803d;      --category-green-highlight: #dcfce7;
+  --category-teal: #0f766e;       --category-teal-highlight: #ccfbf1;
+  --category-blue: #1d4ed8;       --category-blue-highlight: #dbeafe;
+  --category-indigo: #4338ca;     --category-indigo-highlight: #e0e7ff;
+  --category-purple: #7e22ce;     --category-purple-highlight: #f3e8ff;
+  --category-pink: #be185d;       --category-pink-highlight: #fce7f3;
+  --category-gray: #475569;       --category-gray-highlight: #e2e8f0;
 }
 
 /* ==================================================================
@@ -331,4 +343,15 @@
   --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.5);
   --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.5);
   --shadow-lg: 0 12px 24px -6px rgb(0 0 0 / 0.6);
+  /* Category colours: lighter text on a translucent highlight */
+  --category-red: #fca5a5;        --category-red-highlight: rgb(239 68 68 / 0.15);
+  --category-orange: #fdba74;     --category-orange-highlight: rgb(249 115 22 / 0.15);
+  --category-amber: #fcd34d;      --category-amber-highlight: rgb(245 158 11 / 0.15);
+  --category-green: #86efac;      --category-green-highlight: rgb(34 197 94 / 0.15);
+  --category-teal: #5eead4;       --category-teal-highlight: rgb(20 184 166 / 0.15);
+  --category-blue: #93c5fd;       --category-blue-highlight: rgb(59 130 246 / 0.15);
+  --category-indigo: #a5b4fc;     --category-indigo-highlight: rgb(99 102 241 / 0.15);
+  --category-purple: #d8b4fe;     --category-purple-highlight: rgb(168 85 247 / 0.15);
+  --category-pink: #f9a8d4;       --category-pink-highlight: rgb(236 72 153 / 0.15);
+  --category-gray: #cbd5e1;       --category-gray-highlight: rgb(100 116 139 / 0.2);
 }

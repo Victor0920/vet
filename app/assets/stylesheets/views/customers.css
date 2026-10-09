@@ -1,10 +1,23 @@
 /* ---------- customers#index ---------- */
 
-.customer-cell {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
+/* Avatar column (customers#index), same idea as .products-table__photo */
+.table .customers-table__photo {
+  width: 1%;
+  padding-right: 0;
+
+  /* Explicit size: with width: 1% on the cell, a block link could collapse to 0
+     after the search re-renders the frame, hiding the avatar inside it */
+  a {
+    display: block;
+    width: var(--avatar-md);
+    height: var(--avatar-md);
+    line-height: 0;
+  }
+
+  /* The initials placeholder needs its normal line height to stay centred */
+  .avatar {
+    line-height: var(--leading-tight);
+  }
 }
 
 .customer-cell__text {
@@ -245,11 +258,61 @@
 }
 
 /* Turbo sets aria-busy while the frame loads: dim the old results meanwhile */
-turbo-frame#customers {
+turbo-frame#customers,
+turbo-frame#history {
   display: block;
   transition: opacity var(--duration-fast) var(--ease-out);
 
   &[aria-busy="true"] {
     opacity: 0.6;
   }
+}
+
+/* ---------- customers#show: History (appointments / invoices) ---------- */
+
+/* Type select, search box (grows) and from/to dates; wraps below on small screens */
+.history-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.history-filters__type {
+  width: auto;
+}
+
+.history-filters__search {
+  flex: 1 1 14rem;
+}
+
+.history-filters__dates {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+
+  .input {
+    width: 10rem;
+  }
+}
+
+.history-filters__label {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Result count on the left, "New appointment/invoice" on the right */
+.history-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.history-toolbar__count {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
 }

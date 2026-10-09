@@ -101,10 +101,21 @@
                 <td class="table__truncate">
                   <%= link_to appointment.title.presence || t("shared.untitled"), edit_appointment_path(appointment) %>
                 </td>
-                <td><%= link_to appointment.customer.full_name, customer_path(appointment.customer) %></td>
+                <%# Customer and pet are optional on an appointment %>
                 <td>
-                  <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"),
-                        customer_pet_path(appointment.pet.customer, appointment.pet) %>
+                  <% if appointment.customer %>
+                    <%= link_to appointment.customer.full_name, customer_path(appointment.customer) %>
+                  <% else %>
+                    <span class="text-subtle">—</span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if appointment.pet %>
+                    <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"),
+                          customer_pet_path(appointment.pet.customer, appointment.pet) %>
+                  <% else %>
+                    <span class="text-subtle">—</span>
+                  <% end %>
                 </td>
                 <td><%= appointment.room.name %></td>
               </tr>

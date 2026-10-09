@@ -15,9 +15,25 @@ class CustomersController < ApplicationController
 
   def show
     @pets = @customer.pets
-    @new_pet = Pet.new(customer_id: @customer.id)
-    @invoices = @customer.invoices.includes(:employee, invoice_products: :product).order(date: :desc)
-    @appointments = @customer.appointments.includes(:pet, :employee, :room, :invoice).order(starts_at: :desc)
+    @history = params[:history] == "invoices" ? "invoices" : "appointments"
+    @query = params[:q].to_s.strip
+    @from = date_param(:from)
+    @to = date_param(:to)
+
+    # Only load the list that's selected
+    if @history == "invoices"
+      @invoices = @customer.invoices
+        .search(@query)
+        .dated_between(@from, @to)
+        .includes(:employee, invoice_products: [ :product, :service ])
+        .order(date: :desc)
+    else
+      @appointments = @customer.appointments
+        .search(@query)
+        .dated_between(@from, @to)
+        .includes(:pet, :employee, :room, :invoice)
+        .order(starts_at: :desc)
+    end
   end
 
   def edit

@@ -86,7 +86,7 @@ class InvoicePdf
 
     rows = [ [ t(:description), column(:quantity), column(:unit_price), column(:subtotal) ] ]
     @invoice.invoice_products.each do |line|
-      name = line.product ? (line.product.name.presence || I18n.t("products.unnamed")) : line.description
+      name = line.catalog_item ? (line.catalog_item.name.presence || I18n.t("shared.unnamed")) : line.description
       rows << [ name.to_s, line.quantity.to_s, money(line.price), money(line.subtotal) ]
     end
 

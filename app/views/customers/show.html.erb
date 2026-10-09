@@ -172,97 +172,144 @@
     <% end %>
 
     <header class="customer-profile__section-header customer-profile__section-header--spaced">
-      <div>
-        <h2 class="section__title"><%= t(".appointments") %></h2>
-        <p class="text-muted"><%= t(".appointments_count", count: @appointments.size) %></p>
-      </div>
-      <%# Same calendar "booking for this customer" mode as the sidebar button %>
-      <%= link_to appointments_path(customer_id: @customer.id), class: "btn btn--secondary" do %>
-        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
-            d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
-          /></svg>
-        <%= t(".new_appointment") %>
-      <% end %>
+      <h2 class="section__title"><%= t(".history") %></h2>
     </header>
 
-    <% if @appointments.any? %>
-      <div class="table-wrapper">
-        <table class="table">
-          <thead>
-            <tr>
-              <th><%= t(".columns.when") %></th>
-              <th><%= t(".columns.appointment") %></th>
-              <th><%= t(".columns.pet") %></th>
-              <th><%= t(".columns.staff") %></th>
-              <th><%= t(".columns.room") %></th>
-              <th><%= t(".columns.invoice") %></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @appointments.each do |appointment| %>
-              <tr>
-                <td class="table__numeric">
-                  <%= l(appointment.starts_at, format: :display) %><br>
-                  <span class="text-subtle"><%= l(appointment.starts_at, format: :hour) %>–<%= l(appointment.ends_at, format: :hour) %></span>
-                </td>
-                <td class="table__truncate">
-                  <%= link_to appointment.title.presence || t("shared.untitled"), edit_appointment_path(appointment) %>
-                  <% if appointment.starts_at.future? %>
-                    <span class="badge badge--info"><%= t(".upcoming") %></span>
-                  <% end %>
-                </td>
-                <td>
-                  <% if appointment.pet %>
-                    <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"), customer_pet_path(@customer, appointment.pet) %>
-                  <% else %>
-                    <span class="text-subtle">—</span>
-                  <% end %>
-                </td>
-                <td><%= appointment.employee.display_name %></td>
-                <td><%= appointment.room.name %></td>
-                <td>
-                  <%# One invoice per appointment: link to it, or offer to create it %>
-                  <% if appointment.invoice %>
-                    <%= link_to appointment.invoice.invoice_id.presence || t("invoices.number", id: appointment.invoice.id),
-                          invoice_path(appointment.invoice), class: "badge badge--success" %>
-                  <% else %>
-                    <%= link_to t(".create_invoice"), new_invoice_path(appointment_id: appointment.id), class: "btn btn--ghost btn--sm" %>
-                  <% end %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+    <%# Same pattern as invoices#index: any change submits the form (debounced by
+        search_controller.js) into the "history" frame below, so only the table is
+        replaced and the pets above stay put. URL: /customers/1?history=invoices&q=…&from=…&to=… %>
+    <%= form_with url: customer_path(@customer), method: :get, role: "search", class: "history-filters",
+        data: { controller: "search", turbo_frame: "history", turbo_action: "replace" } do %>
+      <%= label_tag :history, t(".history_type"), class: "sr-only" %>
+      <%= select_tag :history,
+            options_for_select([[t(".appointments"), "appointments"], [t(".invoices"), "invoices"]], @history),
+            class: "select history-filters__type",
+            data: { action: "change->search#submit" } %>
+
+      <div class="search-field history-filters__search">
+        <%= render "shared/icons/magnifying_glass" %>
+        <%= label_tag :q, t(".search_label"), class: "sr-only" %>
+        <%= search_field_tag :q, @query,
+              class: "input",
+              placeholder: t(".search_placeholder"),
+              autocomplete: "off",
+              data: { action: "input->search#submit" } %>
       </div>
-    <% else %>
-      <div class="empty-state">
-        <%= render "shared/icons/calendar" %>
-        <p class="empty-state__title"><%= t(".no_appointments") %></p>
-        <p><%= t(".no_appointments_hint") %></p>
+
+      <div class="history-filters__dates">
+        <%= label_tag :from, t(".from"), class: "history-filters__label" %>
+        <%= date_field_tag :from, @from, class: "input", data: { action: "change->search#submit" } %>
+        <%= label_tag :to, t(".to"), class: "history-filters__label" %>
+        <%= date_field_tag :to, @to, class: "input", data: { action: "change->search#submit" } %>
       </div>
     <% end %>
 
-    <header class="customer-profile__section-header customer-profile__section-header--spaced">
-      <div>
-        <h2 class="section__title"><%= t(".invoices") %></h2>
-        <p class="text-muted"><%= t(".invoices_count", count: @invoices.size) %></p>
-      </div>
-      <%= link_to new_invoice_path(customer_id: @customer.id), class: "btn btn--secondary" do %>
-        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
-            d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
-          /></svg>
-        <%= t(".new_invoice") %>
-      <% end %>
-    </header>
+    <%# Everything that depends on the selected type lives inside the frame (count, "New…"
+        button, table), so it all updates together. target: "_top" so links open the full page %>
+    <%= turbo_frame_tag "history", target: "_top" do %>
+      <% filtered = @query.present? || @from || @to %>
 
-    <% if @invoices.any? %>
-      <%= render "invoices/table", invoices: @invoices, show_customer: false %>
-    <% else %>
-      <div class="empty-state">
-        <%= render "shared/icons/document_text" %>
-        <p class="empty-state__title"><%= t(".no_invoices") %></p>
-        <p><%= t(".no_invoices_hint") %></p>
-      </div>
+      <% if @history == "invoices" %>
+        <div class="history-toolbar">
+          <p class="history-toolbar__count"><%= t(".invoices_count", count: @invoices.size) %></p>
+          <%= link_to new_invoice_path(customer_id: @customer.id), class: "btn btn--secondary btn--sm" do %>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+                d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+              /></svg>
+            <%= t(".new_invoice") %>
+          <% end %>
+        </div>
+
+        <% if @invoices.any? %>
+          <%= render "invoices/table", invoices: @invoices, show_customer: false %>
+        <% elsif filtered %>
+          <div class="empty-state">
+            <%= render "shared/icons/magnifying_glass" %>
+            <p class="empty-state__title"><%= t(".no_matching_invoices") %></p>
+            <p><%= t(".no_matches_hint") %></p>
+          </div>
+        <% else %>
+          <div class="empty-state">
+            <%= render "shared/icons/document_text" %>
+            <p class="empty-state__title"><%= t(".no_invoices") %></p>
+            <p><%= t(".no_invoices_hint") %></p>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="history-toolbar">
+          <p class="history-toolbar__count"><%= t(".appointments_count", count: @appointments.size) %></p>
+          <%# Same calendar "booking for this customer" mode as the sidebar button %>
+          <%= link_to appointments_path(customer_id: @customer.id), class: "btn btn--secondary btn--sm" do %>
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+                d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+              /></svg>
+            <%= t(".new_appointment") %>
+          <% end %>
+        </div>
+
+        <% if @appointments.any? %>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th><%= t(".columns.when") %></th>
+                  <th><%= t(".columns.appointment") %></th>
+                  <th><%= t(".columns.pet") %></th>
+                  <th><%= t(".columns.staff") %></th>
+                  <th><%= t(".columns.room") %></th>
+                  <th><%= t(".columns.invoice") %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @appointments.each do |appointment| %>
+                  <tr>
+                    <td class="table__numeric">
+                      <%= l(appointment.starts_at, format: :display) %><br>
+                      <span class="text-subtle"><%= l(appointment.starts_at, format: :hour) %>–<%= l(appointment.ends_at, format: :hour) %></span>
+                    </td>
+                    <td class="table__truncate">
+                      <%= link_to appointment.title.presence || t("shared.untitled"), edit_appointment_path(appointment) %>
+                      <% if appointment.starts_at.future? %>
+                        <span class="badge badge--info"><%= t(".upcoming") %></span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <% if appointment.pet %>
+                        <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"), customer_pet_path(@customer, appointment.pet) %>
+                      <% else %>
+                        <span class="text-subtle">—</span>
+                      <% end %>
+                    </td>
+                    <td><%= appointment.employee.display_name %></td>
+                    <td><%= appointment.room.name %></td>
+                    <td>
+                      <%# One invoice per appointment: link to it, or offer to create it %>
+                      <% if appointment.invoice %>
+                        <%= link_to appointment.invoice.invoice_id.presence || t("invoices.number", id: appointment.invoice.id),
+                              invoice_path(appointment.invoice), class: "badge badge--success" %>
+                      <% else %>
+                        <%= link_to t(".create_invoice"), new_invoice_path(appointment_id: appointment.id), class: "btn btn--ghost btn--sm" %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% elsif filtered %>
+          <div class="empty-state">
+            <%= render "shared/icons/magnifying_glass" %>
+            <p class="empty-state__title"><%= t(".no_matching_appointments") %></p>
+            <p><%= t(".no_matches_hint") %></p>
+          </div>
+        <% else %>
+          <div class="empty-state">
+            <%= render "shared/icons/calendar" %>
+            <p class="empty-state__title"><%= t(".no_appointments") %></p>
+            <p><%= t(".no_appointments_hint") %></p>
+          </div>
+        <% end %>
+      <% end %>
     <% end %>
   </section>
 </div>

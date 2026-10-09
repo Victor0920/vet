@@ -52,6 +52,12 @@ en:
       product_category:
         one: "Category"
         other: "Categories"
+      service:
+        one: "Service"
+        other: "Services"
+      service_category:
+        one: "Category"
+        other: "Categories"
       invoice:
         one: "Invoice"
         other: "Invoices"
@@ -110,6 +116,7 @@ en:
         transponder_number: "Microchip number"
         transponder_location: "Microchip location"
         notes: "Notes"
+        sterilized: "Sterilized"
         photo: "Photo"
         customer: "Owner"
       product:
@@ -120,9 +127,21 @@ en:
         product_category_id: "Category"
         stock: "Stock"
         show_warning_when_stock_under_x_items: "Low stock warning"
+        photo: "Photo"
       product_category:
         name: "Name"
         products: "Products"
+        color: "Colour"
+      service:
+        name: "Name"
+        description: "Description"
+        price: "Price"
+        service_category: "Category"
+        service_category_id: "Category"
+      service_category:
+        name: "Name"
+        services: "Services"
+        color: "Colour"
       invoice:
         invoice_id: "Invoice number"
         date: "Date"
@@ -142,12 +161,16 @@ en:
         description: "Description"
         price: "Price"
         quantity: "Quantity"
+        service: "Service"
+        service_id: "Service"
+        item: "Product or service"
       # Errors on nested lines read from here: "Line description can't be blank"
       invoice/invoice_products:
         product: "Line product"
         description: "Line description"
         price: "Line price"
         quantity: "Line quantity"
+        service: "Line service"
     # Custom validation messages: errors.add(:ends_at, :must_be_after_start)
     errors:
       messages:
@@ -156,6 +179,7 @@ en:
         not_this_customers_pet: "doesn't belong to this customer"
         must_match_customer_enterprise: "must match the customer's enterprise"
         not_enough_stock: "Not enough stock for %{product}: only %{stock} more in stock"
+        product_and_service: "A line can't be both a product and a service"
       # Per-model wording, used instead of the generic message above
       models:
         invoice:
@@ -215,12 +239,36 @@ en:
       not_found: "Product not found"
       stock_updated: "%{name}: stock is now %{stock}"
       stock_invalid: "%{name}: not enough stock, or the quantity is invalid"
+    services:
+      created: "Service created"
+      updated: "Service updated"
+      not_found: "Service not found"
+    service_categories:
+      created: "Category created"
+      updated: "Category updated"
+      not_found: "Category not found"
     sessions:
       rate_limited: "Try again later."
       invalid: "Try another email address or password."
 
   # ---------- Shared words ----------
   shared:
+    # Category colour palette (see Colorable::COLORS)
+    no_color: "No colour"
+    preview: "Preview"
+    category_name_placeholder: "Category name"
+    colors:
+      red: "Red"
+      orange: "Orange"
+      amber: "Amber"
+      green: "Green"
+      teal: "Teal"
+      blue: "Blue"
+      indigo: "Indigo"
+      purple: "Purple"
+      pink: "Pink"
+      gray: "Gray"
+    dismiss: "Click to dismiss"
     add_photo: "Add photo"
     cancel: "Cancel"
     change_photo: "Change photo"
@@ -234,9 +282,12 @@ en:
     not_set: "Not set"
     pencil_hint: "Click the pencil next to a field to edit it."
     pet_number: "Pet #%{id}"
+    "yes": "Yes"
+    "no": "No"
     save: "Save"
     save_changes: "Save changes"
     time_ago: "%{time} ago"
+    time_ago_by: "%{time} ago by %{name}"
     unknown: "Unknown"
     unnamed: "Unnamed"
     unnamed_customer: "Unnamed customer"
@@ -267,6 +318,7 @@ en:
       calendar: "Calendar"
       customers: "Customers"
       products: "Products"
+      services: "Services"
       invoices: "Invoices"
       sign_out: "Sign out"
 
@@ -369,7 +421,7 @@ en:
         one: "1 customer matching “%{query}”"
         other: "%{count} customers matching “%{query}”"
       columns:
-        id: "ID"
+        photo: "Photo"
         customer: "Customer"
         phone: "Phone number"
         pets: "Pets"
@@ -428,6 +480,15 @@ en:
       new_invoice: "New invoice"
       no_invoices: "No invoices yet"
       no_invoices_hint: "Invoices billed to this customer will show up here."
+      history: "History"
+      history_type: "Show"
+      search_label: "Search history"
+      search_placeholder: "Search by title, pet or invoice number…"
+      from: "From"
+      to: "To"
+      no_matching_appointments: "No appointments match these filters"
+      no_matching_invoices: "No invoices match these filters"
+      no_matches_hint: "Try another search or widen the date range."
 
   # ---------- Pets ----------
   pets:
@@ -511,6 +572,8 @@ en:
       title_placeholder: "e.g. Vaccination, Grooming…"
       choose_room: "Choose a room"
       no_customer: "No customer"
+      search_customers: "Search customers…"
+      no_customers_match: "No customers match"
       no_pet: "No pet"
       view_customer: "View customer · %{name}"
       view_pet: "View pet · %{name}"
@@ -590,6 +653,7 @@ en:
     unnamed: "Unnamed product"
     number: "Product #%{id}"
     columns:
+      photo: "Photo"
       id: "ID"
       product: "Product"
       category: "Category"
@@ -610,6 +674,8 @@ en:
       search_placeholder: "Search by name or description…"
       category: "Category"
       all_categories: "All categories"
+      search_categories: "Search categories…"
+      no_categories_match: "No categories match"
       count:
         one: "1 product"
         other: "%{count} products"
@@ -623,6 +689,7 @@ en:
     show:
       edit_product: "Edit product"
       created: "Created"
+      view_photo: "Open the full-size photo"
     new:
       title: "New product"
     edit:
@@ -632,12 +699,17 @@ en:
       create: "Create product"
       details: "Details"
       choose_category: "Choose a category…"
+      search_categories: "Search categories…"
+      no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
       create_category_first: "create one first"
       price_label: "Price (€)"
       stock: "Stock"
       stock_hint: "Units in the clinic right now"
       warning_hint: "The stock is highlighted in orange when it drops below this number"
+      photo: "Photo"
+      photo_hint: "JPG, PNG or WebP. Shown as a thumbnail in the products list."
+      photo_hint_change: "Pick a new image to replace the current one."
 
   product_categories:
     all_categories: "All categories"
@@ -655,15 +727,104 @@ en:
         one: "1 category"
         other: "%{count} categories"
       columns:
+        updated_by: "Updated by"
         products: "Products"
         created: "Created"
       empty: "No categories yet"
       empty_hint: "Create a category before adding products to it."
     show:
+      updated: "Updated %{time} ago"
+      updated_by: "Updated %{time} ago by %{name}"
       view_in_products: "View in products"
       edit_category: "Edit category"
       empty: "No products in this category"
       empty_hint: "Pick this category when creating or editing a product."
+    new:
+      title: "New category"
+    edit:
+      title: "Edit %{name}"
+    form:
+      back_to_category: "Back to category"
+      create: "Create category"
+      details: "Details"
+
+  services:
+    all_services: "All services"
+    unnamed: "Unnamed service"
+    number: "Service #%{id}"
+    columns:
+      id: "ID"
+      service: "Service"
+      category: "Category"
+      price: "Price"
+    index:
+      title: "All services"
+      heading: "Services"
+      subtitle: "Everything the clinic offers, from check-ups to surgeries"
+      categories: "Categories"
+      new_service: "New service"
+      search_label: "Search services"
+      search_placeholder: "Search by name or description…"
+      category: "Category"
+      all_categories: "All categories"
+      search_categories: "Search categories…"
+      no_categories_match: "No categories match"
+      count:
+        one: "1 service"
+        other: "%{count} services"
+      count_matching:
+        one: "1 service matching “%{query}”"
+        other: "%{count} services matching “%{query}”"
+      no_matches: "No services match these filters"
+      no_matches_hint: "Try another search or pick “All categories”."
+      empty: "No services yet"
+      empty_hint: "Services will show up here once the first is created."
+    show:
+      edit_service: "Edit service"
+      created: "Created"
+    new:
+      title: "New service"
+    edit:
+      title: "Edit %{name}"
+    form:
+      back_to_service: "Back to service"
+      create: "Create service"
+      details: "Details"
+      choose_category: "Choose a category…"
+      search_categories: "Search categories…"
+      no_categories_match: "No categories match"
+      no_categories_html: "No categories yet — %{link}."
+      create_category_first: "create one first"
+      price_label: "Price (€)"
+
+  service_categories:
+    all_categories: "All categories"
+    unnamed: "Unnamed category"
+    number: "Category #%{id}"
+    services_count:
+      one: "1 service"
+      other: "%{count} services"
+    index:
+      title: "Service categories"
+      heading: "Categories"
+      subtitle: "How services are grouped"
+      new_category: "New category"
+      count:
+        one: "1 category"
+        other: "%{count} categories"
+      columns:
+        updated_by: "Updated by"
+        services: "Services"
+        created: "Created"
+      empty: "No categories yet"
+      empty_hint: "Create a category before adding services to it."
+    show:
+      updated: "Updated %{time} ago"
+      updated_by: "Updated %{time} ago by %{name}"
+      view_in_services: "View in services"
+      edit_category: "Edit category"
+      empty: "No services in this category"
+      empty_hint: "Pick this category when creating or editing a service."
     new:
       title: "New category"
     edit:
@@ -684,7 +845,7 @@ en:
       customer: "Customer"
       employee: "Staff"
       total: "Total"
-      product: "Product"
+      product: "Item"
       quantity: "Quantity"
       unit_price: "Unit price"
       subtotal: "Subtotal"
@@ -710,12 +871,13 @@ en:
     show:
       edit_invoice: "Edit invoice"
       custom_item: "Custom"
+      service: "Service"
       download_pdf: "Download PDF"
       send_email: "Send by email"
       no_appointment: "Not linked to an appointment"
-      lines: "Products"
-      no_lines: "No products on this invoice"
-      no_lines_hint: "Products added to this invoice will show up here."
+      lines: "Lines"
+      no_lines: "No lines on this invoice"
+      no_lines_hint: "Products and services added to this invoice will show up here."
       stock_updated: "Stock updated"
       stock_not_updated: "Stock not updated"
     new:
@@ -731,12 +893,16 @@ en:
       choose_employee: "Choose a staff member…"
       billed_to: "Billed to"
       no_customer: "No customer"
+      search_customers: "Search customers…"
+      no_customers_match: "No customers match"
       no_appointment: "No appointment"
+      search_appointments: "Search by date, title or customer…"
+      no_appointments_match: "No appointments match"
       appointment_hint: "Optional. Links this invoice to the visit it bills."
-      lines: "Products"
+      lines: "Lines"
       line_detail: "Description · Price"
       add_line: "Add line"
-      lines_hint: "Pick a product, or choose “Custom item” to type a description and price."
+      lines_hint: "Pick a product or service, or choose “Custom item” to type a description and price."
       available: "%{count} available"
       updates_stock_hint: "When on, saving takes these units out of stock and puts them back if you remove them later. You can't invoice more units than are in stock."
     emails:
@@ -758,6 +924,10 @@ en:
       footer: "Issued by %{name}. Thank you for trusting us with your pets."
     line_fields:
       custom_item: "Custom item"
+      products_group: "Products"
+      services_group: "Services"
+      search_placeholder: "Search products and services…"
+      no_matches: "No products or services match"
       per_unit: "per unit"
       description_placeholder: "e.g. Treats, temporary product…"
       price_placeholder: "Price €"

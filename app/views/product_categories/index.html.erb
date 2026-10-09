@@ -31,6 +31,7 @@
           <th><%= t("products.columns.category") %></th>
           <th><%= t(".columns.products") %></th>
           <th><%= t(".columns.created") %></th>
+          <th><%= t(".columns.updated_by") %></th>
         </tr>
       </thead>
       <tbody>
@@ -43,6 +44,7 @@
             </td>
             <td class="table__numeric"><%= t("product_categories.products_count", count: category.products.size) %></td>
             <td class="table__numeric"><%= l(category.created_at, format: :display) %></td>
+            <%= render "shared/updated_by_cell", record: category %>
           </tr>
         <% end %>
       </tbody>

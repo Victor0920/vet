@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Adds and removes invoice lines on the invoice form, and switches each line
-// between "existing product" and "custom item" (description + price).
+// between "existing product or service" and "custom item" (description + price).
 // While the "Update stock" switch is on, each product line shows how many units
 // are available and its quantity can't go above that (the server checks it too).
 // <section data-controller="invoice-lines" data-invoice-lines-available-value="%{count} available">
@@ -53,10 +53,10 @@ export default class extends Controller {
     this.lineTargets.forEach((line) => this.update(line))
   }
 
-  // Product picked → show its price, hide and disable description/price.
+  // Product or service picked → show its price, hide and disable description/price.
   // "Custom item" picked → the other way round. Disabled inputs aren't submitted.
   update(line) {
-    const select = line.querySelector("[data-product-select]")
+    const select = line.querySelector("[data-item-select]")
     const custom = select.value === ""
     const manual = line.querySelector("[data-manual]")
     const productPrice = line.querySelector("[data-product-price]")
@@ -72,13 +72,13 @@ export default class extends Controller {
   }
 
   // Shows "· 5 available" and sets the quantity's max, or removes both when the line
-  // is a custom item or the "Update stock" switch is off.
+  // is a custom item or a service (no data-stock), or the "Update stock" switch is off.
   updateStock(line, option) {
     const quantity = line.querySelector("input[name$='[quantity]']")
     const label = line.querySelector("[data-product-stock]")
     const tracking = this.hasStockToggleTarget && this.stockToggleTarget.checked
 
-    if (!option || !tracking) {
+    if (!option || !tracking || option.dataset.stock === undefined) {
       quantity.removeAttribute("max")
       label.hidden = true
       return
@@ -86,7 +86,7 @@ export default class extends Controller {
 
     // A saved line already took its units out of stock, so editing it may use them again
     let available = Number(option.dataset.stock)
-    if (line.dataset.savedProductId === option.value) available += Number(line.dataset.savedQuantity)
+    if (line.dataset.savedItem === option.value) available += Number(line.dataset.savedQuantity)
 
     quantity.max = available
     label.textContent = `· ${this.availableValue.replace("%{count}", available)}`

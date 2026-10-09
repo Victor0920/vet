@@ -1,0 +1,5 @@
+<%# A product or service category as a pill linking to its page, in the category's
+    colour (badge--red, badge--blue… see badge.css), or the default teal when it has none.
+    link_to with a record builds the path itself: product_category_path / service_category_path %>
+<%= link_to category.name.presence || t("shared.unnamed"), category,
+      class: ["badge", category.color ? "badge--#{category.color}" : "badge--primary"] %>

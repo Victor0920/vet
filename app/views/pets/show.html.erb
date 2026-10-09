@@ -64,6 +64,7 @@
       [Pet.human_attribute_name(:name), @pet.name],
       [Pet.human_attribute_name(:species), @pet.species],
       [Pet.human_attribute_name(:breed), @pet.breed],
+      [Pet.human_attribute_name(:sterilized), @pet.sterilized.nil? ? nil : (@pet.sterilized ? tag.span(t("shared.yes"), class: "badge badge--success") : tag.span(t("shared.no"), class: "badge"))],
       [Pet.human_attribute_name(:sex), @pet.sex.presence && t(@pet.sex.downcase, scope: "pets.sex", default: @pet.sex)],
       [Pet.human_attribute_name(:born_on), @pet.born_on && t("pets.born_value", date: l(@pet.born_on, format: :display), age: distance_of_time_in_words(@pet.born_on, Date.current))],
       [Pet.human_attribute_name(:color), @pet.color]

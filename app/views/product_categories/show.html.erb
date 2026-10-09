@@ -9,7 +9,12 @@
   <div>
     <h1 class="page-header__title"><%= @category.name.presence || t("product_categories.unnamed") %></h1>
     <p class="page-header__subtitle">
-      <%= t("product_categories.number", id: @category.id) %> · <%= t("product_categories.products_count", count: @products.size) %>
+      <%= t("product_categories.number", id: @category.id) %> · <%= t("product_categories.products_count", count: @products.size) %> ·
+      <% if @category.updated_by %>
+        <%= t(".updated_by", time: time_ago_in_words(@category.updated_at), name: @category.updated_by.display_name) %>
+      <% else %>
+        <%= t(".updated", time: time_ago_in_words(@category.updated_at)) %>
+      <% end %>
     </p>
   </div>
   <div class="page-header__actions">

@@ -1,10 +1,13 @@
 class Product < ApplicationRecord
+  include TracksUpdatedBy
   belongs_to :enterprise
   belongs_to :product_category
+  has_one_attached :photo
 
   validates :name, presence: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :stock, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validate :photo_is_an_image
 
   validate :category_belongs_to_same_enterprise
 
@@ -31,6 +34,12 @@ class Product < ApplicationRecord
   def category_belongs_to_same_enterprise
     if product_category && product_category.enterprise_id != enterprise_id
       errors.add(:product_category, "is not valid")
+    end
+  end
+
+  def photo_is_an_image
+    if photo.attached? && !photo.content_type.in?(%w[image/jpeg image/png image/webp])
+      errors.add(:photo, "is not valid")
     end
   end
 end

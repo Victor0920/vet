@@ -40,6 +40,12 @@
                   aria: { invalid: category.errors[:name].any? } %>
           </dd>
         </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= ProductCategory.human_attribute_name(:color) %></dt>
+          <dd class="field-row__value">
+            <%= render "shared/color_picker", f: f %>
+          </dd>
+        </div>
       </dl>
     </section>
   </div>

@@ -1,7 +1,18 @@
-<% content_for :title, @product.name.presence || t("products.number", id: @product.id) %>
+<% content_for :title,
+@product.name.presence || t("products.number", id: @product.id) %>
 
 <%= link_to products_path, class: "back-link" do %>
-  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+  <svg
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    width="16"
+    height="16"
+    aria-hidden="true"
+  ><path
+      fill-rule="evenodd"
+      d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+      clip-rule="evenodd"
+    /></svg>
   <%= t("products.all_products") %>
 <% end %>
 
@@ -23,23 +34,31 @@
 </div>
 
 <section class="card product-card">
-  <div class="card__body">
+  <div class="card__body product-card__layout">
+    <% if @product.photo.attached? %>
+      <%# Thumbnail opens the original, full-size file in a new tab.
+          320×320 for a 160px box, so it stays sharp on retina screens. %>
+      <%= link_to rails_blob_path(@product.photo, disposition: "inline"), target: "_blank",
+            class: "product-card__photo", title: t(".view_photo") do %>
+        <%= image_tag @product.photo.variant(resize_to_fill: [320, 320]),
+              alt: @product.name.to_s, class: "product-thumb product-thumb--xl" %>
+      <% end %>
+    <% end %>
+
     <dl class="details details--grid">
       <div>
         <dt><%= Product.human_attribute_name(:product_category) %></dt>
         <dd>
-          <%= link_to @product.product_category.name.presence || t("shared.unnamed"),
-                product_category_path(@product.product_category),
-                class: "badge badge--primary" %>
+          <%= render "shared/category_badge", category: @product.product_category %>
         </dd>
       </div>
       <div>
         <dt><%= Product.human_attribute_name(:price) %></dt>
-        <dd><%= @product.price ? number_to_currency(@product.price, unit: "€", format: "%n %u") : "—" %></dd>
-      </div>
-      <div class="details__wide">
-        <dt><%= Product.human_attribute_name(:description) %></dt>
-        <dd><%= @product.description.presence || "—" %></dd>
+        <dd><%= if @product.price
+            number_to_currency(@product.price, unit: "€", format: "%n %u")
+          else
+            "—"
+          end %></dd>
       </div>
       <div>
         <dt><%= t(".created") %></dt>
@@ -47,7 +66,22 @@
       </div>
       <div>
         <dt><%= t("shared.last_updated") %></dt>
-        <dd><%= t("shared.time_ago", time: time_ago_in_words(@product.updated_at)) %></dd>
+        <dd>
+          <%# updated_by is empty for rows changed before it existed, or from the console %>
+          <% if @product.updated_by %>
+            <%= t(
+              "shared.time_ago_by",
+              time: time_ago_in_words(@product.updated_at),
+              name: @product.updated_by.display_name,
+            ) %>
+          <% else %>
+            <%= t("shared.time_ago", time: time_ago_in_words(@product.updated_at)) %>
+          <% end %>
+        </dd>
+      </div>
+      <div class="details__wide">
+        <dt><%= Product.human_attribute_name(:description) %></dt>
+        <dd><%= @product.description.presence || "—" %></dd>
       </div>
     </dl>
   </div>
