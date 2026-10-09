@@ -309,12 +309,58 @@ es:
       products: "Productos"
       services: "Servicios"
       invoices: "Facturación"
+      settings: "Configuración"
+      admin: "Administración"
       sign_out: "Cerrar sesión"
 
   # ---------- Layouts ----------
   layouts:
     mailer:
       footer: "Recibes este correo por actividad en tu cuenta de Vet."
+
+  # ---------- Configuración (área de administración) ----------
+  settings:
+    show:
+      title: "Configuración"
+      heading: "Configuración"
+      admin_only: "Solo administradores"
+      subtitle: "Gestiona tu negocio: centros, equipo, catálogo y facturación."
+      coming_soon: "Próximamente"
+      groups:
+        business:
+          title: "Negocio"
+          description: "Los datos de tu empresa y los centros donde trabajas."
+        team:
+          title: "Equipo"
+          description: "Quién trabaja contigo y qué puede hacer."
+        catalogue:
+          title: "Catálogo"
+          description: "Cómo se organizan los productos y servicios."
+        billing:
+          title: "Facturación y mensajes"
+          description: "Facturas y cómo hablas con tus clientes."
+      tiles:
+        enterprise:
+          title: "Datos de la empresa"
+          description: "Nombre, razón social, CIF y dirección."
+        stores:
+          title: "Centros y salas"
+          description: "Tus clínicas y las salas donde se reservan citas."
+        employees:
+          title: "Empleados"
+          description: "Da de alta al equipo, asigna roles y desactiva cuentas."
+        product_categories:
+          title: "Categorías de productos"
+          description: "Agrupa los productos y elige sus colores."
+        service_categories:
+          title: "Categorías de servicios"
+          description: "Agrupa los servicios y elige sus colores."
+        invoicing:
+          title: "Facturación"
+          description: "Numeración, impuestos y los datos que salen en las facturas."
+        whatsapp:
+          title: "WhatsApp"
+          description: "Conecta el número desde el que escribes a los clientes."
 
   # ---------- Páginas ----------
   pages:

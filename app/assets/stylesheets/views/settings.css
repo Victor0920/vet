@@ -1,0 +1,128 @@
+/* ---------- settings#show: the admin control area ---------- */
+
+.settings-admin-badge {
+  margin-left: var(--space-2);
+  vertical-align: middle;
+}
+
+/* Groups stacked with a divider; each is "title on the left, tiles on the right" */
+.settings-groups {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-group {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: var(--space-6);
+  padding: var(--space-6) 0;
+  border-top: var(--border);
+
+  &:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+.settings-group__title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.settings-group__description {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.settings-group__tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: var(--space-3);
+}
+
+/* ---------- One tile: icon · title + description · arrow (or "Coming soon") ---------- */
+
+.settings-tile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+
+  /* The arrow slides a little on hover, hinting the tile opens a page */
+  &:hover .settings-tile__arrow {
+    color: var(--color-primary);
+    transform: translateX(2px);
+  }
+}
+
+.settings-tile__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--avatar-md);
+  height: var(--avatar-md);
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
+
+  svg {
+    width: var(--icon-md);
+    height: var(--icon-md);
+  }
+}
+
+.settings-tile__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+
+.settings-tile__title {
+  color: var(--color-text);
+  font-weight: var(--weight-semibold);
+}
+
+.settings-tile__description {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.settings-tile__arrow {
+  flex-shrink: 0;
+  width: var(--icon-md);
+  height: var(--icon-md);
+  color: var(--color-text-subtle);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.settings-tile__soon {
+  flex-shrink: 0;
+}
+
+/* Not built yet: flat and muted, so the working tiles stand out */
+.settings-tile--soon {
+  box-shadow: none;
+  background: var(--color-bg);
+  border-style: dashed;
+
+  .settings-tile__icon {
+    background: var(--color-surface-sunken);
+    color: var(--color-text-subtle);
+  }
+
+  .settings-tile__title {
+    color: var(--color-text-muted);
+  }
+}
+
+@media (max-width: 56rem) {
+  .settings-group {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}

@@ -320,12 +320,58 @@ en:
       products: "Products"
       services: "Services"
       invoices: "Invoices"
+      settings: "Settings"
+      admin: "Administration"
       sign_out: "Sign out"
 
   # ---------- Layouts ----------
   layouts:
     mailer:
       footer: "You're receiving this email because of activity on your Vet account."
+
+  # ---------- Settings (admin area) ----------
+  settings:
+    show:
+      title: "Settings"
+      heading: "Settings"
+      admin_only: "Admin only"
+      subtitle: "Manage your business: locations, team, catalogue and billing."
+      coming_soon: "Coming soon"
+      groups:
+        business:
+          title: "Business"
+          description: "Your company details and the clinics where you work."
+        team:
+          title: "Team"
+          description: "Who works with you and what they can do."
+        catalogue:
+          title: "Catalogue"
+          description: "How products and services are organised."
+        billing:
+          title: "Billing & messaging"
+          description: "Invoices and how you talk to customers."
+      tiles:
+        enterprise:
+          title: "Company details"
+          description: "Name, legal name, CIF and address."
+        stores:
+          title: "Stores & rooms"
+          description: "Your clinics and the rooms you book appointments in."
+        employees:
+          title: "Employees"
+          description: "Invite staff, set roles and deactivate accounts."
+        product_categories:
+          title: "Product categories"
+          description: "Group products and pick their colours."
+        service_categories:
+          title: "Service categories"
+          description: "Group services and pick their colours."
+        invoicing:
+          title: "Invoicing"
+          description: "Numbering, taxes and the details printed on invoices."
+        whatsapp:
+          title: "WhatsApp"
+          description: "Connect the number you message customers from."
 
   # ---------- Pages ----------
   pages:

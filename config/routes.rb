@@ -47,6 +47,13 @@ Rails.application.routes.draw do
 
   post "/conversations/:id/messages", to: "conversations#create_message"
 
+  scope "settings" do
+    resources :stores, path: "stores"
+    resources :enterprises, path: "enterprise", only: [ :show, :edit ]
+    resources :employees, path: "employees", only: [ :show, :edit ]
+  end
+  resource :settings, only: :show
+
   get "/auth", to: "auth#index"
 
   namespace :webhooks do

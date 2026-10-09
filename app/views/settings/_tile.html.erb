@@ -1,0 +1,27 @@
+<%# One area of the settings hub.
+    Locals:
+      icon        - name of a partial in shared/icons ("tag", "cog"…)
+      title       - tile heading
+      description - one line about what you manage there
+      path        - where it links; leave it out (nil) while that area isn't built
+                    yet and the tile shows "Coming soon" instead of being a link %>
+<% path = local_assigns[:path] %>
+
+<% content = capture do %>
+  <span class="settings-tile__icon"><%= render "shared/icons/#{icon}" %></span>
+  <span class="settings-tile__text">
+    <span class="settings-tile__title"><%= title %></span>
+    <span class="settings-tile__description"><%= description %></span>
+  </span>
+  <% if path %>
+    <svg class="settings-tile__arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+  <% else %>
+    <span class="badge settings-tile__soon"><%= t("settings.show.coming_soon") %></span>
+  <% end %>
+<% end %>
+
+<% if path %>
+  <%= link_to content, path, class: "card card--interactive settings-tile" %>
+<% else %>
+  <div class="card settings-tile settings-tile--soon"><%= content %></div>
+<% end %>

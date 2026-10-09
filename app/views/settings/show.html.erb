@@ -1,0 +1,66 @@
+<% content_for :title, t(".title") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">
+      <%= t(".heading") %>
+      <span class="badge badge--warning settings-admin-badge"><%= t(".admin_only") %></span>
+    </h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+</div>
+
+<%# The admin control area: one group per part of the business, each a grid of tiles.
+    A tile without path: shows "Coming soon"; give it the route helper once that area
+    exists (e.g. path: stores_path when StoresController is in place). %>
+<div class="settings-groups">
+  <section class="settings-group" aria-labelledby="settings-business">
+    <header class="settings-group__header">
+      <h2 class="settings-group__title" id="settings-business"><%= t(".groups.business.title") %></h2>
+      <p class="settings-group__description"><%= t(".groups.business.description") %></p>
+    </header>
+    <div class="settings-group__tiles">
+      <%= render "settings/tile", icon: "building_office",
+            title: t(".tiles.enterprise.title"), description: t(".tiles.enterprise.description") %>
+      <%= render "settings/tile", icon: "building_storefront",
+            title: t(".tiles.stores.title"), description: t(".tiles.stores.description") %>
+    </div>
+  </section>
+
+  <section class="settings-group" aria-labelledby="settings-team">
+    <header class="settings-group__header">
+      <h2 class="settings-group__title" id="settings-team"><%= t(".groups.team.title") %></h2>
+      <p class="settings-group__description"><%= t(".groups.team.description") %></p>
+    </header>
+    <div class="settings-group__tiles">
+      <%= render "settings/tile", icon: "customers",
+            title: t(".tiles.employees.title"), description: t(".tiles.employees.description") %>
+    </div>
+  </section>
+
+  <section class="settings-group" aria-labelledby="settings-catalogue">
+    <header class="settings-group__header">
+      <h2 class="settings-group__title" id="settings-catalogue"><%= t(".groups.catalogue.title") %></h2>
+      <p class="settings-group__description"><%= t(".groups.catalogue.description") %></p>
+    </header>
+    <div class="settings-group__tiles">
+      <%= render "settings/tile", icon: "tag", path: product_categories_path,
+            title: t(".tiles.product_categories.title"), description: t(".tiles.product_categories.description") %>
+      <%= render "settings/tile", icon: "tag", path: service_categories_path,
+            title: t(".tiles.service_categories.title"), description: t(".tiles.service_categories.description") %>
+    </div>
+  </section>
+
+  <section class="settings-group" aria-labelledby="settings-billing">
+    <header class="settings-group__header">
+      <h2 class="settings-group__title" id="settings-billing"><%= t(".groups.billing.title") %></h2>
+      <p class="settings-group__description"><%= t(".groups.billing.description") %></p>
+    </header>
+    <div class="settings-group__tiles">
+      <%= render "settings/tile", icon: "document_text",
+            title: t(".tiles.invoicing.title"), description: t(".tiles.invoicing.description") %>
+      <%= render "settings/tile", icon: "messages",
+            title: t(".tiles.whatsapp.title"), description: t(".tiles.whatsapp.description") %>
+    </div>
+  </section>
+</div>
