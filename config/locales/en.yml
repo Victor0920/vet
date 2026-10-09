@@ -463,6 +463,15 @@ en:
       new_invoice: "New invoice"
       no_invoices: "No invoices yet"
       no_invoices_hint: "Invoices billed to this customer will show up here."
+      history: "History"
+      history_type: "Show"
+      search_label: "Search history"
+      search_placeholder: "Search by title, pet or invoice number…"
+      from: "From"
+      to: "To"
+      no_matching_appointments: "No appointments match these filters"
+      no_matching_invoices: "No invoices match these filters"
+      no_matches_hint: "Try another search or widen the date range."
 
   # ---------- Pets ----------
   pets:

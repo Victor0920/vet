@@ -76,13 +76,6 @@ class InvoicesController < ApplicationController
     @services = Current.enterprise.services.order(:name)
   end
 
-  # Turns "2026-10-08" into a Date; blank or garbage becomes nil (no filter)
-  def date_param(key)
-    Date.parse(params[key].to_s)
-  rescue Date::Error
-    nil
-  end
-
   def invoice_params
     params.expect(invoice: [ :invoice_id, :date, :store_id, :employee_id, :customer_id, :appointment_id, :updates_stock,
       invoice_products_attributes: [ [ :id, :item, :description, :price, :quantity, :_destroy ] ] ])

@@ -452,6 +452,15 @@ es:
       new_invoice: "Nueva factura"
       no_invoices: "Todavía no hay facturas"
       no_invoices_hint: "Las facturas de este cliente aparecerán aquí."
+      history: "Historial"
+      history_type: "Mostrar"
+      search_label: "Buscar en el historial"
+      search_placeholder: "Busca por título, mascota o número de factura…"
+      from: "Desde"
+      to: "Hasta"
+      no_matching_appointments: "Ninguna cita coincide con estos filtros"
+      no_matching_invoices: "Ninguna factura coincide con estos filtros"
+      no_matches_hint: "Prueba otra búsqueda o amplía el rango de fechas."
 
   # ---------- Mascotas ----------
   pets:

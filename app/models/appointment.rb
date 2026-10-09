@@ -19,7 +19,22 @@ class Appointment < ApplicationRecord
   # Appointments that overlap the period from..to, even partly
   scope :overlapping, ->(from, to) { where("starts_at < ? AND ends_at > ?", to, from) }
 
-    private
+  # Matches the appointment title or the pet's name
+  scope :search, ->(query) {
+    next all if query.blank?
+    pattern = "%#{sanitize_sql_like(query)}%"
+    left_joins(:pet).where("appointments.title LIKE :pattern OR pets.name LIKE :pattern", pattern: pattern)
+  }
+
+  # Either end may be nil, same as Invoice.dated_between
+  scope :dated_between, ->(from, to) {
+    scope = all
+    scope = scope.where(starts_at: from.beginning_of_day..) if from
+    scope = scope.where(starts_at: ..to.end_of_day) if to
+    scope
+  }
+
+  private
 
   def fill_in_from_associations
     self.store = room&.store          # the store always comes from the room
