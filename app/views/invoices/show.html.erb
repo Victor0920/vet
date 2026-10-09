@@ -105,6 +105,11 @@
                     <% if line.product %>
                       <%= link_to line.product.name.presence || t("products.unnamed"), product_path(line.product),
                             class: "product-cell__name" %>
+                    <% elsif line.service %>
+                      <span class="product-cell__name">
+                        <%= link_to line.service.name.presence || t("services.unnamed"), service_path(line.service) %>
+                        <span class="badge badge--primary"><%= t(".service") %></span>
+                      </span>
                     <% else %>
                       <span class="product-cell__name">
                         <%= line.description %>
@@ -115,7 +120,7 @@
                 </td>
                 <td class="table__numeric invoices-table__total"><%= line.quantity %></td>
                 <td class="table__numeric invoices-table__total">
-                  <%# The price saved on the line, so later product price changes don't alter old invoices %>
+                  <%# The price saved on the line, so later product/service price changes don't alter old invoices %>
                   <%= line.price ? number_to_currency(line.price, unit: "€", format: "%n %u") : "—" %>
                 </td>
                 <td class="table__numeric invoices-table__total">

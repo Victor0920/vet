@@ -42,6 +42,12 @@ es:
       product_category:
         one: "Categoría"
         other: "Categorías"
+      service:
+        one: "Servicio"
+        other: "Servicios"
+      service_category:
+        one: "Categoría"
+        other: "Categorías"
       invoice:
         one: "Factura"
         other: "Facturas"
@@ -100,6 +106,7 @@ es:
         transponder_number: "Número de microchip"
         transponder_location: "Ubicación del microchip"
         notes: "Notas"
+        sterilized: "Esterilizado"
         photo: "Foto"
         customer: "Propietario"
       product:
@@ -113,6 +120,15 @@ es:
       product_category:
         name: "Nombre"
         products: "Productos"
+      service:
+        name: "Nombre"
+        description: "Descripción"
+        price: "Precio"
+        service_category: "Categoría"
+        service_category_id: "Categoría"
+      service_category:
+        name: "Nombre"
+        services: "Servicios"
       invoice:
         invoice_id: "Número de factura"
         date: "Fecha"
@@ -132,12 +148,16 @@ es:
         description: "Descripción"
         price: "Precio"
         quantity: "Cantidad"
+        service: "Servicio"
+        service_id: "Servicio"
+        item: "Producto o servicio"
       # Los errores de las líneas se leen de aquí: "Descripción de la línea no puede estar en blanco"
       invoice/invoice_products:
         product: "Producto de la línea"
         description: "Descripción de la línea"
         price: "Precio de la línea"
         quantity: "Cantidad de la línea"
+        service: "Servicio de la línea"
     errors:
       messages:
         must_be_after_start: "debe ser posterior a la hora de inicio"
@@ -145,6 +165,7 @@ es:
         not_this_customers_pet: "no pertenece a este cliente"
         must_match_customer_enterprise: "debe coincidir con la empresa del cliente"
         not_enough_stock: "No hay suficiente stock de %{product}: solo quedan %{stock} más"
+        product_and_service: "Una línea no puede ser a la vez un producto y un servicio"
       # Mensajes por modelo, usados en lugar del genérico de arriba
       models:
         invoice:
@@ -188,10 +209,6 @@ es:
       created: "Mascota creada"
       updated: "Mascota actualizada"
       not_found: "No se ha encontrado la mascota"
-    product_categories:
-      created: "Categoría creada"
-      updated: "Categoría actualizada"
-      not_found: "No se ha encontrado la categoría"
     invoices:
       created: "Factura creada"
       updated: "Factura actualizada"
@@ -204,6 +221,18 @@ es:
       not_found: "No se ha encontrado el producto"
       stock_updated: "%{name}: el stock ahora es %{stock}"
       stock_invalid: "%{name}: no hay suficiente stock o la cantidad no es válida"
+    product_categories:
+      created: "Categoría creada"
+      updated: "Categoría actualizada"
+      not_found: "No se ha encontrado la categoría"
+    services:
+      created: "Servicio creado"
+      updated: "Servicio actualizado"
+      not_found: "No se ha encontrado el servicio"
+    service_categories:
+      created: "Categoría creada"
+      updated: "Categoría actualizada"
+      not_found: "No se ha encontrado la categoría"
     sessions:
       rate_limited: "Inténtalo de nuevo más tarde."
       invalid: "Prueba con otro correo o contraseña."
@@ -223,9 +252,12 @@ es:
     not_set: "Sin especificar"
     pencil_hint: "Pulsa el lápiz junto a un campo para editarlo."
     pet_number: "Mascota n.º %{id}"
+    "yes": "Sí"
+    "no": "No"
     save: "Guardar"
     save_changes: "Guardar cambios"
     time_ago: "hace %{time}"
+    time_ago_by: "hace %{time} por %{name}"
     unknown: "Desconocido"
     unnamed: "Sin nombre"
     unnamed_customer: "Cliente sin nombre"
@@ -256,6 +288,7 @@ es:
       calendar: "Calendario"
       customers: "Clientes"
       products: "Productos"
+      services: "Servicios"
       invoices: "Facturación"
       sign_out: "Cerrar sesión"
 
@@ -642,15 +675,100 @@ es:
         one: "1 categoría"
         other: "%{count} categorías"
       columns:
+        updated_by: "Actualizada por"
         products: "Productos"
         created: "Creada"
       empty: "Todavía no hay categorías"
       empty_hint: "Crea una categoría antes de añadirle productos."
     show:
+      updated: "Actualizada hace %{time}"
+      updated_by: "Actualizada hace %{time} por %{name}"
       view_in_products: "Ver en productos"
       edit_category: "Editar categoría"
       empty: "No hay productos en esta categoría"
       empty_hint: "Elige esta categoría al crear o editar un producto."
+    new:
+      title: "Nueva categoría"
+    edit:
+      title: "Editar %{name}"
+    form:
+      back_to_category: "Volver a la categoría"
+      create: "Crear categoría"
+      details: "Detalles"
+
+  services:
+    all_services: "Todos los servicios"
+    unnamed: "Servicio sin nombre"
+    number: "Servicio n.º %{id}"
+    columns:
+      id: "ID"
+      service: "Servicio"
+      category: "Categoría"
+      price: "Precio"
+    index:
+      title: "Todos los servicios"
+      heading: "Servicios"
+      subtitle: "Todo lo que ofrece la clínica, de revisiones a cirugías"
+      categories: "Categorías"
+      new_service: "Nuevo servicio"
+      search_label: "Buscar servicios"
+      search_placeholder: "Busca por nombre o descripción…"
+      category: "Categoría"
+      all_categories: "Todas las categorías"
+      count:
+        one: "1 servicio"
+        other: "%{count} servicios"
+      count_matching:
+        one: "1 servicio coincide con «%{query}»"
+        other: "%{count} servicios coinciden con «%{query}»"
+      no_matches: "Ningún servicio coincide con estos filtros"
+      no_matches_hint: "Prueba otra búsqueda o elige «Todas las categorías»."
+      empty: "Todavía no hay servicios"
+      empty_hint: "Los servicios aparecerán aquí cuando crees el primero."
+    show:
+      edit_service: "Editar servicio"
+      created: "Creado"
+    new:
+      title: "Nuevo servicio"
+    edit:
+      title: "Editar %{name}"
+    form:
+      back_to_service: "Volver al servicio"
+      create: "Crear servicio"
+      details: "Detalles"
+      choose_category: "Elige una categoría…"
+      no_categories_html: "Todavía no hay categorías: %{link}."
+      create_category_first: "crea una primero"
+      price_label: "Precio (€)"
+
+  service_categories:
+    all_categories: "Todas las categorías"
+    unnamed: "Categoría sin nombre"
+    number: "Categoría n.º %{id}"
+    services_count:
+      one: "1 servicio"
+      other: "%{count} servicios"
+    index:
+      title: "Categorías de servicios"
+      heading: "Categorías"
+      subtitle: "Cómo se agrupan los servicios"
+      new_category: "Nueva categoría"
+      count:
+        one: "1 categoría"
+        other: "%{count} categorías"
+      columns:
+        updated_by: "Actualizada por"
+        services: "Servicios"
+        created: "Creada"
+      empty: "Todavía no hay categorías"
+      empty_hint: "Crea una categoría antes de añadirle servicios."
+    show:
+      updated: "Actualizada hace %{time}"
+      updated_by: "Actualizada hace %{time} por %{name}"
+      view_in_services: "Ver en servicios"
+      edit_category: "Editar categoría"
+      empty: "No hay servicios en esta categoría"
+      empty_hint: "Elige esta categoría al crear o editar un servicio."
     new:
       title: "Nueva categoría"
     edit:
@@ -671,7 +789,7 @@ es:
       customer: "Cliente"
       employee: "Profesional"
       total: "Total"
-      product: "Producto"
+      product: "Concepto"
       quantity: "Cantidad"
       unit_price: "Precio unitario"
       subtotal: "Subtotal"
@@ -697,12 +815,13 @@ es:
     show:
       edit_invoice: "Editar factura"
       custom_item: "Personalizado"
+      service: "Servicio"
       download_pdf: "Descargar PDF"
       send_email: "Enviar por email"
       no_appointment: "No vinculada a ninguna cita"
-      lines: "Productos"
-      no_lines: "Esta factura no tiene productos"
-      no_lines_hint: "Los productos añadidos a esta factura aparecerán aquí."
+      lines: "Líneas"
+      no_lines: "Esta factura no tiene líneas"
+      no_lines_hint: "Los productos y servicios añadidos a esta factura aparecerán aquí."
       stock_updated: "Stock actualizado"
       stock_not_updated: "Stock sin actualizar"
     new:
@@ -720,10 +839,10 @@ es:
       no_customer: "Sin cliente"
       no_appointment: "Sin cita"
       appointment_hint: "Opcional. Vincula esta factura a la visita que cobra."
-      lines: "Productos"
+      lines: "Líneas"
       line_detail: "Descripción · Precio"
       add_line: "Añadir línea"
-      lines_hint: "Elige un producto, o «Artículo personalizado» para escribir una descripción y un precio."
+      lines_hint: "Elige un producto o servicio, o «Artículo personalizado» para escribir una descripción y un precio."
       available: "%{count} disponibles"
       updates_stock_hint: "Si está activado, al guardar se descuentan estas unidades del stock y se devuelven si luego las quitas. No puedes facturar más unidades de las que hay en stock."
     emails:
@@ -745,6 +864,10 @@ es:
       footer: "Emitida por %{name}. Gracias por confiarnos a tus mascotas."
     line_fields:
       custom_item: "Artículo personalizado"
+      products_group: "Productos"
+      services_group: "Servicios"
+      search_placeholder: "Busca productos y servicios…"
+      no_matches: "Ningún producto o servicio coincide"
       per_unit: "por unidad"
       description_placeholder: "p. ej. Premios, producto temporal…"
       price_placeholder: "Precio €"

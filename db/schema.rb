@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_08_160140) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_09_070748) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -130,9 +130,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160140) do
     t.decimal "price", precision: 7, scale: 2
     t.integer "product_id"
     t.integer "quantity"
+    t.integer "service_id"
     t.datetime "updated_at", null: false
     t.index ["invoice_id"], name: "index_invoice_products_on_invoice_id"
     t.index ["product_id"], name: "index_invoice_products_on_product_id"
+    t.index ["service_id"], name: "index_invoice_products_on_service_id"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -176,6 +178,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160140) do
     t.string "notes"
     t.string "sex"
     t.string "species"
+    t.boolean "sterilized"
     t.string "transponder_location"
     t.string "transponder_number"
     t.datetime "updated_at", null: false
@@ -187,7 +190,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160140) do
     t.integer "enterprise_id", null: false
     t.string "name"
     t.datetime "updated_at", null: false
+    t.integer "updated_by_id"
     t.index ["enterprise_id"], name: "index_product_categories_on_enterprise_id"
+    t.index ["updated_by_id"], name: "index_product_categories_on_updated_by_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -200,8 +205,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160140) do
     t.integer "show_warning_when_stock_under_x_items", default: 5, null: false
     t.integer "stock", default: 0, null: false
     t.datetime "updated_at", null: false
+    t.integer "updated_by_id"
     t.index ["enterprise_id"], name: "index_products_on_enterprise_id"
     t.index ["product_category_id"], name: "index_products_on_product_category_id"
+    t.index ["updated_by_id"], name: "index_products_on_updated_by_id"
   end
 
   create_table "rooms", force: :cascade do |t|
@@ -211,6 +218,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160140) do
     t.integer "store_id", null: false
     t.datetime "updated_at", null: false
     t.index ["store_id"], name: "index_rooms_on_store_id"
+  end
+
+  create_table "service_categories", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "enterprise_id", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.integer "updated_by_id"
+    t.index ["enterprise_id"], name: "index_service_categories_on_enterprise_id"
+    t.index ["updated_by_id"], name: "index_service_categories_on_updated_by_id"
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.integer "enterprise_id", null: false
+    t.string "name"
+    t.decimal "price", precision: 7, scale: 2
+    t.integer "service_category_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "updated_by_id"
+    t.index ["enterprise_id"], name: "index_services_on_enterprise_id"
+    t.index ["service_category_id"], name: "index_services_on_service_category_id"
+    t.index ["updated_by_id"], name: "index_services_on_updated_by_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -254,6 +285,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160140) do
   add_foreign_key "employees", "enterprises"
   add_foreign_key "invoice_products", "invoices"
   add_foreign_key "invoice_products", "products"
+  add_foreign_key "invoice_products", "services"
   add_foreign_key "invoices", "appointments"
   add_foreign_key "invoices", "customers"
   add_foreign_key "invoices", "employees"
@@ -261,10 +293,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_08_160140) do
   add_foreign_key "invoices", "stores"
   add_foreign_key "messages", "conversations"
   add_foreign_key "pets", "customers"
+  add_foreign_key "product_categories", "employees", column: "updated_by_id", on_delete: :nullify
   add_foreign_key "product_categories", "enterprises"
+  add_foreign_key "products", "employees", column: "updated_by_id", on_delete: :nullify
   add_foreign_key "products", "enterprises"
   add_foreign_key "products", "product_categories"
   add_foreign_key "rooms", "stores"
+  add_foreign_key "service_categories", "employees", column: "updated_by_id", on_delete: :nullify
+  add_foreign_key "service_categories", "enterprises"
+  add_foreign_key "services", "employees", column: "updated_by_id", on_delete: :nullify
+  add_foreign_key "services", "enterprises"
+  add_foreign_key "services", "service_categories"
   add_foreign_key "sessions", "employees"
   add_foreign_key "stores", "enterprises"
 end

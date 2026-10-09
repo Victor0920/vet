@@ -73,6 +73,7 @@ class InvoicesController < ApplicationController
     @customers = Current.enterprise.customers.order(:first_name)
     @appointments = Current.enterprise.appointments.includes(:customer).order(starts_at: :desc)
     @products = Current.enterprise.products.order(:name)
+    @services = Current.enterprise.services.order(:name)
   end
 
   # Turns "2026-10-08" into a Date; blank or garbage becomes nil (no filter)
@@ -84,6 +85,6 @@ class InvoicesController < ApplicationController
 
   def invoice_params
     params.expect(invoice: [ :invoice_id, :date, :store_id, :employee_id, :customer_id, :appointment_id, :updates_stock,
-      invoice_products_attributes: [ [ :id, :product_id, :description, :price, :quantity, :_destroy ] ] ])
+      invoice_products_attributes: [ [ :id, :item, :description, :price, :quantity, :_destroy ] ] ])
   end
 end

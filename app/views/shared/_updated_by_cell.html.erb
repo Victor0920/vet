@@ -1,0 +1,13 @@
+<%# Table cell for the "Updated by" column: who last changed the record, and when.
+    Used by the product and service categories index tables.
+    updated_by is empty for rows changed before it existed, or from the console. %>
+<td>
+  <div class="product-cell">
+    <% if record.updated_by %>
+      <span><%= record.updated_by.display_name %></span>
+    <% else %>
+      <span>—</span>
+    <% end %>
+    <span class="product-cell__meta"><%= t("shared.time_ago", time: time_ago_in_words(record.updated_at)) %></span>
+  </div>
+</td>

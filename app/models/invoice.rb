@@ -32,7 +32,7 @@ class Invoice < ApplicationRecord
 
   # An untouched empty row is ignored instead of failing validation
   def blank_line?(attributes)
-    attributes.values_at("product_id", "description", "price").all?(&:blank?)
+    attributes.values_at("item", "description", "price").all?(&:blank?)
   end
 
   def stock_changes

@@ -1,4 +1,4 @@
-/* ---------- products#index filters ---------- */
+/* ---------- products#index & services#index filters ---------- */
 
 /* Search box grows, category select keeps its natural width */
 .products-filters {
@@ -24,7 +24,8 @@
 }
 
 /* Turbo sets aria-busy while the frame loads: dim the old results meanwhile */
-turbo-frame#products {
+turbo-frame#products,
+turbo-frame#services {
   display: block;
   transition: opacity var(--duration-fast) var(--ease-out);
 
@@ -33,7 +34,7 @@ turbo-frame#products {
   }
 }
 
-/* ---------- product tables (products#index, product_categories#show) ---------- */
+/* ---------- product & service tables (products#index, services#index, *_categories#show) ---------- */
 
 .product-cell {
   display: flex;
@@ -82,7 +83,7 @@ turbo-frame#products {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- products#show ---------- */
+/* ---------- products#show & services#show ---------- */
 
 .product-card {
   max-width: 48rem;
@@ -103,7 +104,7 @@ turbo-frame#products {
   }
 }
 
-/* ---------- products & categories new/edit ---------- */
+/* ---------- products, services & categories new/edit ---------- */
 
 /* Back link on the left, save button on the right (like customers#new) */
 .resource-form__toolbar {

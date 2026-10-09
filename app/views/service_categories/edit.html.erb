@@ -1,0 +1,3 @@
+<% content_for :title, t(".title", name: @category.name_was.presence || t("service_categories.number", id: @category.id)) %>
+
+<%= render "form", category: @category %>

@@ -1,6 +1,8 @@
 class Product < ApplicationRecord
+  include TracksUpdatedBy
   belongs_to :enterprise
   belongs_to :product_category
+  has_one_attached :photo
 
   validates :name, presence: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true

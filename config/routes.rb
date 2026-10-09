@@ -36,6 +36,11 @@ Rails.application.routes.draw do
     resource :stock, only: :update, module: :products
   end
 
+  scope "services" do
+    resources :service_categories, path: "categories"
+  end
+  resources :services
+
   resources :invoices do
     resource :email, only: %i[ new create ], module: :invoices
   end

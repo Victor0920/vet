@@ -19,7 +19,7 @@ class ProductCategoriesController < ApplicationController
     @category = Current.enterprise.product_categories.new(category_params)
 
     if @category.save
-      redirect_to product_category_path(@category), notice: t("flash.product_categories.created")
+      redirect_to product_categories_path(), notice: t("flash.product_categories.created")
     else
       render :new, status: :unprocessable_entity
     end

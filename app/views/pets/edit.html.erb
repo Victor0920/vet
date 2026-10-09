@@ -73,6 +73,9 @@
         <%= render "shared/editable_field", model: [@customer, @pet], attribute: :name, label: Pet.human_attribute_name(:name) %>
         <%= render "shared/editable_field", model: [@customer, @pet], attribute: :species, label: Pet.human_attribute_name(:species) %>
         <%= render "shared/editable_field", model: [@customer, @pet], attribute: :breed, label: Pet.human_attribute_name(:breed) %>
+        <%= render "shared/editable_field", model: [@customer, @pet], attribute: :sterilized, label: Pet.human_attribute_name(:sterilized),
+              input: :select, choices: [[t("shared.yes"), true], [t("shared.no"), false]],
+              value: @pet.sterilized.nil? ? nil : (@pet.sterilized ? t("shared.yes") : t("shared.no")) %>
         <%= render "shared/editable_field", model: [@customer, @pet], attribute: :sex, label: Pet.human_attribute_name(:sex),
               input: :select, choices: [[t("pets.sex.male"), "Male"], [t("pets.sex.female"), "Female"]],
               value: @pet.sex.presence && t(@pet.sex.downcase, scope: "pets.sex", default: @pet.sex) %>

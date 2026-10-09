@@ -34,11 +34,16 @@
       <%= render "shared/icons/customers" %>
       <span><%= t("components.top_nav.customers") %></span>
     <% end %>
-    <%= link_to helpers.products_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/product")) } do %>
+    <%= link_to helpers.products_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/products")) } do %>
       <%= render "shared/icons/shopping_bag" %>
       <span><%= t("components.top_nav.products") %></span>
     <% end %>
-    <%= link_to helpers.invoices_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/invoice")) } do %>
+    <%= link_to helpers.services_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/services")) } do %>
+      <%= render "shared/icons/heart" %>
+      <span><%= t("components.top_nav.services") %></span>
+    <% end %>
+
+    <%= link_to helpers.invoices_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/invoices")) } do %>
       <%= render "shared/icons/document_text" %>
       <span><%= t("components.top_nav.invoices") %></span>
     <% end %>

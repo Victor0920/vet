@@ -1,0 +1,71 @@
+<%# Shared by services/new and services/edit. form_with model: picks POST /services
+    for a new record and PATCH /services/:id for an existing one.
+    Same layout as products/_form, minus the stock card: services have no stock. %>
+<%= form_with model: service do |f| %>
+  <div class="resource-form__toolbar">
+    <%= link_to (service.persisted? ? service_path(service) : services_path), class: "back-link" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+      <%= service.persisted? ? t(".back_to_service") : t("services.all_services") %>
+    <% end %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), (service.persisted? ? service_path(service) : services_path), class: "btn btn--ghost" %>
+      <%= f.submit (service.persisted? ? t("shared.save_changes") : t(".create")), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title"><%= service.persisted? ? t("services.edit.title", name: service.name_was.presence || t("services.number", id: service.id)) : t("services.new.title") %></h1>
+
+    <% if service.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% service.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".details") %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :name %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :name, class: "input", required: true, autofocus: true,
+                  aria: { invalid: service.errors[:name].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :service_category_id %></dt>
+          <dd class="field-row__value">
+            <%= f.collection_select :service_category_id, categories, :id, :name,
+                  { prompt: t(".choose_category") },
+                  class: "select", required: true,
+                  aria: { invalid: service.errors[:service_category].any? } %>
+            <% if categories.empty? %>
+              <p class="form-hint">
+                <%= t(".no_categories_html", link: link_to(t(".create_category_first"), new_service_category_path)) %>
+              </p>
+            <% end %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :price, t(".price_label") %></dt>
+          <dd class="field-row__value">
+            <%= f.number_field :price, class: "input", step: 0.01, min: 0,
+                  aria: { invalid: service.errors[:price].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :description %></dt>
+          <dd class="field-row__value"><%= f.text_area :description, class: "textarea", rows: 4 %></dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+<% end %>
