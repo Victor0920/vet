@@ -45,6 +45,6 @@ class ServiceCategoriesController < ApplicationController
 
   # The form is built from a ServiceCategory, so its params arrive under :service_category
   def category_params
-    params.expect(service_category: [ :name ])
+    params.expect(service_category: [ :name, :color ])
   end
 end

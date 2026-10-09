@@ -121,6 +121,7 @@ es:
       product_category:
         name: "Nombre"
         products: "Productos"
+        color: "Color"
       service:
         name: "Nombre"
         description: "Descripción"
@@ -130,6 +131,7 @@ es:
       service_category:
         name: "Nombre"
         services: "Servicios"
+        color: "Color"
       invoice:
         invoice_id: "Número de factura"
         date: "Fecha"
@@ -240,6 +242,19 @@ es:
 
   # ---------- Palabras compartidas ----------
   shared:
+    # Paleta de colores de las categorías (ver Colorable::COLORS)
+    no_color: "Sin color"
+    colors:
+      red: "Rojo"
+      orange: "Naranja"
+      amber: "Ámbar"
+      green: "Verde"
+      teal: "Turquesa"
+      blue: "Azul"
+      indigo: "Índigo"
+      purple: "Morado"
+      pink: "Rosa"
+      gray: "Gris"
     dismiss: "Haz clic para cerrar"
     add_photo: "Añadir foto"
     cancel: "Cancelar"

@@ -49,9 +49,7 @@
       <div>
         <dt><%= Product.human_attribute_name(:product_category) %></dt>
         <dd>
-          <%= link_to @product.product_category.name.presence || t("shared.unnamed"),
-          product_category_path(@product.product_category),
-          class: "badge badge--primary" %>
+          <%= render "shared/category_badge", category: @product.product_category %>
         </dd>
       </div>
       <div>

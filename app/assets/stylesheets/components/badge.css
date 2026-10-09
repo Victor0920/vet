@@ -62,3 +62,16 @@
   background: var(--color-surface-sunken);
   box-shadow: 0 0 0 1px var(--color-border);
 }
+
+/* Category colours: <span class="badge badge--pink">Vaccines</span>
+   One per Colorable::COLORS, tokens in variables.css */
+.badge--red    { background: var(--category-red-highlight);    color: var(--category-red); }
+.badge--orange { background: var(--category-orange-highlight); color: var(--category-orange); }
+.badge--amber  { background: var(--category-amber-highlight);  color: var(--category-amber); }
+.badge--green  { background: var(--category-green-highlight);  color: var(--category-green); }
+.badge--teal   { background: var(--category-teal-highlight);   color: var(--category-teal); }
+.badge--blue   { background: var(--category-blue-highlight);   color: var(--category-blue); }
+.badge--indigo { background: var(--category-indigo-highlight); color: var(--category-indigo); }
+.badge--purple { background: var(--category-purple-highlight); color: var(--category-purple); }
+.badge--pink   { background: var(--category-pink-highlight);   color: var(--category-pink); }
+.badge--gray   { background: var(--category-gray-highlight);   color: var(--category-gray); }

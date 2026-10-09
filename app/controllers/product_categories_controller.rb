@@ -45,6 +45,6 @@ class ProductCategoriesController < ApplicationController
 
   # The form is built from a ProductCategory, so its params arrive under :product_category
   def category_params
-    params.expect(product_category: [ :name ])
+    params.expect(product_category: [ :name, :color ])
   end
 end

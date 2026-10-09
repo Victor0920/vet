@@ -94,9 +94,7 @@
                 </div>
               </td>
               <td>
-                <%= link_to product.product_category.name.presence || t("shared.unnamed"),
-                      product_category_path(product.product_category),
-                      class: "badge badge--primary" %>
+                <%= render "shared/category_badge", category: product.product_category %>
               </td>
               <td class="table__numeric products-table__price">
                 <%= product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "—" %>

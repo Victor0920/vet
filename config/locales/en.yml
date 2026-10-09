@@ -131,6 +131,7 @@ en:
       product_category:
         name: "Name"
         products: "Products"
+        color: "Colour"
       service:
         name: "Name"
         description: "Description"
@@ -140,6 +141,7 @@ en:
       service_category:
         name: "Name"
         services: "Services"
+        color: "Colour"
       invoice:
         invoice_id: "Invoice number"
         date: "Date"
@@ -251,6 +253,19 @@ en:
 
   # ---------- Shared words ----------
   shared:
+    # Category colour palette (see Colorable::COLORS)
+    no_color: "No colour"
+    colors:
+      red: "Red"
+      orange: "Orange"
+      amber: "Amber"
+      green: "Green"
+      teal: "Teal"
+      blue: "Blue"
+      indigo: "Indigo"
+      purple: "Purple"
+      pink: "Pink"
+      gray: "Gray"
     dismiss: "Click to dismiss"
     add_photo: "Add photo"
     cancel: "Cancel"

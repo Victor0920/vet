@@ -80,9 +80,7 @@
                 </div>
               </td>
               <td>
-                <%= link_to service.service_category.name.presence || t("shared.unnamed"),
-                      service_category_path(service.service_category),
-                      class: "badge badge--primary" %>
+                <%= render "shared/category_badge", category: service.service_category %>
               </td>
               <td class="table__numeric products-table__price">
                 <%= service.price ? number_to_currency(service.price, unit: "€", format: "%n %u") : "—" %>

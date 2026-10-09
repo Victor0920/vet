@@ -39,9 +39,7 @@
       <div>
         <dt><%= Service.human_attribute_name(:service_category) %></dt>
         <dd>
-          <%= link_to @service.service_category.name.presence || t("shared.unnamed"),
-          service_category_path(@service.service_category),
-          class: "badge badge--primary" %>
+          <%= render "shared/category_badge", category: @service.service_category %>
         </dd>
       </div>
       <div>
