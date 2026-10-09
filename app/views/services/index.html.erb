@@ -31,12 +31,18 @@
           data: { action: "input->search#submit" } %>
   </div>
 
-  <%= label_tag :category_id, t(".category"), class: "sr-only" %>
-  <%= select_tag :category_id,
-        options_from_collection_for_select(@categories, :id, :name, @category_id),
-        include_blank: t(".all_categories"),
-        class: "select products-filters__category",
-        data: { action: "change->search#submit" } %>
+  <%# item_picker_controller.js (same as the invoice lines) turns the select into a dropdown
+      with "All categories" on top and a search box for the categories below it %>
+  <div class="item-picker products-filters__category" data-controller="item-picker"
+       data-item-picker-placeholder-value="<%= t(".search_categories") %>"
+       data-item-picker-empty-value="<%= t(".no_categories_match") %>">
+    <%= label_tag :category_id, t(".category"), class: "sr-only" %>
+    <%= select_tag :category_id,
+          options_from_collection_for_select(@categories, :id, :name, @category_id),
+          include_blank: t(".all_categories"),
+          class: "select",
+          data: { action: "change->search#submit", item_picker_target: "select" } %>
+  </div>
 <% end %>
 
 <%# target: "_top" so links inside (service names) open the full page, not the frame %>

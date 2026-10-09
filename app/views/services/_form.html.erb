@@ -43,10 +43,17 @@
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :service_category_id %></dt>
           <dd class="field-row__value">
-            <%= f.collection_select :service_category_id, categories, :id, :name,
-                  { prompt: t(".choose_category") },
-                  class: "select", required: true,
-                  aria: { invalid: service.errors[:service_category].any? } %>
+            <%# item_picker_controller.js adds a search box to the category list
+                (same dropdown as the invoice lines and the services list filter) %>
+            <div class="item-picker" data-controller="item-picker"
+                 data-item-picker-placeholder-value="<%= t(".search_categories") %>"
+                 data-item-picker-empty-value="<%= t(".no_categories_match") %>">
+              <%= f.collection_select :service_category_id, categories, :id, :name,
+                    { prompt: t(".choose_category") },
+                    class: "select", required: true,
+                    data: { item_picker_target: "select" },
+                    aria: { invalid: service.errors[:service_category].any? } %>
+            </div>
             <% if categories.empty? %>
               <p class="form-hint">
                 <%= t(".no_categories_html", link: link_to(t(".create_category_first"), new_service_category_path)) %>

@@ -6,6 +6,12 @@
 .item-picker {
   position: relative;
   min-width: 0;
+
+  /* The JS hides the real <select> with the hidden attribute, but .select sets its own
+     display (flex, in browsers with appearance: base-select), which beats [hidden] */
+  select[hidden] {
+    display: none;
+  }
 }
 
 /* .input gives the border, height and focus ring; this adds the .select chevron */
@@ -48,12 +54,47 @@
   box-shadow: var(--shadow-lg);
 }
 
+/* Popover version (see place() in the JS): the browser's [popover] defaults centre it on
+   the screen with its own colours, so undo those; the JS sets top/bottom/left */
+.item-picker__panel:popover-open {
+  inset: auto;
+  margin: 0;
+  overflow: visible;
+  color: inherit;
+}
+
 /* Set by the JS when the button is in the lower half of the window */
 .item-picker__panel--above {
   top: auto;
   bottom: 100%;
   margin-top: 0;
   margin-bottom: var(--space-1);
+}
+
+/* Fade in when it opens (nothing on close: the JS removes it straight away).
+   It slides a few pixels away from the button: down when below, up when above. */
+@keyframes item-picker-in {
+  from {
+    opacity: 0;
+    translate: 0 -0.25rem;
+  }
+}
+
+@keyframes item-picker-in-above {
+  from {
+    opacity: 0;
+    translate: 0 0.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .item-picker__panel {
+    animation: item-picker-in var(--duration-fast) var(--ease-out);
+  }
+
+  .item-picker__panel--above {
+    animation-name: item-picker-in-above;
+  }
 }
 
 .item-picker__search {

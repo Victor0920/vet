@@ -127,6 +127,7 @@ en:
         product_category_id: "Category"
         stock: "Stock"
         show_warning_when_stock_under_x_items: "Low stock warning"
+        photo: "Photo"
       product_category:
         name: "Name"
         products: "Products"
@@ -250,6 +251,7 @@ en:
 
   # ---------- Shared words ----------
   shared:
+    dismiss: "Click to dismiss"
     add_photo: "Add photo"
     cancel: "Cancel"
     change_photo: "Change photo"
@@ -544,6 +546,8 @@ en:
       title_placeholder: "e.g. Vaccination, Grooming…"
       choose_room: "Choose a room"
       no_customer: "No customer"
+      search_customers: "Search customers…"
+      no_customers_match: "No customers match"
       no_pet: "No pet"
       view_customer: "View customer · %{name}"
       view_pet: "View pet · %{name}"
@@ -623,6 +627,7 @@ en:
     unnamed: "Unnamed product"
     number: "Product #%{id}"
     columns:
+      photo: "Photo"
       id: "ID"
       product: "Product"
       category: "Category"
@@ -643,6 +648,8 @@ en:
       search_placeholder: "Search by name or description…"
       category: "Category"
       all_categories: "All categories"
+      search_categories: "Search categories…"
+      no_categories_match: "No categories match"
       count:
         one: "1 product"
         other: "%{count} products"
@@ -656,6 +663,7 @@ en:
     show:
       edit_product: "Edit product"
       created: "Created"
+      view_photo: "Open the full-size photo"
     new:
       title: "New product"
     edit:
@@ -665,12 +673,17 @@ en:
       create: "Create product"
       details: "Details"
       choose_category: "Choose a category…"
+      search_categories: "Search categories…"
+      no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
       create_category_first: "create one first"
       price_label: "Price (€)"
       stock: "Stock"
       stock_hint: "Units in the clinic right now"
       warning_hint: "The stock is highlighted in orange when it drops below this number"
+      photo: "Photo"
+      photo_hint: "JPG, PNG or WebP. Shown as a thumbnail in the products list."
+      photo_hint_change: "Pick a new image to replace the current one."
 
   product_categories:
     all_categories: "All categories"
@@ -728,6 +741,8 @@ en:
       search_placeholder: "Search by name or description…"
       category: "Category"
       all_categories: "All categories"
+      search_categories: "Search categories…"
+      no_categories_match: "No categories match"
       count:
         one: "1 service"
         other: "%{count} services"
@@ -750,6 +765,8 @@ en:
       create: "Create service"
       details: "Details"
       choose_category: "Choose a category…"
+      search_categories: "Search categories…"
+      no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
       create_category_first: "create one first"
       price_label: "Price (€)"
@@ -850,7 +867,11 @@ en:
       choose_employee: "Choose a staff member…"
       billed_to: "Billed to"
       no_customer: "No customer"
+      search_customers: "Search customers…"
+      no_customers_match: "No customers match"
       no_appointment: "No appointment"
+      search_appointments: "Search by date, title or customer…"
+      no_appointments_match: "No appointments match"
       appointment_hint: "Optional. Links this invoice to the visit it bills."
       lines: "Lines"
       line_detail: "Description · Price"

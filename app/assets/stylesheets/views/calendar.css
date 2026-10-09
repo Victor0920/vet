@@ -247,7 +247,12 @@
   }
 }
 
+/* Short appointments don't have room for everything. overflow: hidden (needed for the
+   ellipsis) lets a flex item shrink to 0, so without flex-shrink: 0 the title and time
+   were squeezed away first. Now they keep their height, the links give way instead,
+   and whatever doesn't fit is cut off at the bottom by .cal-event's overflow: hidden. */
 .cal-event__title {
+  flex-shrink: 0;
   color: var(--color-text);
   font-weight: var(--weight-semibold);
   white-space: nowrap;
@@ -268,6 +273,7 @@
 }
 
 .cal-event__time {
+  flex-shrink: 0;
   color: var(--color-primary-text);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -279,6 +285,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);
+  /* The first thing to go when the block is short */
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Above the stretched title link, so these stay clickable */
@@ -311,6 +320,7 @@
   gap: var(--space-3);
 
   .cal-event__title {
+    flex-shrink: 1; /* in a row it's the width that shrinks: undo the flex-shrink: 0 above */
     min-width: 0; /* lets a long title shrink and get its ellipsis */
   }
 

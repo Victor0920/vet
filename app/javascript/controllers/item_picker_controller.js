@@ -1,12 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Searchable dropdown for a long <select>: the invoice line's product/service picker.
+// Searchable dropdown for a long <select>: the invoice line's product/service picker and
+// the category filter on the products and services lists.
 // The real <select> stays in the form, just hidden. It's still what gets submitted, and
-// picking an option here sets its value and fires "change", so invoice_lines_controller.js
-// keeps working without knowing this exists.
-// The panel shows the first option (the blank "Custom item") on top, then a search box,
-// then every <optgroup> (Products, Services). It's built from the <select> when it opens,
-// so a long list costs nothing until it's needed.
+// picking an option here sets its value and fires "change", so whatever listens to the
+// select (invoice_lines_controller.js, search_controller.js) keeps working unchanged.
+// The panel shows the blank option ("Custom item", "All categories") on top, then a search
+// box, then the other options: grouped under each <optgroup> label, or as one plain list
+// when the select has no groups. It's built from the <select> when it opens, so a long
+// list costs nothing until it's needed.
 // <div data-controller="item-picker"
 //      data-item-picker-placeholder-value="Search…" data-item-picker-empty-value="No matches">
 //   <label for="…">…</label>
@@ -18,7 +20,8 @@ export default class extends Controller {
 
   connect() {
     this.select = this.selectTarget
-    this.label = this.element.querySelector(`label[for="${this.select.id}"]`)
+    // select.labels finds the <label for="…"> anywhere on the page, e.g. in the form's <dt>
+    this.label = this.select.labels?.[0]
 
     this.button = document.createElement("button")
     this.button.type = "button"
@@ -26,8 +29,9 @@ export default class extends Controller {
     this.button.className = "input item-picker__button"
     this.button.setAttribute("aria-haspopup", "listbox")
     this.button.setAttribute("aria-expanded", "false")
-    if (this.select.hasAttribute("aria-invalid")) {
-      this.button.setAttribute("aria-invalid", this.select.getAttribute("aria-invalid"))
+    // Keep the select's error state and hint (e.g. "Optional. Links this invoice…") on the button
+    for (const attribute of ["aria-invalid", "aria-describedby"]) {
+      if (this.select.hasAttribute(attribute)) this.button.setAttribute(attribute, this.select.getAttribute(attribute))
     }
     this.button.addEventListener("click", () => (this.panel ? this.close() : this.open()))
     this.button.addEventListener("keydown", (event) => this.buttonKeydown(event))
@@ -38,6 +42,8 @@ export default class extends Controller {
     this.select.after(this.button)
     this.updateButton()
 
+    this.select.addEventListener("invalid", this.showInvalid)
+
     this.closeOnOutsideClick = (event) => {
       if (!this.element.contains(event.target)) this.close({ focus: false })
     }
@@ -45,6 +51,7 @@ export default class extends Controller {
 
   // Put the page back as Rails rendered it (also keeps Turbo's page cache clean)
   disconnect() {
+    this.select.removeEventListener("invalid", this.showInvalid)
     this.close({ focus: false })
     this.button.remove()
     this.select.hidden = false
@@ -59,6 +66,18 @@ export default class extends Controller {
     const { top, height } = this.button.getBoundingClientRect()
     this.panel.classList.toggle("item-picker__panel--above", top + height / 2 > window.innerHeight / 2)
     this.button.after(this.panel)
+
+    // popover="manual" puts the panel in the browser's top layer: drawn above everything and
+    // not clipped by a scrolling parent (like the appointment modal). The CSS position
+    // (absolute, under the button) stays as the fallback for browsers without popovers.
+    if (this.panel.showPopover) {
+      this.panel.popover = "manual"
+      this.panel.showPopover()
+      this.place()
+      window.addEventListener("resize", this.place)
+      window.addEventListener("scroll", this.placeOnScroll, true) // true: also scrolls of inner elements
+    }
+
     this.button.setAttribute("aria-expanded", "true")
     document.addEventListener("click", this.closeOnOutsideClick)
 
@@ -74,7 +93,34 @@ export default class extends Controller {
     this.panel = null
     this.button.setAttribute("aria-expanded", "false")
     document.removeEventListener("click", this.closeOnOutsideClick)
+    window.removeEventListener("resize", this.place)
+    window.removeEventListener("scroll", this.placeOnScroll, true)
     if (focus) this.button.focus()
+  }
+
+  // Pins the popover panel to the button (position: fixed uses window coordinates):
+  // left edges lined up, at least as wide as the button, never past the right edge.
+  place = () => {
+    const button = this.button.getBoundingClientRect()
+    const gap = 4
+    const edge = 16
+    const style = this.panel.style
+
+    style.position = "fixed"
+    style.minWidth = `${button.width}px`
+    if (this.panel.classList.contains("item-picker__panel--above")) {
+      style.top = "auto"
+      style.bottom = `${window.innerHeight - button.top + gap}px`
+    } else {
+      style.top = `${button.bottom + gap}px`
+      style.bottom = "auto"
+    }
+    style.left = `${Math.max(edge, Math.min(button.left, window.innerWidth - this.panel.offsetWidth - edge))}px`
+  }
+
+  // The page (or the modal) scrolled: follow the button. Scrolling the list itself doesn't move it.
+  placeOnScroll = (event) => {
+    if (!this.panel?.contains(event.target)) this.place()
   }
 
   // Down/Up arrows open the list; typing a letter opens it with that letter already searched
@@ -105,6 +151,8 @@ export default class extends Controller {
         break
       case "Escape":
         event.preventDefault()
+        // Only close this list: don't let Esc reach a modal behind it (it closes on Esc too)
+        event.stopPropagation()
         this.close()
         break
       case "Tab":
@@ -146,7 +194,18 @@ export default class extends Controller {
     item.scrollIntoView({ block: "nearest" })
   }
 
+  // A required select left empty: the browser can't point its "Please select an item" bubble
+  // at a hidden field (it would just refuse to submit, silently), so show it on the button
+  // instead: red border, and open the list if it's the first field that needs fixing.
+  showInvalid = (event) => {
+    event.preventDefault()
+    this.button.setAttribute("aria-invalid", "true")
+    if (this.select.form?.querySelector(":invalid") === this.select) this.open()
+  }
+
   choose(value) {
+    // Picking a valid option clears the red border (from showInvalid or a server error)
+    if (value !== "") this.button.removeAttribute("aria-invalid")
     if (this.select.value !== value) {
       this.select.value = value
       // invoice_lines_controller.js listens for this to show the price / custom fields
@@ -204,16 +263,30 @@ export default class extends Controller {
         group.append(...items)
         list.append(group)
         this.groups.push({ group, items })
-      } else {
-        // Options outside a group (the blank "Custom item") go above the search box
+      } else if (child.value === "") {
+        // The blank option ("Custom item", "All categories") goes above the search box
         top.append(this.buildOption(child))
+      } else {
+        // Options outside any <optgroup> share one unlabelled group, so they filter the same way
+        if (!this.looseGroup) {
+          this.looseGroup = { group: element("div", "item-picker__group"), items: [] }
+          this.looseGroup.group.setAttribute("role", "group")
+          list.append(this.looseGroup.group)
+          this.groups.push(this.looseGroup)
+        }
+        const item = this.buildOption(child)
+        this.looseGroup.group.append(item)
+        this.looseGroup.items.push(item)
       }
     }
+    this.looseGroup = null
 
     this.emptyMessage = element("p", "item-picker__empty", this.emptyValue)
     list.append(this.emptyMessage)
 
-    panel.append(top, this.search, list)
+    // On edit pages Rails leaves out the blank "Choose…" prompt, so there may be nothing on top
+    if (top.children.length) panel.append(top)
+    panel.append(this.search, list)
     return panel
   }
 

@@ -1,5 +1,5 @@
 /*
- * Alerts (used for flash messages)
+ * Alerts (flash messages and form errors)
  * <div class="alert alert--success">Saved!</div>
  */
 .alert {
@@ -42,9 +42,53 @@
   color: var(--color-info-text);
 }
 
+/*
+ * Flash messages (shared/_flash): fixed toasts at the top centre, above everything,
+ * so showing or hiding one never pushes the page content around.
+ * flash_controller.js removes each one after 5 seconds or on click.
+ */
 .flash-stack {
+  position: fixed;
+  top: var(--space-4);
+  left: 50%;
+  z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
+  width: min(32rem, calc(100vw - var(--space-8)));
+  translate: -50% 0;
+  /* Clicks between/around the toasts reach the page underneath */
+  pointer-events: none;
+}
+
+.alert--toast {
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+/* Enter: fade in while sliding down from the top */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    translate: 0 -0.75rem;
+  }
+}
+
+/* Exit (class added by flash_controller.js): fade out while sliding back up */
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    translate: 0 -0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .alert--toast {
+    animation: toast-in var(--duration-slow) var(--ease-out);
+  }
+
+  .alert--toast.alert--leaving {
+    animation: toast-out var(--duration-normal) var(--ease-in-out) forwards;
+  }
 }

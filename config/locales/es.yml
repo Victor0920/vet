@@ -117,6 +117,7 @@ es:
         product_category_id: "Categoría"
         stock: "Stock"
         show_warning_when_stock_under_x_items: "Aviso de stock bajo"
+        photo: "Foto"
       product_category:
         name: "Nombre"
         products: "Productos"
@@ -239,6 +240,7 @@ es:
 
   # ---------- Palabras compartidas ----------
   shared:
+    dismiss: "Haz clic para cerrar"
     add_photo: "Añadir foto"
     cancel: "Cancelar"
     change_photo: "Cambiar foto"
@@ -531,6 +533,8 @@ es:
       title_placeholder: "p. ej. Vacunación, Peluquería…"
       choose_room: "Elige una sala"
       no_customer: "Sin cliente"
+      search_customers: "Busca clientes…"
+      no_customers_match: "Ningún cliente coincide"
       no_pet: "Sin mascota"
       view_customer: "Ver cliente · %{name}"
       view_pet: "Ver mascota · %{name}"
@@ -610,6 +614,7 @@ es:
     unnamed: "Producto sin nombre"
     number: "Producto n.º %{id}"
     columns:
+      photo: "Foto"
       id: "ID"
       product: "Producto"
       category: "Categoría"
@@ -630,6 +635,8 @@ es:
       search_placeholder: "Busca por nombre o descripción…"
       category: "Categoría"
       all_categories: "Todas las categorías"
+      search_categories: "Busca categorías…"
+      no_categories_match: "Ninguna categoría coincide"
       count:
         one: "1 producto"
         other: "%{count} productos"
@@ -643,6 +650,7 @@ es:
     show:
       edit_product: "Editar producto"
       created: "Creado"
+      view_photo: "Abrir la foto a tamaño completo"
     new:
       title: "Nuevo producto"
     edit:
@@ -652,12 +660,17 @@ es:
       create: "Crear producto"
       details: "Detalles"
       choose_category: "Elige una categoría…"
+      search_categories: "Busca categorías…"
+      no_categories_match: "Ninguna categoría coincide"
       no_categories_html: "Todavía no hay categorías: %{link}."
       create_category_first: "crea una primero"
       price_label: "Precio (€)"
       stock: "Stock"
       stock_hint: "Unidades que hay ahora mismo en la clínica"
       warning_hint: "El stock se resalta en naranja cuando baja de este número"
+      photo: "Foto"
+      photo_hint: "JPG, PNG o WebP. Se muestra en miniatura en la lista de productos."
+      photo_hint_change: "Elige una imagen nueva para sustituir la actual."
 
   product_categories:
     all_categories: "Todas las categorías"
@@ -715,6 +728,8 @@ es:
       search_placeholder: "Busca por nombre o descripción…"
       category: "Categoría"
       all_categories: "Todas las categorías"
+      search_categories: "Busca categorías…"
+      no_categories_match: "Ninguna categoría coincide"
       count:
         one: "1 servicio"
         other: "%{count} servicios"
@@ -737,6 +752,8 @@ es:
       create: "Crear servicio"
       details: "Detalles"
       choose_category: "Elige una categoría…"
+      search_categories: "Busca categorías…"
+      no_categories_match: "Ninguna categoría coincide"
       no_categories_html: "Todavía no hay categorías: %{link}."
       create_category_first: "crea una primero"
       price_label: "Precio (€)"
@@ -837,7 +854,11 @@ es:
       choose_employee: "Elige un profesional…"
       billed_to: "Facturar a"
       no_customer: "Sin cliente"
+      search_customers: "Busca clientes…"
+      no_customers_match: "Ningún cliente coincide"
       no_appointment: "Sin cita"
+      search_appointments: "Busca por fecha, título o cliente…"
+      no_appointments_match: "Ninguna cita coincide"
       appointment_hint: "Opcional. Vincula esta factura a la visita que cobra."
       lines: "Líneas"
       line_detail: "Descripción · Precio"

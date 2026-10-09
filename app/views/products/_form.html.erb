@@ -42,10 +42,17 @@
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :product_category_id %></dt>
           <dd class="field-row__value">
-            <%= f.collection_select :product_category_id, categories, :id, :name,
-                  { prompt: t(".choose_category") },
-                  class: "select", required: true,
-                  aria: { invalid: product.errors[:product_category].any? } %>
+            <%# item_picker_controller.js adds a search box to the category list
+                (same dropdown as the invoice lines and the products list filter) %>
+            <div class="item-picker" data-controller="item-picker"
+                 data-item-picker-placeholder-value="<%= t(".search_categories") %>"
+                 data-item-picker-empty-value="<%= t(".no_categories_match") %>">
+              <%= f.collection_select :product_category_id, categories, :id, :name,
+                    { prompt: t(".choose_category") },
+                    class: "select", required: true,
+                    data: { item_picker_target: "select" },
+                    aria: { invalid: product.errors[:product_category].any? } %>
+            </div>
             <% if categories.empty? %>
               <p class="form-hint">
                 <%= t(".no_categories_html", link: link_to(t(".create_category_first"), new_product_category_path)) %>
@@ -63,6 +70,43 @@
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :description %></dt>
           <dd class="field-row__value"><%= f.text_area :description, class: "textarea", rows: 4 %></dd>
+        </div>
+      </dl>
+    </section>
+
+    <%# form_with switches to multipart/form-data by itself when it contains a file_field %>
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".photo") %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :photo %></dt>
+          <dd class="field-row__value">
+            <%# image-preview swaps the placeholder (current photo or icon) for the picked file %>
+            <div class="product-photo-field" data-controller="image-preview">
+              <%# persisted? is false when a just-picked photo failed validation: it isn't
+                  uploaded yet, so there's no URL to show %>
+              <% if product.photo.attached? && product.photo.persisted? %>
+                <%= image_tag product.photo.variant(resize_to_fill: [160, 160]), alt: "",
+                      class: "product-thumb product-thumb--lg", data: { image_preview_target: "placeholder" } %>
+              <% else %>
+                <span class="product-thumb product-thumb--lg" data-image-preview-target="placeholder">
+                  <%= render "shared/icons/shopping_bag" %>
+                </span>
+              <% end %>
+              <img alt="" class="product-thumb product-thumb--lg" hidden data-image-preview-target="image">
+
+              <div class="product-photo-field__input">
+                <%= f.file_field :photo, accept: "image/*", class: "file-input",
+                      data: { action: "change->image-preview#show" },
+                      aria: { describedby: "photo_hint", invalid: product.errors[:photo].any? } %>
+                <p class="form-hint" id="photo_hint">
+                  <%= product.photo.attached? && product.photo.persisted? ? t(".photo_hint_change") : t(".photo_hint") %>
+                </p>
+              </div>
+            </div>
+          </dd>
         </div>
       </dl>
     </section>

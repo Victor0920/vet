@@ -56,6 +56,100 @@ turbo-frame#services {
   white-space: nowrap;
 }
 
+/* ---------- product photos (products#index thumbnail, products/_form) ---------- */
+
+/* Rounded square rather than the round .avatar: products aren't people */
+.product-thumb {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--avatar-md);
+  height: var(--avatar-md);
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  background: var(--color-surface-sunken);
+  box-shadow: 0 0 0 1px var(--color-border);
+  color: var(--color-text-subtle);
+
+  /* The placeholder icon (shared/icons/shopping_bag) */
+  svg {
+    width: 50%;
+    height: 50%;
+  }
+
+  /* display: inline-grid would otherwise beat the hidden attribute */
+  &[hidden] {
+    display: none;
+  }
+}
+
+.product-thumb--lg {
+  width: 5rem;
+  height: 5rem;
+}
+
+/* Just wide enough for the 40px thumbnail */
+.table .products-table__photo {
+  width: 1%;
+  padding-right: 0;
+
+  /* Explicit size: with width: 1% on the cell, the link could otherwise collapse to 0
+     (seen after a search re-renders the frame), hiding the image inside it */
+  a {
+    display: block;
+    width: var(--avatar-md);
+    height: var(--avatar-md);
+    line-height: 0;
+  }
+}
+
+.product-photo-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.product-photo-field__input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+/* Native file input, with its button styled like .btn--secondary */
+.file-input {
+  max-width: 100%;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+
+  &::file-selector-button {
+    height: var(--control-height-sm);
+    margin-right: var(--space-3);
+    padding: 0 var(--space-3);
+    background: var(--color-surface);
+    border: var(--border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+    color: var(--color-text);
+    font: inherit;
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+  }
+
+  &::file-selector-button:hover {
+    background: var(--color-surface-hover);
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:focus-visible::file-selector-button {
+    border-color: var(--color-focus);
+    box-shadow: var(--focus-ring);
+  }
+}
+
 /* Prices line up on the decimal point when right-aligned */
 .table .products-table__price {
   text-align: right;
@@ -87,6 +181,41 @@ turbo-frame#services {
 
 .product-card {
   max-width: 48rem;
+}
+
+/* Photo on the left, details on the right; without a photo the details take the full width */
+.product-card__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+
+  .details {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.product-card__photo {
+  flex-shrink: 0;
+  line-height: 0;
+  border-radius: var(--radius-md);
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+}
+
+.product-thumb--xl {
+  width: 10rem;
+  height: 10rem;
+}
+
+/* Phones: photo on top, details underneath */
+@media (max-width: 40rem) {
+  .product-card__layout {
+    flex-direction: column;
+  }
 }
 
 /* 2-column version of .details; .details__wide spans both columns */

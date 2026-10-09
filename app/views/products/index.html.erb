@@ -31,12 +31,18 @@
           data: { action: "input->search#submit" } %>
   </div>
 
-  <%= label_tag :category_id, t(".category"), class: "sr-only" %>
-  <%= select_tag :category_id,
-        options_from_collection_for_select(@categories, :id, :name, @category_id),
-        include_blank: t(".all_categories"),
-        class: "select products-filters__category",
-        data: { action: "change->search#submit" } %>
+  <%# item_picker_controller.js (same as the invoice lines) turns the select into a dropdown
+      with "All categories" on top and a search box for the categories below it %>
+  <div class="item-picker products-filters__category" data-controller="item-picker"
+       data-item-picker-placeholder-value="<%= t(".search_categories") %>"
+       data-item-picker-empty-value="<%= t(".no_categories_match") %>">
+    <%= label_tag :category_id, t(".category"), class: "sr-only" %>
+    <%= select_tag :category_id,
+          options_from_collection_for_select(@categories, :id, :name, @category_id),
+          include_blank: t(".all_categories"),
+          class: "select",
+          data: { action: "change->search#submit", item_picker_target: "select" } %>
+  </div>
 <% end %>
 
 <%# target: "_top" so links inside (product names) open the full page, not the frame %>
@@ -54,7 +60,7 @@
       <table class="table">
         <thead>
           <tr>
-            <th><%= t("products.columns.id") %></th>
+            <th class="products-table__photo"><span class="sr-only"><%= t("products.columns.photo") %></span></th>
             <th><%= t("products.columns.product") %></th>
             <th><%= t("products.columns.category") %></th>
             <th class="products-table__price"><%= t("products.columns.price") %></th>
@@ -65,7 +71,19 @@
         <tbody>
           <% @products.each do |product| %>
             <tr>
-              <td class="table__numeric">#<%= product.id %></td>
+              <td class="products-table__photo">
+                <%# Same destination as the name link next to it, so it's skipped by keyboard
+                    and screen readers (tabindex -1 + aria-hidden) to avoid announcing it twice %>
+                <%= link_to product_path(product), tabindex: -1, aria: { hidden: true } do %>
+                  <% if product.photo.attached? %>
+                    <%# 80×80 for a 40px thumbnail, so it stays sharp on retina screens %>
+                    <%= image_tag product.photo.variant(resize_to_fill: [80, 80]), alt: "",
+                          class: "product-thumb", loading: "lazy" %>
+                  <% else %>
+                    <span class="product-thumb"><%= render "shared/icons/shopping_bag" %></span>
+                  <% end %>
+                <% end %>
+              </td>
               <td>
                 <div class="product-cell">
                   <%= link_to product.name.presence || t("products.unnamed"), product_path(product),

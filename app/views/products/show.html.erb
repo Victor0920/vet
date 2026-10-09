@@ -34,7 +34,17 @@
 </div>
 
 <section class="card product-card">
-  <div class="card__body">
+  <div class="card__body product-card__layout">
+    <% if @product.photo.attached? %>
+      <%# Thumbnail opens the original, full-size file in a new tab.
+          320×320 for a 160px box, so it stays sharp on retina screens. %>
+      <%= link_to rails_blob_path(@product.photo, disposition: "inline"), target: "_blank",
+            class: "product-card__photo", title: t(".view_photo") do %>
+        <%= image_tag @product.photo.variant(resize_to_fill: [320, 320]),
+              alt: @product.name.to_s, class: "product-thumb product-thumb--xl" %>
+      <% end %>
+    <% end %>
+
     <dl class="details details--grid">
       <div>
         <dt><%= Product.human_attribute_name(:product_category) %></dt>

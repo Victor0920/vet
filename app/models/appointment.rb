@@ -1,6 +1,6 @@
 class Appointment < ApplicationRecord
-  belongs_to :customer
-  belongs_to :pet
+  belongs_to :customer, optional: true
+  belongs_to :pet, optional: true
   belongs_to :employee, default: -> { Current.employee }
   belongs_to :store
   belongs_to :room
