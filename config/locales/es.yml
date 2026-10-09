@@ -393,7 +393,7 @@ es:
         one: "1 cliente coincide con «%{query}»"
         other: "%{count} clientes coinciden con «%{query}»"
       columns:
-        id: "ID"
+        photo: "Foto"
         customer: "Cliente"
         phone: "Teléfono"
         pets: "Mascotas"

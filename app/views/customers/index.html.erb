@@ -50,7 +50,7 @@
         <table class="table">
           <thead>
             <tr>
-              <th><%= t(".columns.id") %></th>
+              <th class="customers-table__photo"><span class="sr-only"><%= t(".columns.photo") %></span></th>
               <th><%= t(".columns.customer") %></th>
               <th><%= t(".columns.phone") %></th>
               <th><%= t(".columns.pets") %></th>
@@ -62,9 +62,10 @@
                 " ",
               ) %>
               <tr>
-                <td class="table__numeric">#<%= customer.id %></td>
-                <td>
-                  <div class="customer-cell">
+                <td class="customers-table__photo">
+                  <%# Same destination as the name link next to it, so it's skipped by keyboard
+                      and screen readers (tabindex -1 + aria-hidden) to avoid announcing it twice %>
+                  <%= link_to customer_path(customer), tabindex: -1, aria: { hidden: true } do %>
                     <% if customer.photo.attached? %>
                       <%= image_tag customer.photo.variant(resize_to_fill: [80, 80]),
                       alt: "",
@@ -72,14 +73,16 @@
                     <% else %>
                       <span class="avatar"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
                     <% end %>
-                    <div class="customer-cell__text">
-                      <%= link_to full_name.presence || t("shared.unnamed_customer"),
-                      customer_path(customer),
-                      class: "customer-cell__name" %>
-                      <% if customer.email.present? %>
-                        <span class="customer-cell__meta"><%= customer.email %></span>
-                      <% end %>
-                    </div>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="customer-cell__text">
+                    <%= link_to full_name.presence || t("shared.unnamed_customer"),
+                    customer_path(customer),
+                    class: "customer-cell__name" %>
+                    <% if customer.email.present? %>
+                      <span class="customer-cell__meta"><%= customer.email %></span>
+                    <% end %>
                   </div>
                 </td>
                 <td class="table__numeric"><%= customer.first_phone.presence || "—" %></td>

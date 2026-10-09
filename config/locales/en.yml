@@ -404,7 +404,7 @@ en:
         one: "1 customer matching “%{query}”"
         other: "%{count} customers matching “%{query}”"
       columns:
-        id: "ID"
+        photo: "Photo"
         customer: "Customer"
         phone: "Phone number"
         pets: "Pets"
