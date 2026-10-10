@@ -1,0 +1,4 @@
+<% title = t(".title", name: @room.name_was.presence || t("shared.unnamed")) %>
+<% content_for :title, title %>
+
+<%= render "form", store: @store, room: @room, title: title %>

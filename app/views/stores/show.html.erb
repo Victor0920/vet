@@ -1,0 +1,82 @@
+<% content_for :title, @store.name.presence || t("stores.number", id: @store.id) %>
+
+<%= link_to stores_path, class: "back-link" do %>
+  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+  <%= t("stores.all_stores") %>
+<% end %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= @store.name.presence || t("stores.unnamed") %></h1>
+    <p class="page-header__subtitle">
+      <%= t("stores.number", id: @store.id) %> · <%= t("stores.rooms_count", count: @store.rooms.size) %>
+    </p>
+  </div>
+  <div class="page-header__actions">
+    <%= link_to edit_store_path(@store), class: "btn btn--secondary" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+          d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
+        /><path
+          d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
+        /></svg>
+      <%= t(".edit_store") %>
+    <% end %>
+  </div>
+</div>
+
+<section class="card">
+  <div class="card__body store-details">
+    <% if @store.photo.attached? %>
+      <%= image_tag @store.photo.variant(resize_to_fill: [320, 320]), alt: @store.name.to_s, class: "store-details__photo" %>
+    <% end %>
+
+    <dl class="details details--grid">
+      <div>
+        <dt><%= Store.human_attribute_name(:address) %></dt>
+        <dd><%= @store.address.presence || "—" %></dd>
+      </div>
+      <div>
+        <dt><%= Store.human_attribute_name(:post_code) %></dt>
+        <dd><%= @store.post_code.presence || "—" %></dd>
+      </div>
+      <div>
+        <dt><%= t(".added") %></dt>
+        <dd><%= l(@store.created_at, format: :display) %></dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<header class="customer-profile__section-header customer-profile__section-header--spaced">
+  <div>
+    <h2 class="section__title"><%= t(".rooms") %></h2>
+    <p class="text-muted"><%= t(".rooms_hint") %></p>
+  </div>
+  <%= link_to new_store_room_path(@store), class: "btn btn--primary" do %>
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+        d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+      /></svg>
+    <%= t(".new_room") %>
+  <% end %>
+</header>
+
+<% if @store.rooms.any? %>
+  <ul class="rooms-list">
+    <% @store.rooms.each do |room| %>
+      <li>
+        <%= link_to edit_store_room_path(@store, room), class: "card card--interactive rooms-list__item" do %>
+          <%# color-swatch--<name> only sets the --swatch colours, so the icon takes the room's colour %>
+          <span class="rooms-list__icon <%= "color-swatch--#{room.color}" if room.color %>"><%= render "shared/icons/building_office" %></span>
+          <span class="rooms-list__name"><%= room.name.presence || t("shared.unnamed") %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <div class="empty-state">
+    <%= render "shared/icons/building_office" %>
+    <p class="empty-state__title"><%= t("stores.no_rooms") %></p>
+    <p><%= t(".no_rooms_hint") %></p>
+    <%= link_to t(".add_first_room"), new_store_room_path(@store), class: "btn btn--secondary btn--sm" %>
+  </div>
+<% end %>

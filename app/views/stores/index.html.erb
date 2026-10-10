@@ -1,0 +1,60 @@
+<% content_for :title, t(".title") %>
+
+<%= link_to settings_path, class: "back-link" do %>
+  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+  <%= t("settings.back") %>
+<% end %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".count", count: @stores.size) %></p>
+  </div>
+  <div class="page-header__actions">
+    <%= link_to new_store_path, class: "btn btn--primary" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+          d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+        /></svg>
+      <%= t(".new_store") %>
+    <% end %>
+  </div>
+</div>
+
+<% if @stores.any? %>
+  <div class="stores-grid">
+    <% @stores.each do |store| %>
+      <%= link_to store_path(store), class: "card card--interactive store-card" do %>
+        <div class="store-card__media">
+          <% if store.photo.attached? %>
+            <%= image_tag store.photo.variant(resize_to_fill: [640, 320]), alt: "", class: "store-card__photo" %>
+          <% else %>
+            <span class="store-card__placeholder"><%= render "shared/icons/building_storefront" %></span>
+          <% end %>
+        </div>
+
+        <div class="store-card__body">
+          <h2 class="store-card__name"><%= store.name.presence || t("stores.unnamed") %></h2>
+          <p class="store-card__address">
+            <%= [store.address, store.post_code].compact_blank.join(", ").presence || t("stores.no_address") %>
+          </p>
+
+          <% if store.rooms.any? %>
+            <div class="store-card__rooms">
+              <% store.rooms.each do |room| %>
+                <span class="badge <%= "badge--#{room.color}" if room.color %>"><%= room.name.presence || t("shared.unnamed") %></span>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="text-subtle text-xs"><%= t("stores.no_rooms") %></p>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <%= render "shared/icons/building_storefront" %>
+    <p class="empty-state__title"><%= t(".empty") %></p>
+    <p><%= t(".empty_hint") %></p>
+  </div>
+<% end %>

@@ -20,10 +20,38 @@ es:
       hour: "%H:%M" # 09:30
       short_datetime: "%-d %b, %H:%M" # 6 oct, 09:30
       full: "%-d %b %Y a las %H:%M" # 6 oct 2026 a las 09:30
+  # time_ago_in_words / distance_of_time_in_words ("2 horas", "3 meses"…).
+  # Sustituye el "alrededor de / casi / más de 2 años" de rails-i18n: solo número y unidad
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: "%{count} hora"
+        other: "%{count} horas"
+      about_x_months:
+        one: "%{count} mes"
+        other: "%{count} meses"
+      about_x_years:
+        one: "%{count} año"
+        other: "%{count} años"
+      almost_x_years:
+        one: "%{count} año"
+        other: "%{count} años"
+      over_x_years:
+        one: "%{count} año"
+        other: "%{count} años"
 
   # ---------- Modelos y atributos ----------
   activerecord:
     models:
+      store:
+        one: "Centro"
+        other: "Centros"
+      room:
+        one: "Sala"
+        other: "Salas"
+      enterprise:
+        one: "Empresa"
+        other: "Empresas"
       appointment:
         one: "Cita"
         other: "Citas"
@@ -55,6 +83,20 @@ es:
         one: "Línea de factura"
         other: "Líneas de factura"
     attributes:
+      store:
+        name: "Nombre"
+        address: "Dirección"
+        post_code: "Código postal"
+        photo: "Foto"
+        color: "Color"
+      room:
+        name: "Nombre"
+        color: "Color"
+      enterprise:
+        name: "Nombre comercial"
+        legal_name: "Razón social"
+        cif: "CIF"
+        address: "Dirección"
       appointment:
         title: "Título"
         starts_at: "Inicio"
@@ -178,6 +220,17 @@ es:
 
   # ---------- Mensajes flash (controladores) ----------
   flash:
+    rooms:
+      updated: "Sala actualizada"
+      created: "Sala creada"
+      not_found: "Sala no encontrada"
+    not_authorized: "No tienes acceso a esa página"
+    stores:
+      not_found: "Centro no encontrado"
+      updated: "Centro actualizado"
+      created: "Centro creado"
+    enterprise:
+      updated: "Datos de la empresa actualizados"
     appointments:
       created: "Cita creada"
       updated: "Cita actualizada"
@@ -318,8 +371,75 @@ es:
     mailer:
       footer: "Recibes este correo por actividad en tu cuenta de Vet."
 
+  # ---------- Centros y empresa (área de configuración) ----------
+  stores:
+    all_stores: "Todos los centros"
+    unnamed: "Centro sin nombre"
+    number: "Centro n.º %{id}"
+    no_address: "Sin dirección"
+    no_rooms: "Todavía no hay salas"
+    rooms_count:
+      one: "1 sala"
+      other: "%{count} salas"
+    index:
+      title: "Centros y salas"
+      heading: "Centros y salas"
+      new_store: "Nuevo centro"
+      count:
+        one: "1 centro"
+        other: "%{count} centros"
+      empty: "Todavía no hay centros"
+      empty_hint: "Tus clínicas aparecerán aquí."
+    show:
+      edit_store: "Editar centro"
+      added: "Alta"
+      rooms: "Salas"
+      rooms_hint: "Donde se reservan las citas en este centro."
+      no_rooms_hint: "Las salas de este centro aparecerán aquí."
+      new_room: "Nueva sala"
+      add_first_room: "Añade la primera sala"
+    new:
+      title: "Nuevo centro"
+    edit:
+      title: "Editar %{name}"
+    form:
+      back_to_store: "Volver al centro"
+      create: "Crear centro"
+      details: "Detalles"
+      photo_hint: "JPG, PNG o WebP. Se muestra en la lista de centros."
+      photo_hint_change: "Elige una imagen nueva para sustituir la actual."
+
+  profiles:
+    show:
+      title: "Mi perfil"
+
+  rooms:
+    new:
+      title: "Nueva sala en %{store}"
+    edit:
+      title: "Editar %{name}"
+    form:
+      back_to: "Volver a %{store}"
+      details: "Detalles"
+      name_placeholder: "Nombre de la sala"
+      create: "Crear sala"
+
+  enterprises:
+    edit:
+      title: "Editar datos de la empresa"
+    show:
+      title: "Datos de la empresa"
+      subtitle: "Cómo aparece tu negocio en las facturas y ante los clientes."
+      edit: "Editar datos"
+      legal_details: "Datos fiscales"
+      legal_details_hint: "Aparecen en todas las facturas."
+      registered: "Alta"
+      stores: "Centros"
+      manage_stores: "Gestionar centros"
+
   # ---------- Configuración (área de administración) ----------
   settings:
+    back: "Configuración"
     show:
       title: "Configuración"
       heading: "Configuración"
@@ -550,11 +670,27 @@ es:
 
   # ---------- Empleados ----------
   employees:
+    all_employees: "Todos los empleados"
     roles:
       admin: "Admin"
       vet: "Vet"
       atv: "ATV"
       recepcionist: "Recepcionista"
+    index:
+      title: "Empleados"
+      heading: "Empleados"
+      count:
+        one: "1 empleado"
+        other: "%{count} empleados"
+      columns:
+        employee: "Empleado"
+        status: "Estado"
+      empty: "Todavía no hay empleados"
+      empty_hint: "Las cuentas del equipo de tu empresa aparecerán aquí."
+    # Cada idioma en su propio idioma, como el selector del perfil
+    languages:
+      es: "Español"
+      en: "English"
     show:
       number: "Empleado n.º %{id}"
       active: "Activo"

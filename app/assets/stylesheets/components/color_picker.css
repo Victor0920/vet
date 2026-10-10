@@ -118,3 +118,10 @@
 .color-picker:has(.color-picker__input[value="purple"]:checked) { --picked: var(--category-purple); --picked-highlight: var(--category-purple-highlight); }
 .color-picker:has(.color-picker__input[value="pink"]:checked)   { --picked: var(--category-pink);   --picked-highlight: var(--category-pink-highlight); }
 .color-picker:has(.color-picker__input[value="gray"]:checked)   { --picked: var(--category-gray);   --picked-highlight: var(--category-gray-highlight); }
+
+/* Categories tables: first column with an "Aa" pill in the category's colour,
+   just wide enough for it */
+.table .category-color-cell {
+  width: 1%;
+  padding-right: 0;
+}

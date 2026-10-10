@@ -370,6 +370,46 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Rooms view: each room in its colour ---------- */
+
+/* The room's colour comes from a color-swatch--<name> class on the header cell and the
+   column (it sets --swatch and --swatch-highlight). A room without a colour has neither,
+   so every var() falls back to the usual teal. */
+.time-grid--rooms {
+  .time-grid__day {
+    border-top: 3px solid var(--swatch, transparent);
+  }
+
+  /* Coloured dot before the room name */
+  .time-grid__room {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1-5);
+
+    &::before {
+      content: "";
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: var(--radius-full);
+      background: var(--swatch, var(--color-primary));
+    }
+  }
+
+  .cal-event {
+    background: var(--swatch-highlight, var(--color-primary-subtle));
+    border-color: color-mix(in srgb, var(--swatch, var(--color-primary)) 35%, transparent);
+    border-left-color: var(--swatch, var(--color-primary));
+
+    &:hover {
+      background: color-mix(in srgb, var(--swatch-highlight, var(--color-primary-subtle)), var(--swatch, var(--color-primary)) 12%);
+    }
+  }
+
+  .cal-event__time {
+    color: var(--swatch, var(--color-primary-text));
+  }
+}
+
 /* ---------- Month grid ---------- */
 
 .month-grid {

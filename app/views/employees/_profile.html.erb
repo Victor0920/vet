@@ -1,0 +1,141 @@
+<%# An employee's profile: card on the left, their upcoming appointments on the right.
+    Same layout as customers/show. Rendered by:
+      employees/show - an admin looking at anyone (/settings/employees/:id)
+      profiles/show  - the signed-in employee looking at themselves (/profile)
+    Locals:
+      employee     - the Employee
+      appointments - their upcoming appointments (the controller loads them)
+      own_profile  - true on /profile: shows the language picker %>
+<div class="customer-profile">
+  <aside class="card customer-profile__sidebar">
+    <div class="customer-profile__header">
+      <% if employee.photo.attached? %>
+        <%= image_tag employee.photo.variant(resize_to_fill: [192, 192]),
+        alt: employee.display_name,
+        class: "avatar avatar--xl avatar--photo" %>
+      <% else %>
+        <span class="avatar avatar--xl"><%= (
+            employee.first_name.to_s.first.to_s + employee.last_name.to_s.first.to_s
+          ).presence || employee.email_address.first.upcase %></span>
+      <% end %>
+      <div>
+        <h1 class="customer-profile__name"><%= employee.display_name %></h1>
+        <p class="text-subtle text-xs"><%= t("employees.show.number", id: employee.id) %></p>
+      </div>
+      <div class="row">
+        <% if employee.role.present? %>
+          <span class="badge badge--primary"><%= t(employee.role, scope: "employees.roles", default: employee.role.humanize) %></span>
+        <% end %>
+        <%# active is nil for employees created before the column existed, so only false counts as inactive %>
+        <% if employee.active == false %>
+          <span class="badge badge--danger"><%= t("employees.show.inactive") %></span>
+        <% else %>
+          <span class="badge badge--success"><%= t("employees.show.active") %></span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card__body">
+      <dl class="details">
+        <div>
+          <dt><%= Employee.human_attribute_name(:email_address) %></dt>
+          <dd><%= mail_to employee.email_address %></dd>
+        </div>
+        <div>
+          <dt><%= Employee.human_attribute_name(:phone) %></dt>
+          <dd><%= employee.phone.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt><%= Employee.human_attribute_name(:role) %></dt>
+          <dd><%= employee.role.present? ? t(employee.role, scope: "employees.roles", default: employee.role.humanize) : "—" %></dd>
+        </div>
+        <div>
+          <dt><%= t("employees.show.enterprise") %></dt>
+          <dd><%= employee.enterprise.name.presence || "—" %></dd>
+        </div>
+        <div>
+          <dt><%= t("employees.show.employee_since") %></dt>
+          <dd><%= l(employee.created_at, format: :display) %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <%# Language picker, only on your own profile (/profile). Changing it submits the form right away
+        (auto_submit_controller.js) and ProfilesController#update saves employee.locale.
+        url + method because /profile is a singular resource: there's no id in the URL to build it from.
+        Language names are written in their own language, so everyone can find theirs. %>
+    <% if own_profile %>
+      <footer class="card__footer">
+        <%= form_with model: employee, url: profile_path, method: :patch, class: "form-field",
+              data: { controller: "auto-submit" } do |f| %>
+          <%= f.label :locale, t("employees.show.language"), class: "label" %>
+          <%= f.select :locale, [["Español", "es"], ["English", "en"]], {},
+                class: "select select--sm",
+                data: { action: "change->auto-submit#submit" } %>
+          <p class="form-hint"><%= t("employees.show.language_hint") %></p>
+        <% end %>
+      </footer>
+    <% end %>
+  </aside>
+
+  <section class="customer-profile__main">
+    <header class="customer-profile__section-header">
+      <div>
+        <h2 class="section__title"><%= t("employees.show.appointments") %></h2>
+        <p class="text-muted"><%= t("employees.show.appointments_count", count: appointments.size) %></p>
+      </div>
+    </header>
+
+    <% if appointments.any? %>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%= t("employees.show.columns.when") %></th>
+              <th><%= t("employees.show.columns.appointment") %></th>
+              <th><%= t("employees.show.columns.customer") %></th>
+              <th><%= t("employees.show.columns.pet") %></th>
+              <th><%= t("employees.show.columns.room") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% appointments.each do |appointment| %>
+              <tr>
+                <td class="table__numeric">
+                  <%= l(appointment.starts_at, format: :display) %><br>
+                  <%= l(appointment.starts_at, format: :hour) %>–<%= l(appointment.ends_at, format: :hour) %>
+                </td>
+                <td class="table__truncate">
+                  <%= link_to appointment.title.presence || t("shared.untitled"), edit_appointment_path(appointment) %>
+                </td>
+                <%# Customer and pet are optional on an appointment %>
+                <td>
+                  <% if appointment.customer %>
+                    <%= link_to appointment.customer.full_name, customer_path(appointment.customer) %>
+                  <% else %>
+                    <span class="text-subtle">—</span>
+                  <% end %>
+                </td>
+                <td>
+                  <% if appointment.pet %>
+                    <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"),
+                          customer_pet_path(appointment.pet.customer, appointment.pet) %>
+                  <% else %>
+                    <span class="text-subtle">—</span>
+                  <% end %>
+                </td>
+                <td><%= appointment.room.name %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/></svg>
+        <p class="empty-state__title"><%= t("employees.show.empty") %></p>
+        <p><%= t("employees.show.empty_hint") %></p>
+      </div>
+    <% end %>
+  </section>
+</div>

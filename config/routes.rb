@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     resources :pets
   end
 
-  resources :employees
+  resource :profile, only: %i[ show update ]
   resources :appointments
 
   scope "products" do
@@ -48,9 +48,11 @@ Rails.application.routes.draw do
   post "/conversations/:id/messages", to: "conversations#create_message"
 
   scope "settings" do
-    resources :stores, path: "stores"
-    resources :enterprises, path: "enterprise", only: [ :show, :edit ]
-    resources :employees, path: "employees", only: [ :show, :edit ]
+    resource :enterprise, only: %i[ show edit update ]
+    resources :employees, path: "employees"
+    resources :stores, path: "stores" do
+      resources :rooms, only: %i[ new create edit update ]
+    end
   end
   resource :settings, only: :show
 

@@ -20,9 +20,9 @@
       <p class="settings-group__description"><%= t(".groups.business.description") %></p>
     </header>
     <div class="settings-group__tiles">
-      <%= render "settings/tile", icon: "building_office",
+      <%= render "settings/tile", icon: "building_office", path: enterprise_path,
             title: t(".tiles.enterprise.title"), description: t(".tiles.enterprise.description") %>
-      <%= render "settings/tile", icon: "building_storefront",
+      <%= render "settings/tile", icon: "building_storefront", path: stores_path,
             title: t(".tiles.stores.title"), description: t(".tiles.stores.description") %>
     </div>
   </section>
@@ -33,7 +33,7 @@
       <p class="settings-group__description"><%= t(".groups.team.description") %></p>
     </header>
     <div class="settings-group__tiles">
-      <%= render "settings/tile", icon: "customers",
+      <%= render "settings/tile", icon: "customers", path: employees_path,
             title: t(".tiles.employees.title"), description: t(".tiles.employees.description") %>
     </div>
   </section>

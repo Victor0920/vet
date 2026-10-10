@@ -27,7 +27,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th><%= t("services.columns.id") %></th>
+          <th class="category-color-cell"><span class="sr-only"><%= ServiceCategory.human_attribute_name(:color) %></span></th>
           <th><%= t("services.columns.category") %></th>
           <th><%= t(".columns.services") %></th>
           <th><%= t(".columns.created") %></th>
@@ -37,7 +37,12 @@
       <tbody>
         <% @categories.each do |category| %>
           <tr>
-            <td class="table__numeric">#<%= category.id %></td>
+            <td class="category-color-cell">
+              <%# A sample of how this category's pills look: same badge--<colour> as shared/_category_badge,
+                  teal when it has no colour. aria-hidden: "Aa" means nothing read aloud, the title names the colour %>
+              <span class="badge <%= category.color ? "badge--#{category.color}" : "badge--primary" %>" aria-hidden="true"
+                    title="<%= category.color ? t(category.color, scope: "shared.colors") : t("shared.no_color") %>">Aa</span>
+            </td>
             <td>
               <%= link_to category.name.presence || t("service_categories.unnamed"), service_category_path(category),
                     class: "product-cell__name" %>

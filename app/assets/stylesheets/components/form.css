@@ -296,3 +296,8 @@
     padding-left: calc(var(--space-3) + var(--icon-sm) + var(--space-2));
   }
 }
+
+/* Narrower input for short values (post code, CIF…) */
+.input--short {
+  max-width: 12rem;
+}

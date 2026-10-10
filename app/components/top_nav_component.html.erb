@@ -60,7 +60,7 @@
   <% employee = Current.session&.employee %>
   <div class="sidebar__footer">
 
-    <%= link_to helpers.employee_path(employee) do %>
+    <%= link_to helpers.profile_path, aria: { current: ("page" if request.path == helpers.profile_path) } do %>
       <span class="avatar avatar--sm"><%= employee&.email_address.to_s.first %></span>
       <span class="sidebar__user" title="<%= employee&.email_address %>"><%= employee&.email_address %></span>
     <% end %>

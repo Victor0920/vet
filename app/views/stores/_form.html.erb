@@ -1,0 +1,97 @@
+<%# Shared by stores/new and /edit %>
+<% back_path = store.persisted? ? store_path(store) : stores_path %>
+
+<%= form_with model: store do |f| %>
+  <div class="resource-form__toolbar">
+    <%= link_to back_path, class: "back-link" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+      <%= store.persisted? ? t(".back_to_store") : t("stores.all_stores") %>
+    <% end %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), back_path, class: "btn btn--ghost" %>
+      <%= f.submit (store.persisted? ? t("shared.save_changes") : t(".create")), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title">
+      <%= store.persisted? ? t("stores.edit.title", name: store.name_was.presence || t("stores.number", id: store.id)) : t("stores.new.title") %>
+    </h1>
+
+    <% if store.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% store.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".details") %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :name %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :name, class: "input", required: true, autofocus: true,
+                  aria: { invalid: store.errors[:name].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :address %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :address, class: "input", autocomplete: "street-address",
+                  aria: { invalid: store.errors[:address].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :post_code %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :post_code, class: "input input--short", autocomplete: "postal-code", inputmode: "numeric",
+                  aria: { invalid: store.errors[:post_code].any? } %>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <%# form_with switches to multipart/form-data by itself when it contains a file_field %>
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= Store.human_attribute_name(:photo) %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :photo %></dt>
+          <dd class="field-row__value">
+            <%# Same photo picker as products: image-preview swaps the placeholder for the picked file %>
+            <div class="product-photo-field" data-controller="image-preview">
+              <% if store.photo.attached? && store.photo.persisted? %>
+                <%= image_tag store.photo.variant(resize_to_fill: [160, 160]), alt: "",
+                      class: "product-thumb product-thumb--lg", data: { image_preview_target: "placeholder" } %>
+              <% else %>
+                <span class="product-thumb product-thumb--lg" data-image-preview-target="placeholder">
+                  <%= render "shared/icons/building_storefront" %>
+                </span>
+              <% end %>
+              <img alt="" class="product-thumb product-thumb--lg" hidden data-image-preview-target="image">
+
+              <div class="product-photo-field__input">
+                <%= f.file_field :photo, accept: "image/*", class: "file-input",
+                      data: { action: "change->image-preview#show" },
+                      aria: { describedby: "photo_hint", invalid: store.errors[:photo].any? } %>
+                <p class="form-hint" id="photo_hint">
+                  <%= store.photo.attached? && store.photo.persisted? ? t(".photo_hint_change") : t(".photo_hint") %>
+                </p>
+              </div>
+            </div>
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+<% end %>

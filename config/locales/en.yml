@@ -30,10 +30,38 @@ en:
       hour: "%H:%M" # 09:30
       short_datetime: "%b %-d, %H:%M" # Oct 6, 09:30
       full: "%b %-d, %Y at %H:%M" # Oct 6, 2026 at 09:30
+  # time_ago_in_words / distance_of_time_in_words ("2 hours", "3 months"…).
+  # Overrides Rails' "about / almost / over 2 years" wording: just the number and unit
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: "%{count} hour"
+        other: "%{count} hours"
+      about_x_months:
+        one: "%{count} month"
+        other: "%{count} months"
+      about_x_years:
+        one: "%{count} year"
+        other: "%{count} years"
+      almost_x_years:
+        one: "%{count} year"
+        other: "%{count} years"
+      over_x_years:
+        one: "%{count} year"
+        other: "%{count} years"
 
   # ---------- Models & attributes ----------
   activerecord:
     models:
+      store:
+        one: "Store"
+        other: "Stores"
+      room:
+        one: "Room"
+        other: "Rooms"
+      enterprise:
+        one: "Company"
+        other: "Companies"
       appointment:
         one: "Appointment"
         other: "Appointments"
@@ -65,6 +93,20 @@ en:
         one: "Invoice line"
         other: "Invoice lines"
     attributes:
+      store:
+        name: "Name"
+        address: "Address"
+        post_code: "Post code"
+        photo: "Photo"
+        color: "Colour"
+      room:
+        name: "Name"
+        color: "Colour"
+      enterprise:
+        name: "Trading name"
+        legal_name: "Legal name"
+        cif: "CIF"
+        address: "Address"
       appointment:
         title: "Title"
         starts_at: "Starts"
@@ -189,6 +231,17 @@ en:
 
   # ---------- Flash messages (controllers) ----------
   flash:
+    rooms:
+      updated: "Room updated"
+      created: "Room created"
+      not_found: "Room not found"
+    not_authorized: "You don't have access to that page"
+    stores:
+      not_found: "Store not found"
+      updated: "Store updated"
+      created: "Store created"
+    enterprise:
+      updated: "Company details updated"
     appointments:
       created: "Appointment created"
       updated: "Appointment updated"
@@ -329,8 +382,75 @@ en:
     mailer:
       footer: "You're receiving this email because of activity on your Vet account."
 
+  # ---------- Stores & company (settings area) ----------
+  stores:
+    all_stores: "All stores"
+    unnamed: "Unnamed store"
+    number: "Store #%{id}"
+    no_address: "No address yet"
+    no_rooms: "No rooms yet"
+    rooms_count:
+      one: "1 room"
+      other: "%{count} rooms"
+    index:
+      title: "Stores & rooms"
+      heading: "Stores & rooms"
+      new_store: "New store"
+      count:
+        one: "1 store"
+        other: "%{count} stores"
+      empty: "No stores yet"
+      empty_hint: "Your clinics will show up here."
+    show:
+      edit_store: "Edit store"
+      added: "Added"
+      rooms: "Rooms"
+      rooms_hint: "Where appointments are booked in this store."
+      no_rooms_hint: "Rooms added to this store will show up here."
+      new_room: "New room"
+      add_first_room: "Add the first room"
+    new:
+      title: "New store"
+    edit:
+      title: "Edit %{name}"
+    form:
+      back_to_store: "Back to store"
+      create: "Create store"
+      details: "Details"
+      photo_hint: "JPG, PNG or WebP. Shown on the stores list."
+      photo_hint_change: "Pick a new image to replace the current one."
+
+  profiles:
+    show:
+      title: "My profile"
+
+  rooms:
+    new:
+      title: "New room in %{store}"
+    edit:
+      title: "Edit %{name}"
+    form:
+      back_to: "Back to %{store}"
+      details: "Details"
+      name_placeholder: "Room name"
+      create: "Create room"
+
+  enterprises:
+    edit:
+      title: "Edit company details"
+    show:
+      title: "Company details"
+      subtitle: "How your business appears on invoices and to customers."
+      edit: "Edit details"
+      legal_details: "Legal details"
+      legal_details_hint: "Printed on every invoice."
+      registered: "Registered"
+      stores: "Stores"
+      manage_stores: "Manage stores"
+
   # ---------- Settings (admin area) ----------
   settings:
+    back: "Settings"
     show:
       title: "Settings"
       heading: "Settings"
@@ -561,6 +681,7 @@ en:
 
   # ---------- Employees ----------
   employees:
+    all_employees: "All employees"
     # Translations for employee.role values (the key is what's stored in the database);
     # unknown roles fall back to role.humanize
     roles:
@@ -568,6 +689,21 @@ en:
       vet: "Vet"
       atv: "ATV"
       recepcionist: "Receptionist"
+    index:
+      title: "Employees"
+      heading: "Employees"
+      count:
+        one: "1 employee"
+        other: "%{count} employees"
+      columns:
+        employee: "Employee"
+        status: "Status"
+      empty: "No employees yet"
+      empty_hint: "Staff accounts for your company will show up here."
+    # Each language in its own language, like the picker on the profile page
+    languages:
+      es: "Español"
+      en: "English"
     show:
       number: "Employee #%{id}"
       active: "Active"
