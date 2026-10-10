@@ -18,6 +18,7 @@ class Appointment < ApplicationRecord
 
   # Appointments that overlap the period from..to, even partly
   scope :overlapping, ->(from, to) { where("starts_at < ? AND ends_at > ?", to, from) }
+  scope :upcoming, -> { where("starts_at >= ?", Time.current).order(:starts_at) }
 
   # Matches the appointment title or the pet's name
   scope :search, ->(query) {

@@ -1,10 +1,11 @@
-<%# A row of colour swatches for a Colorable record (product/service categories),
-    plus a preview of the category's pill in the selected colour.
+<%# A row of colour swatches for a Colorable record (product/service categories, rooms),
+    plus a preview of the record's pill in the selected colour.
     Each swatch is a real radio button, hidden behind a styled <label>, so it works
     without JavaScript and with the keyboard (arrow keys move between colours).
     The preview follows the checked radio with CSS only (:has(), see color_picker.css).
     Locals:
-      f - the form builder %>
+      f           - the form builder
+      placeholder - preview text while the record has no name yet (default "Category name") %>
 
 <div class="color-picker">
   <fieldset class="color-picker__options">
@@ -28,6 +29,6 @@
   <%# aria-hidden: it only repeats the name and colour already in the form %>
   <div class="color-picker__preview" aria-hidden="true">
     <span class="color-picker__preview-label"><%= t("shared.preview") %></span>
-    <span class="badge color-picker__badge"><%= f.object.name.presence || t("shared.category_name_placeholder") %></span>
+    <span class="badge color-picker__badge"><%= f.object.name.presence || local_assigns.fetch(:placeholder, t("shared.category_name_placeholder")) %></span>
   </div>
 </div>

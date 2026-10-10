@@ -1,0 +1,75 @@
+<% content_for :title, t(".title") %>
+
+<%= render "shared/back_link", path: settings_path, label: t("settings.back") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".count", count: @employees.size) %></p>
+  </div>
+</div>
+
+<% if @employees.any? %>
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="customers-table__photo"><span class="sr-only"><%= Employee.human_attribute_name(:photo) %></span></th>
+          <th><%= t(".columns.employee") %></th>
+          <th><%= Employee.human_attribute_name(:role) %></th>
+          <th><%= Employee.human_attribute_name(:phone) %></th>
+          <th><%= Employee.human_attribute_name(:locale) %></th>
+          <th><%= t(".columns.status") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @employees.each do |employee| %>
+          <%# Same initials fallback as employees/show %>
+          <% initials = (employee.first_name.to_s.first.to_s + employee.last_name.to_s.first.to_s).presence ||
+                        employee.email_address.first.upcase %>
+          <tr class="<%= "employees-table__row--inactive" if employee.active == false %>">
+            <td class="customers-table__photo">
+              <%# Same destination as the name link next to it: hidden from keyboard and screen readers %>
+              <%= link_to employee_path(employee), tabindex: -1, aria: { hidden: true } do %>
+                <% if employee.photo.attached? %>
+                  <%= image_tag employee.photo.variant(resize_to_fill: [80, 80]), alt: "", class: "avatar avatar--photo" %>
+                <% else %>
+                  <span class="avatar"><%= initials %></span>
+                <% end %>
+              <% end %>
+            </td>
+            <td>
+              <div class="customer-cell__text">
+                <%= link_to employee.display_name, employee_path(employee), class: "customer-cell__name" %>
+                <span class="customer-cell__meta"><%= employee.email_address %></span>
+              </div>
+            </td>
+            <td>
+              <% if employee.role.present? %>
+                <span class="badge badge--primary"><%= t(employee.role, scope: "employees.roles", default: employee.role.humanize) %></span>
+              <% else %>
+                <span class="text-subtle">—</span>
+              <% end %>
+            </td>
+            <td class="table__numeric"><%= employee.phone.presence || "—" %></td>
+            <td><%= t(employee.locale, scope: "employees.languages", default: employee.locale.to_s.upcase) %></td>
+            <td>
+              <%# active is nil for employees created before the column existed, so only false counts as inactive %>
+              <% if employee.active == false %>
+                <span class="badge badge--danger"><%= t("employees.show.inactive") %></span>
+              <% else %>
+                <span class="badge badge--success"><%= t("employees.show.active") %></span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <%= render "shared/icons/customers" %>
+    <p class="empty-state__title"><%= t(".empty") %></p>
+    <p><%= t(".empty_hint") %></p>
+  </div>
+<% end %>

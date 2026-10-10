@@ -1,0 +1,4 @@
+<% title = t(".title", store: @store.name.presence || t("stores.unnamed")) %>
+<% content_for :title, title %>
+
+<%= render "form", store: @store, room: @room, title: title %>

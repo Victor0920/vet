@@ -1,9 +1,6 @@
 <% content_for :title, t(".title") %>
 
-<%= link_to products_path, class: "back-link" do %>
-  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-  <%= t("products.all_products") %>
-<% end %>
+<%= render "shared/back_link", path: products_path, label: t("products.all_products") %>
 
 <div class="page-header">
   <div>
@@ -27,7 +24,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th><%= t("products.columns.id") %></th>
+          <th class="category-color-cell"><span class="sr-only"><%= ProductCategory.human_attribute_name(:color) %></span></th>
           <th><%= t("products.columns.category") %></th>
           <th><%= t(".columns.products") %></th>
           <th><%= t(".columns.created") %></th>
@@ -37,9 +34,14 @@
       <tbody>
         <% @categories.each do |category| %>
           <tr>
-            <td class="table__numeric">#<%= category.id %></td>
+            <td class="category-color-cell">
+              <%# A sample of how this category's pills look: same badge--<colour> as shared/_category_badge,
+                  teal when it has no colour. aria-hidden: "Aa" means nothing read aloud, the title names the colour %>
+              <span class="badge <%= category.color ? "badge--#{category.color}" : "badge--primary" %>" aria-hidden="true"
+                    title="<%= category.color ? t(category.color, scope: "shared.colors") : t("shared.no_color") %>">Aa</span>
+            </td>
             <td>
-              <%= link_to category.name.presence || t("product_categories.unnamed"), product_category_path(category),
+              <%= link_to category.name.presence || t("product_categories.unnamed"), product_category_path(category, return_to: carried_location),
                     class: "product-cell__name" %>
             </td>
             <td class="table__numeric"><%= t("product_categories.products_count", count: category.products.size) %></td>

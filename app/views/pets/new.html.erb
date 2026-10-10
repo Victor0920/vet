@@ -5,10 +5,7 @@
     all inside one form that is saved with the button in the top right corner. %>
 <%= form_with model: [@customer, @pet] do |f| %>
   <div class="customer-form__toolbar">
-    <%= link_to customer_path(@customer), class: "back-link" do %>
-      <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-      <%= t(".back_to", name: owner_name) %>
-    <% end %>
+    <%= render "shared/back_link", path: customer_path(@customer), label: t(".back_to", name: owner_name) %>
 
     <div class="page-header__actions">
       <%= link_to t("shared.cancel"), customer_path(@customer), class: "btn btn--ghost" %>

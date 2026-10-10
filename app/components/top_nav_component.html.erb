@@ -42,18 +42,25 @@
       <%= render "shared/icons/heart" %>
       <span><%= t("components.top_nav.services") %></span>
     <% end %>
-
     <%= link_to helpers.invoices_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/invoices")) } do %>
       <%= render "shared/icons/document_text" %>
       <span><%= t("components.top_nav.invoices") %></span>
     <% end %>
+  </nav>
 
+  <%# Admin area. Stores live under /settings/stores, so start_with? keeps it highlighted there too %>
+  <div class="sidebar__section-label"><%= t("components.top_nav.admin") %></div>
+  <nav class="sidebar__nav" aria-label="<%= t("components.top_nav.admin") %>">
+    <%= link_to helpers.settings_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/settings")) } do %>
+      <%= render "shared/icons/cog" %>
+      <span><%= t("components.top_nav.settings") %></span>
+    <% end %>
   </nav>
 
   <% employee = Current.session&.employee %>
   <div class="sidebar__footer">
 
-    <%= link_to helpers.employee_path(employee) do %>
+    <%= link_to helpers.profile_path, aria: { current: ("page" if request.path == helpers.profile_path) } do %>
       <span class="avatar avatar--sm"><%= employee&.email_address.to_s.first %></span>
       <span class="sidebar__user" title="<%= employee&.email_address %>"><%= employee&.email_address %></span>
     <% end %>

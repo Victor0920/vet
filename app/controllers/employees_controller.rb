@@ -2,7 +2,7 @@ class EmployeesController < ApplicationController
   before_action :set_employee, only: %i[ show edit update ]
 
   def index
-    @customers = Current.enterprise.employees.all
+    @employees = Current.enterprise.employees.all
   end
 
   def new
@@ -10,9 +10,7 @@ class EmployeesController < ApplicationController
   end
 
   def show
-    @appointments = @employee.appointments.where("starts_at >= ?", Time.current)
-      .order(:starts_at)
-      .includes(:customer, { pet: :customer }, :room)
+    @appointments = @employee.appointments.upcoming.includes(:customer, { pet: :customer }, :room)
   end
 
   def edit
@@ -42,8 +40,8 @@ class EmployeesController < ApplicationController
   private
 
   def set_employee
-    @employee = Current.employee
-    redirect_to employee_url, alert: t("flash.employees.not_found") if @employee.nil?
+    @employee = Current.enterprise.employees.find_by(id: params[:id])
+    redirect_to employees_url, alert: t("flash.employees.not_found") if @employee.nil?
   end
 
   # Strong parameters: only these fields can be changed from a form

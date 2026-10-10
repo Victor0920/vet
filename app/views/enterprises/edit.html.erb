@@ -1,0 +1,68 @@
+<% content_for :title, t(".title") %>
+
+<%# Singular resource: model + url, since there's no :id in /settings/enterprise.
+    method: :patch because the record already exists (update) %>
+<%= form_with model: @enterprise, url: enterprise_path, method: :patch do |f| %>
+  <div class="resource-form__toolbar">
+    <%= render "shared/back_link", path: enterprise_path, label: t("enterprises.show.title") %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), enterprise_path, class: "btn btn--ghost" %>
+      <%= f.submit t("shared.save_changes"), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+
+    <% if @enterprise.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% @enterprise.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("enterprises.show.legal_details") %></h2>
+          <p class="card__description"><%= t("enterprises.show.legal_details_hint") %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :name %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :name, class: "input", required: true, autofocus: true,
+                  aria: { invalid: @enterprise.errors[:name].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :legal_name %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :legal_name, class: "input", autocomplete: "organization",
+                  aria: { invalid: @enterprise.errors[:legal_name].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :cif %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :cif, class: "input input--short", autocapitalize: "characters",
+                  aria: { invalid: @enterprise.errors[:cif].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :address %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :address, class: "input", autocomplete: "street-address",
+                  aria: { invalid: @enterprise.errors[:address].any? } %>
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+<% end %>
