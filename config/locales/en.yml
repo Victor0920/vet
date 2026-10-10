@@ -377,6 +377,26 @@ en:
       admin: "Administration"
       sign_out: "Sign out"
 
+  # ---------- Navigation ----------
+  # Back-link labels when a page was opened from another section (?return_to=),
+  # keyed by the kind of page it returns to (see NavigationHelper)
+  navigation:
+    back: "Back"
+    back_to:
+      calendar: "Calendar"
+      customers: "Customers"
+      customer: "Customer"
+      pet: "Pet"
+      invoices: "Invoices"
+      invoice: "Invoice"
+      products: "Products"
+      product: "Product"
+      product_categories: "Product categories"
+      services: "Services"
+      service: "Service"
+      service_categories: "Service categories"
+      settings: "Settings"
+
   # ---------- Layouts ----------
   layouts:
     mailer:

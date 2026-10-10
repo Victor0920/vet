@@ -1,9 +1,6 @@
 <% content_for :title, t("invoices.number", id: @invoice.invoice_id.presence || @invoice.id) %>
 
-<%= link_to invoices_path, class: "back-link" do %>
-  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-  <%= t("invoices.all_invoices") %>
-<% end %>
+<%= render "shared/back_link", path: invoices_path, label: t("invoices.all_invoices") %>
 
 <div class="page-header">
   <div>
@@ -45,7 +42,7 @@
           <dt><%= Invoice.human_attribute_name(:customer) %></dt>
           <dd>
             <% if @invoice.customer %>
-              <%= link_to @invoice.customer.full_name, customer_path(@invoice.customer) %>
+              <%= link_to @invoice.customer.full_name, customer_path(@invoice.customer, return_to: request.fullpath) %>
             <% else %>
               <span class="text-subtle"><%= t("invoices.no_customer") %></span>
             <% end %>

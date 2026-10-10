@@ -1,9 +1,6 @@
 <% content_for :title, t(".title") %>
 
-<%= link_to services_path, class: "back-link" do %>
-  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-  <%= t("services.all_services") %>
-<% end %>
+<%= render "shared/back_link", path: services_path, label: t("services.all_services") %>
 
 <div class="page-header">
   <div>
@@ -44,7 +41,7 @@
                     title="<%= category.color ? t(category.color, scope: "shared.colors") : t("shared.no_color") %>">Aa</span>
             </td>
             <td>
-              <%= link_to category.name.presence || t("service_categories.unnamed"), service_category_path(category),
+              <%= link_to category.name.presence || t("service_categories.unnamed"), service_category_path(category, return_to: carried_location),
                     class: "product-cell__name" %>
             </td>
             <td class="table__numeric"><%= t("service_categories.services_count", count: category.services.size) %></td>

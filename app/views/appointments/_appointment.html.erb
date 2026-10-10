@@ -14,11 +14,11 @@
   <% if appointment.customer || appointment.pet %>
     <span class="cal-event__links">
       <% if appointment.customer %>
-        <%= link_to appointment.customer.full_name, customer_path(appointment.customer), class: "cal-event__link", data: { turbo_frame: "_top" } %>
+        <%= link_to appointment.customer.full_name, customer_path(appointment.customer, return_to: request.fullpath), class: "cal-event__link", data: { turbo_frame: "_top" } %>
       <% end %>
       <% if appointment.pet %>
         <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"),
-              customer_pet_path(appointment.pet.customer, appointment.pet),
+              customer_pet_path(appointment.pet.customer, appointment.pet, return_to: request.fullpath),
               class: "cal-event__link cal-event__link--pet",
               data: { turbo_frame: "_top" } %>
       <% end %>

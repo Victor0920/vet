@@ -1,9 +1,7 @@
 <% content_for :title, t(".number", id: @message.id) %>
 
 <% if @message.conversation_id %>
-  <%= link_to conversation_path(@message.conversation_id), class: "back-link" do %>
-    ← <%= t(".back") %>
-  <% end %>
+  <%= render "shared/back_link", path: conversation_path(@message.conversation_id), label: t(".back") %>
 <% end %>
 
 <div class="page-header">

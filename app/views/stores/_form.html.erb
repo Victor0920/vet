@@ -3,10 +3,7 @@
 
 <%= form_with model: store do |f| %>
   <div class="resource-form__toolbar">
-    <%= link_to back_path, class: "back-link" do %>
-      <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
-      <%= store.persisted? ? t(".back_to_store") : t("stores.all_stores") %>
-    <% end %>
+    <%= render "shared/back_link", path: back_path, label: (store.persisted? ? t(".back_to_store") : t("stores.all_stores")) %>
 
     <div class="page-header__actions">
       <%= link_to t("shared.cancel"), back_path, class: "btn btn--ghost" %>

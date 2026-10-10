@@ -5,20 +5,7 @@
 ].compact_blank.join(" ") %>
 <% content_for :title, full_name.presence || t("shared.customer_number", id: @customer.id) %>
 
-<%= link_to customers_path, class: "back-link" do %>
-  <svg
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    width="16"
-    height="16"
-    aria-hidden="true"
-  ><path
-      fill-rule="evenodd"
-      d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
-      clip-rule="evenodd"
-    /></svg>
-  <%= t(".all_customers") %>
-<% end %>
+<%= render "shared/back_link", path: customers_path, label: t(".all_customers") %>
 
 <div class="customer-profile">
   <aside class="card customer-profile__sidebar">
@@ -113,7 +100,7 @@
     <% if @pets.any? %>
       <div class="pets-grid">
         <% @pets.each do |pet| %>
-          <%= link_to [@customer, pet], class: "pet-link" do %>
+          <%= link_to customer_pet_path(@customer, pet, return_to: request.fullpath), class: "pet-link" do %>
             <article class="card card--interactive pet-card">
               <div class="pet-card__media">
                 <% if pet.photo.attached? %>
@@ -275,7 +262,7 @@
                     </td>
                     <td>
                       <% if appointment.pet %>
-                        <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"), customer_pet_path(@customer, appointment.pet) %>
+                        <%= link_to appointment.pet.name.presence || t("shared.unnamed_pet"), customer_pet_path(@customer, appointment.pet, return_to: request.fullpath) %>
                       <% else %>
                         <span class="text-subtle">—</span>
                       <% end %>
@@ -286,7 +273,7 @@
                       <%# One invoice per appointment: link to it, or offer to create it %>
                       <% if appointment.invoice %>
                         <%= link_to appointment.invoice.invoice_id.presence || t("invoices.number", id: appointment.invoice.id),
-                              invoice_path(appointment.invoice), class: "badge badge--success" %>
+                              invoice_path(appointment.invoice, return_to: request.fullpath), class: "badge badge--success" %>
                       <% else %>
                         <%= link_to t(".create_invoice"), new_invoice_path(appointment_id: appointment.id), class: "btn btn--ghost btn--sm" %>
                       <% end %>

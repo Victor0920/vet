@@ -366,6 +366,26 @@ es:
       admin: "Administración"
       sign_out: "Cerrar sesión"
 
+  # ---------- Navegación ----------
+  # Textos del enlace "volver" cuando la página se abrió desde otra sección (?return_to=),
+  # según el tipo de página a la que vuelve (ver NavigationHelper)
+  navigation:
+    back: "Volver"
+    back_to:
+      calendar: "Calendario"
+      customers: "Clientes"
+      customer: "Cliente"
+      pet: "Mascota"
+      invoices: "Facturas"
+      invoice: "Factura"
+      products: "Productos"
+      product: "Producto"
+      product_categories: "Categorías de productos"
+      services: "Servicios"
+      service: "Servicio"
+      service_categories: "Categorías de servicios"
+      settings: "Configuración"
+
   # ---------- Layouts ----------
   layouts:
     mailer:

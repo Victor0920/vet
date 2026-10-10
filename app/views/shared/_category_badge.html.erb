@@ -1,5 +1,6 @@
 <%# A product or service category as a pill linking to its page, in the category's
     colour (badge--red, badge--blue… see badge.css), or the default teal when it has none.
-    link_to with a record builds the path itself: product_category_path / service_category_path %>
-<%= link_to category.name.presence || t("shared.unnamed"), category,
+    polymorphic_path builds product_category_path / service_category_path from the record;
+    return_to: brings the category page's back link back here. %>
+<%= link_to category.name.presence || t("shared.unnamed"), polymorphic_path(category, return_to: request.fullpath),
       class: ["badge", category.color ? "badge--#{category.color}" : "badge--primary"] %>

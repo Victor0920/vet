@@ -92,7 +92,7 @@
       <div class="modal__shortcuts">
         <%# One invoice per appointment: once it's billed, link to that invoice instead %>
         <% if appointment.invoice %>
-          <%= link_to invoice_path(appointment.invoice), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
+          <%= link_to invoice_path(appointment.invoice, return_to: appointments_path(calendar_return_params)), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
             <%= t(".view_invoice") %>
           <% end %>
         <% else %>
@@ -101,12 +101,12 @@
           <% end %>
         <% end %>
         <% if appointment.customer %>
-          <%= link_to customer_path(appointment.customer), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
+          <%= link_to customer_path(appointment.customer, return_to: appointments_path(calendar_return_params)), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
             <%= t(".view_customer", name: appointment.customer.full_name) %>
           <% end %>
         <% end %>
         <% if appointment.pet %>
-          <%= link_to customer_pet_path(appointment.pet.customer, appointment.pet), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
+          <%= link_to customer_pet_path(appointment.pet.customer, appointment.pet, return_to: appointments_path(calendar_return_params)), class: "btn btn--secondary btn--sm", data: { turbo_frame: "_top" } do %>
             <%= t(".view_pet", name: appointment.pet.name.presence || t("shared.unnamed_pet")) %>
           <% end %>
         <% end %>

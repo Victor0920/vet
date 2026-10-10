@@ -1,0 +1,9 @@
+<%# locals: (path:, label:) -%>
+<%# The "← Back" link at the top of a page: path is the page's usual parent, label the text after the arrow.
+    e.g. render "shared/back_link", path: customers_path, label: t(".all_customers")
+    When the page was opened with ?return_to= (from another section), it goes there instead,
+    labelled after that page ("← Calendar") — see NavigationHelper. %>
+<%= link_to back_link_path(path), class: "back-link" do %>
+  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd"/></svg>
+  <%= back_link_label(path, label) %>
+<% end %>

@@ -44,9 +44,9 @@
       <p class="settings-group__description"><%= t(".groups.catalogue.description") %></p>
     </header>
     <div class="settings-group__tiles">
-      <%= render "settings/tile", icon: "tag", path: product_categories_path,
+      <%= render "settings/tile", icon: "tag", path: product_categories_path(return_to: settings_path),
             title: t(".tiles.product_categories.title"), description: t(".tiles.product_categories.description") %>
-      <%= render "settings/tile", icon: "tag", path: service_categories_path,
+      <%= render "settings/tile", icon: "tag", path: service_categories_path(return_to: settings_path),
             title: t(".tiles.service_categories.title"), description: t(".tiles.service_categories.description") %>
     </div>
   </section>
