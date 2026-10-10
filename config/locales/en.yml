@@ -99,6 +99,7 @@ en:
         post_code: "Post code"
         photo: "Photo"
         color: "Colour"
+        invoice_code: "Invoice code"
       room:
         name: "Name"
         color: "Colour"
@@ -107,6 +108,9 @@ en:
         legal_name: "Legal name"
         cif: "CIF"
         address: "Address"
+        invoice_number_schema: "Invoice number format"
+        rectification_number_schema: "Corrective invoice number format"
+        invoice_counter_reset: "Restart numbering"
       appointment:
         title: "Title"
         starts_at: "Starts"
@@ -185,7 +189,7 @@ en:
         services: "Services"
         color: "Colour"
       invoice:
-        invoice_id: "Invoice number"
+        number: "Invoice number"
         date: "Date"
         customer: "Customer"
         customer_id: "Customer"
@@ -196,7 +200,7 @@ en:
         store: "Store"
         store_id: "Store"
         invoice_products: "Lines"
-        updates_stock: "Update stock"
+        original_invoice: "Original invoice"
       invoice_product:
         product: "Product"
         product_id: "Product"
@@ -222,11 +226,21 @@ en:
         must_match_customer_enterprise: "must match the customer's enterprise"
         not_enough_stock: "Not enough stock for %{product}: only %{stock} more in stock"
         product_and_service: "A line can't be both a product and a service"
+        refund_exceeds_original: "You can't give back more units than the original invoice sold (earlier corrective invoices included)"
+        refund_without_lines: "Choose at least one line to refund"
+        missing_counter: "must include [n], the invoice counter"
+        missing_year: "must include [y], or numbers would repeat after the counter restarts"
+        missing_month: "must include [m] when numbering restarts every month"
+        unknown_tokens: "has codes that don't exist: %{tokens}. Use [s], [y], [m], [d], [n] or [n4]"
+        same_as_invoices: "must be different from the invoice number format"
+        missing_invoice_code: "%{store} has no invoice code, which the invoice number needs ([s]). Add it in the store's settings"
+        locked: "can't change: it's part of the invoice number"
+        doesnt_match_appointment: "doesn't match the appointment's customer (%{customer}). To bill someone else, remove the appointment"
       # Per-model wording, used instead of the generic message above
       models:
         invoice:
           attributes:
-            invoice_id:
+            number:
               taken: "is already used by another invoice"
 
   # ---------- Flash messages (controllers) ----------
@@ -286,12 +300,14 @@ en:
       not_found: "Invoice not found"
       email_sent: "Invoice sent to %{email}"
       email_invalid: "Enter a valid email address"
+      rectification_created: "Corrective invoice created"
+      rectification_locked: "Corrective invoices can't be edited once issued"
+      rectified_locked: "This invoice has corrective invoices, so it can't be edited. Create another corrective invoice instead."
+      cannot_rectify_rectification: "A corrective invoice can't be corrected again. Create it from the original invoice."
     products:
       created: "Product created"
       updated: "Product updated"
       not_found: "Product not found"
-      stock_updated: "%{name}: stock is now %{stock}"
-      stock_invalid: "%{name}: not enough stock, or the quantity is invalid"
     services:
       created: "Service created"
       updated: "Service updated"
@@ -373,6 +389,7 @@ en:
       products: "Products"
       services: "Services"
       invoices: "Invoices"
+      sales_report: "Sales"
       settings: "Settings"
       admin: "Administration"
       sign_out: "Sign out"
@@ -424,6 +441,7 @@ en:
     show:
       edit_store: "Edit store"
       added: "Added"
+      no_invoice_code: "Not set"
       rooms: "Rooms"
       rooms_hint: "Where appointments are booked in this store."
       no_rooms_hint: "Rooms added to this store will show up here."
@@ -439,6 +457,8 @@ en:
       details: "Details"
       photo_hint: "JPG, PNG or WebP. Shown on the stores list."
       photo_hint_change: "Pick a new image to replace the current one."
+      invoice_code_placeholder: "e.g. PK"
+      invoice_code_hint: "Up to 10 letters or digits. Replaces [s] in invoice numbers, so each store numbers its invoices on its own."
 
   profiles:
     show:
@@ -458,6 +478,16 @@ en:
   enterprises:
     edit:
       title: "Edit company details"
+      codes:
+        s: "Store invoice code"
+        y: "Year (2026)"
+        m: "Month (01–12)"
+        d: "Day (01–31)"
+        n: "Counter (1, 2, 3…)"
+        n4: "Counter with zeros (0001, 0002…); the digit is the length"
+      schema_example_html: "Example: <code>[y]-[s]/[n]</code> for store <code>PK</code> gives <code>2026-PK/9</code>."
+      rectification_schema_hint: "Corrective invoices need their own series. Leave blank to use R + the invoice format."
+      counter_reset_hint: "When [n] goes back to 1. The format must include [y], and also [m] if it restarts every month."
     show:
       title: "Company details"
       subtitle: "How your business appears on invoices and to customers."
@@ -467,6 +497,12 @@ en:
       registered: "Registered"
       stores: "Stores"
       manage_stores: "Manage stores"
+      invoicing: "Invoicing"
+      invoicing_hint: "How invoice numbers are generated. Each invoice gets its number when it's created."
+      default_rectification_schema: "(default: R + invoice format)"
+    invoice_counter_resets:
+      yearly: "Every year"
+      monthly: "Every month"
 
   # ---------- Settings (admin area) ----------
   settings:
@@ -861,11 +897,6 @@ en:
       category: "Category"
       price: "Price"
       stock: "Stock"
-      update_stock: "Update stock"
-    stock_form:
-      quantity: "Quantity"
-      sell: "Sell"
-      restock: "Restock"
     index:
       title: "All products"
       heading: "Products"
@@ -1041,6 +1072,11 @@ en:
     all_invoices: "All invoices"
     number: "Invoice #%{id}"
     no_customer: "No customer"
+    rectificativa: "Corrective"
+    number_preview:
+      hint: "The number is assigned when you save. If someone else saves an invoice first, it moves to the next one."
+      missing_code: "%{store} has no invoice code yet, and your invoice number format uses [s]."
+      add_code: "Add it in the store's settings"
     columns:
       number: "Number"
       date: "Date"
@@ -1072,6 +1108,9 @@ en:
       empty_hint: "Invoices will show up here once the first is created."
     show:
       edit_invoice: "Edit invoice"
+      create_rectification: "Refund / correct"
+      rectifications: "Corrective invoices"
+      rectified_hint: "This invoice can no longer be edited. To change or refund anything else, create another corrective invoice."
       custom_item: "Custom"
       service: "Service"
       download_pdf: "Download PDF"
@@ -1080,8 +1119,6 @@ en:
       lines: "Lines"
       no_lines: "No lines on this invoice"
       no_lines_hint: "Products and services added to this invoice will show up here."
-      stock_updated: "Stock updated"
-      stock_not_updated: "Stock not updated"
     new:
       title: "New invoice"
     edit:
@@ -1090,7 +1127,6 @@ en:
       back_to_invoice: "Back to invoice"
       create: "Create invoice"
       details: "Details"
-      number_placeholder: "e.g. 2026-0001"
       choose_store: "Choose a store…"
       choose_employee: "Choose a staff member…"
       billed_to: "Billed to"
@@ -1100,13 +1136,24 @@ en:
       no_appointment: "No appointment"
       search_appointments: "Search by date, title or customer…"
       no_appointments_match: "No appointments match"
-      appointment_hint: "Optional. Links this invoice to the visit it bills."
+      appointment_hint: "Optional. Links this invoice to the visit it bills, and fills in that visit's customer."
       lines: "Lines"
       line_detail: "Description · Price"
       add_line: "Add line"
       lines_hint: "Pick a product or service, or choose “Custom item” to type a description and price."
       available: "%{count} available"
-      updates_stock_hint: "When on, saving takes these units out of stock and puts them back if you remove them later. You can't invoice more units than are in stock."
+      number_fields_locked: "The date and store are part of the invoice number, so they can't change."
+      stock_hint: "Saving takes these products' units out of stock, and puts them back if you remove them later. You can't invoice more units than are in stock."
+    rectifications:
+      new:
+        title: "New corrective invoice"
+        heading: "New corrective invoice"
+        subtitle: "Refunds or corrects invoice #%{number}"
+        create: "Create corrective invoice"
+        lines: "Lines to refund"
+        lines_hint: "Quantities are negative: -2 refunds 2 units and puts them back in stock. Switch on the lines being refunded."
+        corrects: "Corrected invoice"
+        refund: "Refund"
     emails:
       new:
         title: "Send invoice by email"
@@ -1134,3 +1181,22 @@ en:
       description_placeholder: "e.g. Treats, temporary product…"
       price_placeholder: "Price €"
       remove: "Remove line"
+
+  # ---------- Reports ----------
+  reports:
+    sales:
+      show:
+        title: "Sales"
+        heading: "Sales"
+        subtitle: "Product units sold by each employee. Refunds are subtracted."
+        today: "Today"
+        this_week: "This week"
+        this_month: "This month"
+        from: "From"
+        to: "To"
+        apply: "Show"
+        employee: "Employee"
+        product: "Product"
+        units: "Units"
+        empty: "No products sold in these dates"
+        empty_hint: "Product lines from invoices in this date range show up here. Services and custom items aren't counted."

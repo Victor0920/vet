@@ -298,6 +298,11 @@
 }
 
 /* Narrower input for short values (post code, CIF…) */
+/* Codes and patterns ("[y]-[s]/[n]", "PK"): monospace so every character is clear */
+.input--mono {
+  font-family: var(--font-mono);
+}
+
 .input--short {
   max-width: 12rem;
 }

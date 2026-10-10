@@ -37,6 +37,16 @@
         <dd><%= @store.post_code.presence || "—" %></dd>
       </div>
       <div>
+        <dt><%= Store.human_attribute_name(:invoice_code) %></dt>
+        <dd>
+          <% if @store.invoice_code.present? %>
+            <code><%= @store.invoice_code %></code>
+          <% else %>
+            <span class="text-subtle"><%= t(".no_invoice_code") %></span>
+          <% end %>
+        </dd>
+      </div>
+      <div>
         <dt><%= t(".added") %></dt>
         <dd><%= l(@store.created_at, format: :display) %></dd>
       </div>

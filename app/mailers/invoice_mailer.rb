@@ -3,7 +3,7 @@ class InvoiceMailer < ApplicationMailer
   def invoice(invoice, to:, message: nil)
     @invoice = invoice
     @message = message
-    @number = (invoice.invoice_id.presence || invoice.id).to_s
+    @number = invoice.display_number
 
     attachments["invoice-#{@number.parameterize}.pdf"] = InvoicePdf.new(invoice).render
     mail to: to, subject: t(".subject", number: @number,

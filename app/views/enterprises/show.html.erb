@@ -52,6 +52,39 @@
   </div>
 </section>
 
+<section class="card enterprise-invoicing">
+  <header class="card__header">
+    <div>
+      <h2 class="card__title"><%= t(".invoicing") %></h2>
+      <p class="card__description"><%= t(".invoicing_hint") %></p>
+    </div>
+  </header>
+  <div class="card__body">
+    <dl class="details details--grid">
+      <div>
+        <dt><%= Enterprise.human_attribute_name(:invoice_number_schema) %></dt>
+        <dd><code><%= @enterprise.invoice_number_schema %></code></dd>
+      </div>
+      <div>
+        <dt><%= Enterprise.human_attribute_name(:rectification_number_schema) %></dt>
+        <dd>
+          <% if @enterprise.rectification_number_schema.present? %>
+            <code><%= @enterprise.rectification_number_schema %></code>
+          <% else %>
+            <%# Same fallback as InvoiceNumber#schema %>
+            <code>R<%= @enterprise.invoice_number_schema %></code>
+            <span class="text-subtle"><%= t(".default_rectification_schema") %></span>
+          <% end %>
+        </dd>
+      </div>
+      <div>
+        <dt><%= Enterprise.human_attribute_name(:invoice_counter_reset) %></dt>
+        <dd><%= t("enterprises.invoice_counter_resets.#{@enterprise.invoice_counter_reset}") %></dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
 <header class="customer-profile__section-header customer-profile__section-header--spaced">
   <div>
     <h2 class="section__title"><%= t(".stores") %></h2>

@@ -46,6 +46,10 @@
       <%= render "shared/icons/document_text" %>
       <span><%= t("components.top_nav.invoices") %></span>
     <% end %>
+    <%= link_to helpers.reports_sales_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/reports/sales")) } do %>
+      <%= render "shared/icons/chart_bar" %>
+      <span><%= t("components.top_nav.sales_report") %></span>
+    <% end %>
   </nav>
 
   <%# Admin area. Stores live under /settings/stores, so start_with? keeps it highlighted there too %>

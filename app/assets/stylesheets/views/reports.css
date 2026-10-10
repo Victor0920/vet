@@ -1,0 +1,33 @@
+/* ---------- reports/sales#show ---------- */
+
+/* From / To / Show on one line, wrapping on narrow screens */
+.sales-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+
+  .input {
+    width: 10rem;
+  }
+}
+
+.sales-filters__label {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Today / This week / This month shortcuts */
+.sales-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+/* Units right-aligned so the digits line up */
+.table .sales-table__units {
+  text-align: right;
+  color: var(--color-text);
+}

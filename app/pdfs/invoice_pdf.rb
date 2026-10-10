@@ -152,7 +152,7 @@ class InvoicePdf
 
   def enterprise = @invoice.enterprise
   def issuer_name = enterprise.legal_name.presence || enterprise.name.to_s
-  def number = (@invoice.invoice_id.presence || @invoice.id).to_s
+  def number = @invoice.display_number
   def date = @invoice.date ? I18n.l(@invoice.date.to_date, format: :display) : "—"
 
   def money(amount)

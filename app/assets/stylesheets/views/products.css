@@ -162,21 +162,6 @@ turbo-frame#services {
   color: var(--color-text);
 }
 
-/* Inline "quantity + Sell + Restock" form in each products#index row */
-.stock-form {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-/* .input is width: 100% by default; a few digits is all this needs */
-.table .stock-form__quantity {
-  width: 4.5rem;
-  height: var(--control-height-sm);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
 /* ---------- products#show & services#show ---------- */
 
 .product-card {
@@ -250,4 +235,9 @@ turbo-frame#services {
 
 .resource-form {
   max-width: 48rem;
+}
+
+/* Full content width, for forms with tables or side-by-side cards (invoices) */
+.resource-form--wide {
+  max-width: none;
 }

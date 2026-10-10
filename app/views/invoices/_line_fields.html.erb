@@ -9,7 +9,7 @@
 <%# A saved line that already took units out of stock "holds" them: when editing, it may use
     the product's stock plus those units. The JS adds them back when computing the max.
     data-saved-item uses the same "product-5" format as the select's values, so the JS can compare them. %>
-<% holds_stock = item.persisted? && item.invoice.updates_stock_in_database && item.product_id_in_database %>
+<% holds_stock = item.persisted? && item.product_id_in_database %>
 <div class="invoice-line" data-invoice-lines-target="line"
      data-saved-item="<%= "product-#{item.product_id_in_database}" if holds_stock %>"
      data-saved-quantity="<%= item.quantity_in_database if holds_stock %>">
@@ -49,7 +49,7 @@
     <p class="invoice-line__product-price" data-product-price hidden>
       <span data-product-price-value></span>
       <span class="text-subtle"><%= t("invoices.line_fields.per_unit") %></span>
-      <%# "· 5 available", filled in by the JS while "Update stock" is on %>
+      <%# "· 5 available", filled in by the JS %>
       <span class="invoice-line__stock" data-product-stock hidden></span>
     </p>
 
