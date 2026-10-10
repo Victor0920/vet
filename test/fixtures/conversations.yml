@@ -2,6 +2,8 @@
 
 one:
   user: one
+  customer: one
 
 two:
   user: two
+  customer: two
