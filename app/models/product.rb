@@ -18,6 +18,8 @@ class Product < ApplicationRecord
     end
   }
 
+  scope :low_stock, -> { where("products.stock < products.show_warning_when_stock_under_x_items") }
+
   def adjust_stock(amount)
     with_lock do
       self.stock += amount

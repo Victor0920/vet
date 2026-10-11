@@ -5,11 +5,13 @@
    def index
      @query = params[:q].to_s.strip
      @category_id = params[:category_id].presence
+     @low_stock = params[:low_stock] == "1"
      @products = Current.enterprise.products
        .search(@query)
        .includes(:product_category, photo_attachment: :blob) # avoids one query per row for the category badge
        .order(:name)
      @products = @products.where(product_category_id: @category_id) if @category_id
+     @products = @products.low_stock if @low_stock
    end
 
    def show

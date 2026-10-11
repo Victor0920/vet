@@ -896,6 +896,7 @@ es:
       all_categories: "Todas las categorías"
       search_categories: "Busca categorías…"
       no_categories_match: "Ninguna categoría coincide"
+      low_stock_only: "Solo stock bajo"
       count:
         one: "1 producto"
         other: "%{count} productos"
@@ -903,7 +904,7 @@ es:
         one: "1 producto coincide con «%{query}»"
         other: "%{count} productos coinciden con «%{query}»"
       no_matches: "Ningún producto coincide con estos filtros"
-      no_matches_hint: "Prueba otra búsqueda o elige «Todas las categorías»."
+      no_matches_hint: "Prueba otra búsqueda, elige «Todas las categorías» o desactiva «Solo stock bajo»."
       empty: "Todavía no hay productos"
       empty_hint: "Los productos aparecerán aquí cuando crees el primero."
     show:
@@ -1184,6 +1185,7 @@ es:
         apply: "Ver"
         employee: "Profesional"
         product: "Producto"
-        units: "Unidades"
+        units_sold: "Unidades vendidas"
+        stock: "Stock restante"
         empty: "No se vendieron productos en estas fechas"
         empty_hint: "Aquí aparecen las líneas de producto de las facturas de este periodo. No se cuentan los servicios ni los artículos personalizados."

@@ -909,6 +909,7 @@ en:
       all_categories: "All categories"
       search_categories: "Search categories…"
       no_categories_match: "No categories match"
+      low_stock_only: "Low stock only"
       count:
         one: "1 product"
         other: "%{count} products"
@@ -916,7 +917,7 @@ en:
         one: "1 product matching “%{query}”"
         other: "%{count} products matching “%{query}”"
       no_matches: "No products match these filters"
-      no_matches_hint: "Try another search or pick “All categories”."
+      no_matches_hint: "Try another search, pick “All categories” or turn off “Low stock only”."
       empty: "No products yet"
       empty_hint: "Products will show up here once the first is created."
     show:
@@ -1197,6 +1198,7 @@ en:
         apply: "Show"
         employee: "Employee"
         product: "Product"
-        units: "Units"
+        units_sold: "Units sold"
+        stock: "Stock left"
         empty: "No products sold in these dates"
         empty_hint: "Product lines from invoices in this date range show up here. Services and custom items aren't counted."
