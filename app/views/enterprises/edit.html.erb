@@ -64,5 +64,59 @@
         </div>
       </dl>
     </section>
+
+    <%# How InvoiceNumber builds numbers: the schemas are plain text with [x] codes in them %>
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("enterprises.show.invoicing") %></h2>
+          <p class="card__description"><%= t("enterprises.show.invoicing_hint") %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :invoice_number_schema %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :invoice_number_schema, class: "input input--mono", required: true,
+                  spellcheck: false, autocomplete: "off",
+                  aria: { invalid: @enterprise.errors[:invoice_number_schema].any?, describedby: "schema_codes" } %>
+            <%# The codes the schema understands, with the example from the hint %>
+            <div class="schema-codes" id="schema_codes">
+              <dl class="schema-codes__list">
+                <% %w[s y m d n n4].each do |code| %>
+                  <div>
+                    <dt><code>[<%= code %>]</code></dt>
+                    <dd><%= t(".codes.#{code}") %></dd>
+                  </div>
+                <% end %>
+              </dl>
+              <p class="form-hint"><%= t(".schema_example_html") %></p>
+            </div>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :rectification_number_schema %></dt>
+          <dd class="field-row__value">
+            <%# Blank means "R" + the invoice schema (InvoiceNumber#schema), shown as the placeholder %>
+            <%= f.text_field :rectification_number_schema, class: "input input--mono",
+                  spellcheck: false, autocomplete: "off",
+                  placeholder: "R#{@enterprise.invoice_number_schema_in_database}",
+                  aria: { invalid: @enterprise.errors[:rectification_number_schema].any?, describedby: "rectification_schema_hint" } %>
+            <p class="form-hint" id="rectification_schema_hint"><%= t(".rectification_schema_hint") %></p>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :invoice_counter_reset %></dt>
+          <dd class="field-row__value">
+            <%# Enterprise.invoice_counter_resets → { "yearly" => "yearly", "monthly" => "monthly" } (from the enum) %>
+            <%= f.select :invoice_counter_reset,
+                  Enterprise.invoice_counter_resets.keys.map { |reset| [t("enterprises.invoice_counter_resets.#{reset}"), reset] },
+                  {}, class: "select input--short",
+                  aria: { invalid: @enterprise.errors[:invoice_counter_reset].any?, describedby: "counter_reset_hint" } %>
+            <p class="form-hint" id="counter_reset_hint"><%= t(".counter_reset_hint") %></p>
+          </dd>
+        </div>
+      </dl>
+    </section>
   </div>
 <% end %>

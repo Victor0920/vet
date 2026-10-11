@@ -32,9 +32,7 @@ Rails.application.routes.draw do
   scope "products" do
     resources :product_categories, path: "categories"
   end
-  resources :products do
-    resource :stock, only: :update, module: :products
-  end
+  resources :products
 
   scope "services" do
     resources :service_categories, path: "categories"
@@ -43,6 +41,7 @@ Rails.application.routes.draw do
 
   resources :invoices do
     resource :email, only: %i[ new create ], module: :invoices
+    resources :rectifications, only: %i[ new create ], module: :invoices
   end
 
   post "/conversations/:id/messages", to: "conversations#create_message"
@@ -55,6 +54,11 @@ Rails.application.routes.draw do
     end
   end
   resource :settings, only: :show
+
+
+  namespace :reports do
+    resource :sales, only: :show
+  end
 
   get "/auth", to: "auth#index"
 

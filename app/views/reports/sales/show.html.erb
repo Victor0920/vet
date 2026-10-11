@@ -1,0 +1,61 @@
+<% content_for :title, t(".title") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+</div>
+
+<%# A plain GET form: submitting it reloads the page as /reports/sales?from=…&to=…,
+    which Reports::SalesController#show reads with date_param %>
+<%= form_with url: reports_sales_path, method: :get, class: "sales-filters" do %>
+  <%= label_tag :from, t(".from"), class: "sales-filters__label" %>
+  <%= date_field_tag :from, @from, class: "input" %>
+  <%= label_tag :to, t(".to"), class: "sales-filters__label" %>
+  <%= date_field_tag :to, @to, class: "input" %>
+  <%= submit_tag t(".apply"), name: nil, class: "btn btn--secondary" %>
+<% end %>
+
+<%# Shortcuts: same URL, just with the dates filled in %>
+<nav class="sales-presets" aria-label="<%= t(".heading") %>">
+  <%= link_to t(".today"), reports_sales_path(from: Date.current, to: Date.current),
+        class: "btn btn--sm btn--ghost" %>
+  <%= link_to t(".this_week"), reports_sales_path(from: Date.current.beginning_of_week, to: Date.current),
+        class: "btn btn--sm btn--ghost" %>
+  <%= link_to t(".this_month"), reports_sales_path(from: Date.current.beginning_of_month, to: Date.current),
+        class: "btn btn--sm btn--ghost" %>
+</nav>
+
+<% if @rows.any? %>
+  <div class="table-wrapper">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= t(".employee") %></th>
+          <th><%= t(".product") %></th>
+          <th class="sales-table__units"><%= t(".units") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%# Each row is a hash built by the controller: { employee:, product:, units: } %>
+        <% @rows.each do |row| %>
+          <tr>
+            <td><%= row[:employee].display_name %></td>
+            <td>
+              <%= link_to row[:product].name.presence || t("products.unnamed"),
+                    product_path(row[:product], return_to: request.fullpath) %>
+            </td>
+            <td class="table__numeric sales-table__units"><%= row[:units] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="empty-state">
+    <%= render "shared/icons/chart_bar" %>
+    <p class="empty-state__title"><%= t(".empty") %></p>
+    <p><%= t(".empty_hint") %></p>
+  </div>
+<% end %>

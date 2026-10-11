@@ -43,6 +43,9 @@ export default class extends Controller {
     this.updateButton()
 
     this.select.addEventListener("invalid", this.showInvalid)
+    // Another controller may change the select from code (invoice_customer_controller.js
+    // fills in the customer): keep the button's text in step with it
+    this.select.addEventListener("change", this.updateButton)
 
     this.closeOnOutsideClick = (event) => {
       if (!this.element.contains(event.target)) this.close({ focus: false })
@@ -52,6 +55,7 @@ export default class extends Controller {
   // Put the page back as Rails rendered it (also keeps Turbo's page cache clean)
   disconnect() {
     this.select.removeEventListener("invalid", this.showInvalid)
+    this.select.removeEventListener("change", this.updateButton)
     this.close({ focus: false })
     this.button.remove()
     this.select.hidden = false
@@ -215,7 +219,8 @@ export default class extends Controller {
     this.close()
   }
 
-  updateButton() {
+  // Arrow function so it can be passed to addEventListener and still use `this`
+  updateButton = () => {
     this.button.textContent = this.select.selectedOptions[0]?.text || ""
   }
 

@@ -74,8 +74,10 @@ turbo-frame#invoices {
 
 /* ---------- invoices#show ---------- */
 
-.invoice-page {
-  max-width: 48rem;
+/* Facts across the full width (customer · appointment · staff · store …),
+   wrapping to fewer columns as the page narrows */
+.invoice-page .details--grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
 }
 
 .invoice-page .table-wrapper {
@@ -105,6 +107,45 @@ turbo-frame#invoices {
   font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
+}
+
+/* ---------- invoices new & rectifications#new: number in the title ---------- */
+
+.invoice-number-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* "New invoice  2026-PK/9": the number in a subtle pill next to the title */
+.invoice-number-preview__number {
+  margin-left: var(--space-2);
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-text);
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  vertical-align: middle;
+}
+
+.invoice-number-preview .alert {
+  margin-top: var(--space-2);
+}
+
+/* ---------- invoices new/edit & rectifications#new: layout ---------- */
+
+/* The first two cards side by side, same height; each column is at least 26rem,
+   so on narrower screens they stack. min(100%, …) stops it overflowing on phones. */
+.invoice-form__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+  gap: var(--space-4);
+}
+
+/* Read-only values (no input): line them up with the label like the inputs' text */
+.field-row__value--text {
+  padding-top: var(--space-1-5);
 }
 
 /* ---------- invoices new/edit: lines ---------- */
@@ -191,6 +232,33 @@ turbo-frame#invoices {
     grid-column: 1 / -1;
     grid-row: 2;
   }
+}
+
+/* ---------- invoices#show: rectificativas list ---------- */
+
+.invoice-page__section-hint {
+  margin: var(--space-1) 0 var(--space-2);
+}
+
+/* ---------- invoices/rectifications#new ---------- */
+
+.rectification-lines__hint {
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+/* The table sits inside the card, which already has the border */
+.card .rectification-lines {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* .input is width: 100% by default; a few digits is all this needs */
+.table .rectification-lines__quantity {
+  width: 5.5rem;
+  margin-left: auto;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- customers#show: invoices below the pets ---------- */

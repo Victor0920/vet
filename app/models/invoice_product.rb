@@ -5,11 +5,18 @@
 
    before_validation :use_catalog_details
 
-   validates :quantity, numericality: { only_integer: true, greater_than: 0 }
+   validates :quantity, numericality: { only_integer: true, greater_than: 0 }, unless: -> { invoice&.corrective? }
+   validates :quantity, numericality: { only_integer: true, less_than: 0 }, if: -> { invoice&.corrective? }
    validates :description, :price, presence: true, unless: :catalog_item
    validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
    validate :product_or_service
    validate :catalog_item_in_same_enterprise
+
+   # Product lines (not services or custom items) from invoices in a date range.
+   # Either end may be nil, like Invoice.dated_between.
+   scope :products_sold_between, ->(from, to) {
+     where.not(product_id: nil).joins(:invoice).merge(Invoice.dated_between(from, to))
+   }
 
    def subtotal
      quantity.to_i * (price || 0)
@@ -40,8 +47,11 @@
    def use_catalog_details
      return if catalog_item.nil?
      self.description = nil
+     # A rectificativa refunds at the original invoice's price, not today's catalog price
+     return if invoice&.corrective? && price.present?
      self.price = catalog_item.price if price.nil? || product_id_changed? || service_id_changed?
    end
+
 
    def product_or_service
      errors.add(:base, :product_and_service) if product_id && service_id

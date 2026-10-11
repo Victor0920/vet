@@ -272,7 +272,7 @@
                     <td>
                       <%# One invoice per appointment: link to it, or offer to create it %>
                       <% if appointment.invoice %>
-                        <%= link_to appointment.invoice.invoice_id.presence || t("invoices.number", id: appointment.invoice.id),
+                        <%= link_to appointment.invoice.number.presence || t("invoices.number", id: appointment.invoice.id),
                               invoice_path(appointment.invoice, return_to: request.fullpath), class: "badge badge--success" %>
                       <% else %>
                         <%= link_to t(".create_invoice"), new_invoice_path(appointment_id: appointment.id), class: "btn btn--ghost btn--sm" %>

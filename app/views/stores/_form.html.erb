@@ -53,6 +53,17 @@
                   aria: { invalid: store.errors[:post_code].any? } %>
           </dd>
         </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :invoice_code %></dt>
+          <dd class="field-row__value">
+            <%# Saved in capitals (Store normalizes it); pattern gives the browser's own hint before submitting %>
+            <%= f.text_field :invoice_code, class: "input input--short input--mono", maxlength: 10,
+                  autocapitalize: "characters", autocomplete: "off", spellcheck: false,
+                  pattern: "[A-Za-z0-9]{1,10}", placeholder: t(".invoice_code_placeholder"),
+                  aria: { invalid: store.errors[:invoice_code].any?, describedby: "invoice_code_hint" } %>
+            <p class="form-hint" id="invoice_code_hint"><%= t(".invoice_code_hint") %></p>
+          </dd>
+        </div>
       </dl>
     </section>
 

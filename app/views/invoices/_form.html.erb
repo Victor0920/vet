@@ -13,8 +13,13 @@
     </div>
   </div>
 
-  <div class="resource-form stack">
-    <h1 class="page-header__title"><%= invoice.persisted? ? t("invoices.edit.title", number: invoice.invoice_id_was.presence || invoice.id) : t("invoices.new.title") %></h1>
+  <%# --wide: as wide as the invoices table, so the lines have room %>
+  <div class="resource-form resource-form--wide stack">
+    <% if invoice.persisted? %>
+      <h1 class="page-header__title"><%= t("invoices.edit.title", number: invoice.display_number) %></h1>
+    <% else %>
+      <%= render "invoices/number_preview", invoice: invoice, title: t("invoices.new.title") %>
+    <% end %>
 
     <% if invoice.errors.any? %>
       <div class="alert alert--danger" role="alert">
@@ -27,92 +32,113 @@
       </div>
     <% end %>
 
-    <section class="card">
-      <header class="card__header">
-        <h2 class="card__title"><%= t(".details") %></h2>
-      </header>
-      <dl class="field-list">
-        <div class="field-row">
-          <dt class="field-row__label"><%= f.label :invoice_id %></dt>
-          <dd class="field-row__value">
-            <%= f.text_field :invoice_id, class: "input", autofocus: true,
-                  placeholder: t(".number_placeholder"),
-                  aria: { invalid: invoice.errors[:invoice_id].any? } %>
-          </dd>
-        </div>
-        <div class="field-row">
-          <dt class="field-row__label"><%= f.label :date %></dt>
-          <dd class="field-row__value">
-            <%= f.datetime_field :date, class: "input", required: true,
-                  aria: { invalid: invoice.errors[:date].any? } %>
-          </dd>
-        </div>
-        <div class="field-row">
-          <dt class="field-row__label"><%= f.label :store_id %></dt>
-          <dd class="field-row__value">
-            <%= f.collection_select :store_id, @stores, :id, :name,
-                  { prompt: t(".choose_store") },
-                  class: "select", required: true,
-                  aria: { invalid: invoice.errors[:store].any? } %>
-          </dd>
-        </div>
-        <div class="field-row">
-          <dt class="field-row__label"><%= f.label :employee_id %></dt>
-          <dd class="field-row__value">
-            <%= f.collection_select :employee_id, @employees, :id, :display_name,
-                  { prompt: t(".choose_employee") },
-                  class: "select", required: true,
-                  aria: { invalid: invoice.errors[:employee].any? } %>
-          </dd>
-        </div>
-      </dl>
-    </section>
+    <%# Details and "Billed to" side by side when there's room, stacked otherwise,
+        so the lines start higher up the page %>
+    <div class="invoice-form__columns">
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title"><%= t(".details") %></h2>
+        </header>
+        <dl class="field-list">
+          <%# The number is built from the date and store when the invoice is created,
+              so after that they're shown as text (Invoice#date_and_store_unchanged refuses changes too) %>
+          <% if invoice.persisted? %>
+            <div class="field-row">
+              <dt class="field-row__label"><%= Invoice.human_attribute_name(:date) %></dt>
+              <dd class="field-row__value field-row__value--text">
+                <%= l(invoice.date, format: :full) %>
+              </dd>
+            </div>
+            <div class="field-row">
+              <dt class="field-row__label"><%= Invoice.human_attribute_name(:store) %></dt>
+              <dd class="field-row__value field-row__value--text">
+                <%= invoice.store.name %>
+                <p class="form-hint"><%= t(".number_fields_locked") %></p>
+              </dd>
+            </div>
+          <% else %>
+            <div class="field-row">
+              <dt class="field-row__label"><%= f.label :date %></dt>
+              <dd class="field-row__value">
+                <%= f.datetime_field :date, class: "input", required: true,
+                      aria: { invalid: invoice.errors[:date].any? } %>
+              </dd>
+            </div>
+            <div class="field-row">
+              <dt class="field-row__label"><%= f.label :store_id %></dt>
+              <dd class="field-row__value">
+                <%= f.collection_select :store_id, @stores, :id, :name,
+                      { prompt: t(".choose_store") },
+                      class: "select", required: true,
+                      aria: { invalid: invoice.errors[:store].any? } %>
+              </dd>
+            </div>
+          <% end %>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :employee_id %></dt>
+            <dd class="field-row__value">
+              <%= f.collection_select :employee_id, @employees, :id, :display_name,
+                    { prompt: t(".choose_employee") },
+                    class: "select", required: true,
+                    aria: { invalid: invoice.errors[:employee].any? } %>
+            </dd>
+          </div>
+        </dl>
+      </section>
 
-    <section class="card">
-      <header class="card__header">
-        <h2 class="card__title"><%= t(".billed_to") %></h2>
-      </header>
-      <dl class="field-list">
-        <div class="field-row">
-          <dt class="field-row__label"><%= f.label :customer_id %></dt>
-          <dd class="field-row__value">
-            <%# item_picker_controller.js: "No customer" on top, then a search box for the customers %>
-            <div class="item-picker" data-controller="item-picker"
-                 data-item-picker-placeholder-value="<%= t(".search_customers") %>"
-                 data-item-picker-empty-value="<%= t(".no_customers_match") %>">
-              <%= f.collection_select :customer_id, @customers, :id, :full_name,
-                    { include_blank: t(".no_customer") },
-                    class: "select",
-                    data: { item_picker_target: "select" },
-                    aria: { invalid: invoice.errors[:customer].any? } %>
-            </div>
-          </dd>
-        </div>
-        <div class="field-row">
-          <dt class="field-row__label"><%= f.label :appointment_id %></dt>
-          <dd class="field-row__value">
-            <%# item_picker_controller.js: "No appointment" on top, then a search box that
-                matches the whole option text (date · title · customer) %>
-            <div class="item-picker" data-controller="item-picker"
-                 data-item-picker-placeholder-value="<%= t(".search_appointments") %>"
-                 data-item-picker-empty-value="<%= t(".no_appointments_match") %>">
-              <%= f.select :appointment_id,
-                    @appointments.map { |appointment|
-                      [[l(appointment.starts_at, format: :short_datetime),
-                        appointment.title.presence || t("shared.untitled"),
-                        appointment.customer&.full_name].compact.join(" · "),
-                       appointment.id]
-                    },
-                    { include_blank: t(".no_appointment") },
-                    class: "select",
-                    data: { item_picker_target: "select" },
-                    aria: { invalid: invoice.errors[:appointment].any?, describedby: "appointment_hint" } %>
-            </div>
-            <p class="form-hint" id="appointment_hint"><%= t(".appointment_hint") %></p>
-          </dd>
-        </div>
-      </dl>
-    </section>
+      <%# invoice_customer_controller.js: picking an appointment fills in its customer, and
+          picking another customer clears an appointment that isn't theirs %>
+      <section class="card" data-controller="invoice-customer">
+        <header class="card__header">
+          <h2 class="card__title"><%= t(".billed_to") %></h2>
+        </header>
+        <dl class="field-list">
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :customer_id %></dt>
+            <dd class="field-row__value">
+              <%# item_picker_controller.js: "No customer" on top, then a search box for the customers %>
+              <div class="item-picker" data-controller="item-picker"
+                   data-item-picker-placeholder-value="<%= t(".search_customers") %>"
+                   data-item-picker-empty-value="<%= t(".no_customers_match") %>">
+                <%= f.collection_select :customer_id, @customers, :id, :full_name,
+                      { include_blank: t(".no_customer") },
+                      class: "select",
+                      data: { item_picker_target: "select", invoice_customer_target: "customer",
+                              action: "change->invoice-customer#customerChanged" },
+                      aria: { invalid: invoice.errors[:customer].any? } %>
+              </div>
+            </dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :appointment_id %></dt>
+            <dd class="field-row__value">
+              <%# item_picker_controller.js: "No appointment" on top, then a search box that
+                  matches the whole option text (date · title · customer) %>
+              <div class="item-picker" data-controller="item-picker"
+                   data-item-picker-placeholder-value="<%= t(".search_appointments") %>"
+                   data-item-picker-empty-value="<%= t(".no_appointments_match") %>">
+                <%# The third element of each choice becomes the <option>'s attributes:
+                    data-customer-id tells the JS whose appointment it is %>
+                <%= f.select :appointment_id,
+                      @appointments.map { |appointment|
+                        [[l(appointment.starts_at, format: :short_datetime),
+                          appointment.title.presence || t("shared.untitled"),
+                          appointment.customer&.full_name].compact.join(" · "),
+                         appointment.id,
+                         { data: { customer_id: appointment.customer_id } }]
+                      },
+                      { include_blank: t(".no_appointment") },
+                      class: "select",
+                      data: { item_picker_target: "select", invoice_customer_target: "appointment",
+                              action: "change->invoice-customer#appointmentChanged" },
+                      aria: { invalid: invoice.errors[:appointment].any?, describedby: "appointment_hint" } %>
+              </div>
+              <p class="form-hint" id="appointment_hint"><%= t(".appointment_hint") %></p>
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </div>
 
     <%# Invoice lines. fields_for :invoice_products works because Invoice has
         accepts_nested_attributes_for :invoice_products, so saving the invoice also
@@ -122,19 +148,10 @@
              data-invoice-lines-available-value="<%= t(".available", count: "%{count}") %>">
       <header class="card__header">
         <h2 class="card__title"><%= t(".lines") %></h2>
-
-        <%# check_box sends "1" when on and a hidden "0" when off, so switching it off is saved too.
-            New invoices start on (the column defaults to true). When on, saving takes the
-            products' units out of stock, and the server refuses quantities above the stock. %>
-        <label class="switch">
-          <%= f.check_box :updates_stock, class: "switch__input", role: "switch",
-                data: { invoice_lines_target: "stockToggle", action: "invoice-lines#refresh" },
-                aria: { describedby: "updates_stock_hint" } %>
-          <span class="switch__track" aria-hidden="true"></span>
-          <span class="switch__label"><%= Invoice.human_attribute_name(:updates_stock) %></span>
-        </label>
       </header>
-      <p class="form-hint invoice-lines__stock-hint" id="updates_stock_hint"><%= t(".updates_stock_hint") %></p>
+      <%# Saving always takes the products' units out of stock, and the server refuses
+          quantities above the stock %>
+      <p class="form-hint invoice-lines__stock-hint"><%= t(".stock_hint") %></p>
 
       <div class="invoice-lines">
         <div class="invoice-lines__head" aria-hidden="true">

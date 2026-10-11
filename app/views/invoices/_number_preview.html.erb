@@ -1,0 +1,27 @@
+<%# Title of the new invoice and new rectificativa forms, with the number the invoice
+    will get. Invoice#number_preview builds it from the enterprise's schema, the selected
+    store and the date; the real number is only assigned when the invoice is saved.
+    It's nil when the schema uses [s] and the store has no invoice code yet. %>
+<% preview = invoice.number_preview %>
+<div class="invoice-number-preview">
+  <h1 class="page-header__title">
+    <%= title %>
+    <% if preview %>
+      <span class="invoice-number-preview__number"><%= preview %></span>
+    <% end %>
+  </h1>
+  <% if local_assigns[:subtitle] %>
+    <p class="page-header__subtitle"><%= subtitle %></p>
+  <% end %>
+  <% if preview %>
+    <p class="form-hint"><%= t("invoices.number_preview.hint") %></p>
+  <% elsif invoice.store %>
+    <div class="alert alert--warning" role="status">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+      <p>
+        <%= t("invoices.number_preview.missing_code", store: invoice.store.name) %>
+        <%= link_to t("invoices.number_preview.add_code"), edit_store_path(invoice.store) %>
+      </p>
+    </div>
+  <% end %>
+</div>

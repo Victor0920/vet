@@ -89,6 +89,7 @@ es:
         post_code: "Código postal"
         photo: "Foto"
         color: "Color"
+        invoice_code: "Código de facturación"
       room:
         name: "Nombre"
         color: "Color"
@@ -97,6 +98,9 @@ es:
         legal_name: "Razón social"
         cif: "CIF"
         address: "Dirección"
+        invoice_number_schema: "Formato del número de factura"
+        rectification_number_schema: "Formato de las rectificativas"
+        invoice_counter_reset: "Reiniciar numeración"
       appointment:
         title: "Título"
         starts_at: "Inicio"
@@ -175,7 +179,7 @@ es:
         services: "Servicios"
         color: "Color"
       invoice:
-        invoice_id: "Número de factura"
+        number: "Número de factura"
         date: "Fecha"
         customer: "Cliente"
         customer_id: "Cliente"
@@ -186,7 +190,7 @@ es:
         store: "Centro"
         store_id: "Centro"
         invoice_products: "Líneas"
-        updates_stock: "Actualizar stock"
+        original_invoice: "Factura original"
       invoice_product:
         product: "Producto"
         product_id: "Producto"
@@ -211,11 +215,21 @@ es:
         must_match_customer_enterprise: "debe coincidir con la empresa del cliente"
         not_enough_stock: "No hay suficiente stock de %{product}: solo quedan %{stock} más"
         product_and_service: "Una línea no puede ser a la vez un producto y un servicio"
+        refund_exceeds_original: "No puedes devolver más unidades de las que vendió la factura original (contando rectificativas anteriores)"
+        refund_without_lines: "Elige al menos una línea para devolver"
+        missing_counter: "debe incluir [n], el contador de facturas"
+        missing_year: "debe incluir [y], o los números se repetirían al reiniciar el contador"
+        missing_month: "debe incluir [m] si la numeración se reinicia cada mes"
+        unknown_tokens: "tiene códigos que no existen: %{tokens}. Usa [s], [y], [m], [d], [n] o [n4]"
+        same_as_invoices: "debe ser distinto del formato del número de factura"
+        missing_invoice_code: "%{store} no tiene código de facturación, y el número de factura lo necesita ([s]). Añádelo en la configuración del centro"
+        locked: "no se puede cambiar: forma parte del número de factura"
+        doesnt_match_appointment: "no coincide con el cliente de la cita (%{customer}). Para facturar a otra persona, quita la cita"
       # Mensajes por modelo, usados en lugar del genérico de arriba
       models:
         invoice:
           attributes:
-            invoice_id:
+            number:
               taken: "ya lo usa otra factura"
 
   # ---------- Mensajes flash (controladores) ----------
@@ -271,12 +285,14 @@ es:
       not_found: "No se ha encontrado la factura"
       email_sent: "Factura enviada a %{email}"
       email_invalid: "Introduce un email válido"
+      rectification_created: "Factura rectificativa creada"
+      rectification_locked: "Una factura rectificativa no se puede editar una vez emitida"
+      rectified_locked: "Esta factura tiene rectificativas, así que no se puede editar. Crea otra rectificativa en su lugar."
+      cannot_rectify_rectification: "Una rectificativa no se puede rectificar. Créala desde la factura original."
     products:
       created: "Producto creado"
       updated: "Producto actualizado"
       not_found: "No se ha encontrado el producto"
-      stock_updated: "%{name}: el stock ahora es %{stock}"
-      stock_invalid: "%{name}: no hay suficiente stock o la cantidad no es válida"
     product_categories:
       created: "Categoría creada"
       updated: "Categoría actualizada"
@@ -362,6 +378,7 @@ es:
       products: "Productos"
       services: "Servicios"
       invoices: "Facturación"
+      sales_report: "Ventas"
       settings: "Configuración"
       admin: "Administración"
       sign_out: "Cerrar sesión"
@@ -412,6 +429,7 @@ es:
       empty_hint: "Tus clínicas aparecerán aquí."
     show:
       edit_store: "Editar centro"
+      no_invoice_code: "Sin definir"
       added: "Alta"
       rooms: "Salas"
       rooms_hint: "Donde se reservan las citas en este centro."
@@ -428,6 +446,8 @@ es:
       details: "Detalles"
       photo_hint: "JPG, PNG o WebP. Se muestra en la lista de centros."
       photo_hint_change: "Elige una imagen nueva para sustituir la actual."
+      invoice_code_placeholder: "p. ej. PK"
+      invoice_code_hint: "Hasta 10 letras o números. Sustituye a [s] en los números de factura, así cada centro numera sus facturas por separado."
 
   profiles:
     show:
@@ -447,6 +467,16 @@ es:
   enterprises:
     edit:
       title: "Editar datos de la empresa"
+      codes:
+        s: "Código de facturación del centro"
+        y: "Año (2026)"
+        m: "Mes (01–12)"
+        d: "Día (01–31)"
+        n: "Contador (1, 2, 3…)"
+        n4: "Contador con ceros (0001, 0002…); el dígito es la longitud"
+      schema_example_html: "Ejemplo: <code>[y]-[s]/[n]</code> para el centro <code>PK</code> da <code>2026-PK/9</code>."
+      rectification_schema_hint: "Las rectificativas necesitan su propia serie. Déjalo en blanco para usar R + el formato de factura."
+      counter_reset_hint: "Cuándo vuelve [n] a 1. El formato debe incluir [y], y también [m] si se reinicia cada mes."
     show:
       title: "Datos de la empresa"
       subtitle: "Cómo aparece tu negocio en las facturas y ante los clientes."
@@ -456,6 +486,12 @@ es:
       registered: "Alta"
       stores: "Centros"
       manage_stores: "Gestionar centros"
+      invoicing: "Facturación"
+      invoicing_hint: "Cómo se generan los números de factura. Cada factura recibe su número al crearse."
+      default_rectification_schema: "(por defecto: R + formato de factura)"
+    invoice_counter_resets:
+      yearly: "Cada año"
+      monthly: "Cada mes"
 
   # ---------- Configuración (área de administración) ----------
   settings:
@@ -848,11 +884,6 @@ es:
       category: "Categoría"
       price: "Precio"
       stock: "Stock"
-      update_stock: "Actualizar stock"
-    stock_form:
-      quantity: "Cantidad"
-      sell: "Vender"
-      restock: "Reponer"
     index:
       title: "Todos los productos"
       heading: "Productos"
@@ -1028,6 +1059,11 @@ es:
     all_invoices: "Todas las facturas"
     number: "Factura #%{id}"
     no_customer: "Sin cliente"
+    rectificativa: "Rectificativa"
+    number_preview:
+      hint: "El número se asigna al guardar. Si otra persona guarda una factura antes, pasará al siguiente."
+      missing_code: "%{store} aún no tiene código de facturación, y tu formato de número de factura usa [s]."
+      add_code: "Añádelo en la configuración del centro"
     columns:
       number: "Número"
       date: "Fecha"
@@ -1058,6 +1094,9 @@ es:
       empty: "Todavía no hay facturas"
       empty_hint: "Las facturas aparecerán aquí cuando se cree la primera."
     show:
+      create_rectification: "Devolver / rectificar"
+      rectifications: "Facturas rectificativas"
+      rectified_hint: "Esta factura ya no se puede editar. Para cambiar o devolver algo más, crea otra rectificativa."
       edit_invoice: "Editar factura"
       custom_item: "Personalizado"
       service: "Servicio"
@@ -1067,8 +1106,6 @@ es:
       lines: "Líneas"
       no_lines: "Esta factura no tiene líneas"
       no_lines_hint: "Los productos y servicios añadidos a esta factura aparecerán aquí."
-      stock_updated: "Stock actualizado"
-      stock_not_updated: "Stock sin actualizar"
     new:
       title: "Nueva factura"
     edit:
@@ -1077,7 +1114,6 @@ es:
       back_to_invoice: "Volver a la factura"
       create: "Crear factura"
       details: "Detalles"
-      number_placeholder: "p. ej. 2026-0001"
       choose_store: "Elige un centro…"
       choose_employee: "Elige un profesional…"
       billed_to: "Facturar a"
@@ -1087,13 +1123,24 @@ es:
       no_appointment: "Sin cita"
       search_appointments: "Busca por fecha, título o cliente…"
       no_appointments_match: "Ninguna cita coincide"
-      appointment_hint: "Opcional. Vincula esta factura a la visita que cobra."
+      appointment_hint: "Opcional. Vincula esta factura a la visita que cobra y rellena el cliente de esa visita."
       lines: "Líneas"
       line_detail: "Descripción · Precio"
       add_line: "Añadir línea"
       lines_hint: "Elige un producto o servicio, o «Artículo personalizado» para escribir una descripción y un precio."
       available: "%{count} disponibles"
-      updates_stock_hint: "Si está activado, al guardar se descuentan estas unidades del stock y se devuelven si luego las quitas. No puedes facturar más unidades de las que hay en stock."
+      number_fields_locked: "La fecha y el centro forman parte del número de factura, así que no se pueden cambiar."
+      stock_hint: "Al guardar se descuentan del stock las unidades de estos productos, y se devuelven si luego las quitas. No puedes facturar más unidades de las que hay en stock."
+    rectifications:
+      new:
+        title: "Nueva factura rectificativa"
+        heading: "Nueva factura rectificativa"
+        subtitle: "Devuelve o corrige la factura #%{number}"
+        create: "Crear rectificativa"
+        lines: "Líneas a devolver"
+        lines_hint: "Las cantidades son negativas: -2 devuelve 2 unidades y las vuelve a poner en stock. Activa las líneas que se devuelven."
+        corrects: "Factura corregida"
+        refund: "Devolver"
     emails:
       new:
         title: "Enviar factura por email"
@@ -1121,3 +1168,22 @@ es:
       description_placeholder: "p. ej. Premios, producto temporal…"
       price_placeholder: "Precio €"
       remove: "Quitar línea"
+
+  # ---------- Reports ----------
+  reports:
+    sales:
+      show:
+        title: "Ventas"
+        heading: "Ventas"
+        subtitle: "Unidades de producto vendidas por cada profesional. Las devoluciones se restan."
+        today: "Hoy"
+        this_week: "Esta semana"
+        this_month: "Este mes"
+        from: "Desde"
+        to: "Hasta"
+        apply: "Ver"
+        employee: "Profesional"
+        product: "Producto"
+        units: "Unidades"
+        empty: "No se vendieron productos en estas fechas"
+        empty_hint: "Aquí aparecen las líneas de producto de las facturas de este periodo. No se cuentan los servicios ni los artículos personalizados."

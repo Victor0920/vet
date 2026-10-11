@@ -1,0 +1,162 @@
+<% content_for :title, t(".title") %>
+
+<% original_number = @original.display_number %>
+<%# POST /invoices/:invoice_id/rectifications → Invoices::RectificationsController#create.
+    The url is given because form_with model: @invoice alone would post to /invoices.
+    Params still arrive as invoice[…], which is what rectification_params expects. %>
+<%= form_with model: @invoice, url: invoice_rectifications_path(@original) do |f| %>
+  <div class="resource-form__toolbar">
+    <%= render "shared/back_link", path: invoice_path(@original), label: t("invoices.form.back_to_invoice") %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), invoice_path(@original), class: "btn btn--ghost" %>
+      <%= f.submit t(".create"), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form resource-form--wide stack">
+    <%= render "invoices/number_preview", invoice: @invoice, title: t(".heading"),
+          subtitle: t(".subtitle", number: original_number) %>
+
+    <% if @invoice.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% @invoice.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%# Same two-column layout as invoices/_form %>
+    <div class="invoice-form__columns">
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title"><%= t("invoices.form.details") %></h2>
+        </header>
+        <dl class="field-list">
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :date %></dt>
+            <dd class="field-row__value">
+              <%= f.datetime_field :date, class: "input", required: true,
+                    aria: { invalid: @invoice.errors[:date].any? } %>
+            </dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :store_id %></dt>
+            <dd class="field-row__value">
+              <%= f.collection_select :store_id, @stores, :id, :name,
+                    { prompt: t("invoices.form.choose_store") },
+                    class: "select", required: true,
+                    aria: { invalid: @invoice.errors[:store].any? } %>
+            </dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :employee_id %></dt>
+            <dd class="field-row__value">
+              <%= f.collection_select :employee_id, @employees, :id, :display_name,
+                    { prompt: t("invoices.form.choose_employee") },
+                    class: "select", required: true,
+                    aria: { invalid: @invoice.errors[:employee].any? } %>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title"><%= t(".corrects") %></h2>
+        </header>
+        <dl class="field-list">
+          <%# Original invoice and customer are fixed: the controller copies them, the form never sends them %>
+          <div class="field-row">
+            <dt class="field-row__label"><%= Invoice.human_attribute_name(:original_invoice) %></dt>
+            <dd class="field-row__value field-row__value--text">
+              <%= link_to t("invoices.number", id: original_number), invoice_path(@original) %>
+            </dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= Invoice.human_attribute_name(:customer) %></dt>
+            <dd class="field-row__value field-row__value--text">
+              <%= @invoice.customer&.full_name || t("invoices.no_customer") %>
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".lines") %></h2>
+      </header>
+      <p class="form-hint rectification-lines__hint"><%= t(".lines_hint") %></p>
+
+      <div class="table-wrapper rectification-lines">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%= t(".refund") %></th>
+              <th><%= t("invoices.columns.product") %></th>
+              <th class="invoices-table__total"><%= t("invoices.columns.unit_price") %></th>
+              <th class="invoices-table__total"><%= t("invoices.columns.quantity") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%# One row per line the controller built from the original (quantity already negated) %>
+            <%= f.fields_for :invoice_products do |line| %>
+              <% item = line.object %>
+              <tr>
+                <td>
+                  <%# The item and price are copied from the original line. The server checks
+                      they match it, so editing these hidden fields can't refund something else. %>
+                  <%= line.hidden_field :product_id %>
+                  <%= line.hidden_field :service_id %>
+                  <%= line.hidden_field :description %>
+                  <%= line.hidden_field :price %>
+
+                  <%# Bound to _destroy, inverted: on sends "0" (keep the line), off sends the
+                      hidden "1". A new line with _destroy=1 is simply not created.
+                      Off by default, so you pick what's refunded. After a validation error only
+                      the lines that were on come back (the others were never built), so they stay on. %>
+                  <label class="switch">
+                    <%= line.check_box :_destroy, { checked: @invoice.errors.any?, class: "switch__input", role: "switch" }, "0", "1" %>
+                    <span class="switch__track" aria-hidden="true"></span>
+                    <span class="switch__label sr-only"><%= t(".refund") %></span>
+                  </label>
+                </td>
+                <td>
+                  <div class="product-cell">
+                    <% if item.product %>
+                      <span class="product-cell__name"><%= item.product.name.presence || t("products.unnamed") %></span>
+                    <% elsif item.service %>
+                      <span class="product-cell__name">
+                        <%= item.service.name.presence || t("services.unnamed") %>
+                        <span class="badge badge--primary"><%= t("invoices.show.service") %></span>
+                      </span>
+                    <% else %>
+                      <span class="product-cell__name">
+                        <%= item.description %>
+                        <span class="badge badge--info"><%= t("invoices.show.custom_item") %></span>
+                      </span>
+                    <% end %>
+                  </div>
+                </td>
+                <td class="table__numeric invoices-table__total">
+                  <%= item.price ? number_to_currency(item.price, unit: "€", format: "%n %u") : "—" %>
+                </td>
+                <td class="invoices-table__total">
+                  <%= line.label :quantity, InvoiceProduct.human_attribute_name(:quantity), class: "sr-only" %>
+                  <%# Negative: -2 gives 2 units back. The server checks it isn't more than was sold. %>
+                  <%= line.number_field :quantity, class: "input rectification-lines__quantity",
+                        required: true, max: -1, step: 1,
+                        aria: { invalid: item.errors[:quantity].any? } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+<% end %>

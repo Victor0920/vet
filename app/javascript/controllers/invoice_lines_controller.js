@@ -2,16 +2,15 @@ import { Controller } from "@hotwired/stimulus"
 
 // Adds and removes invoice lines on the invoice form, and switches each line
 // between "existing product or service" and "custom item" (description + price).
-// While the "Update stock" switch is on, each product line shows how many units
-// are available and its quantity can't go above that (the server checks it too).
+// Each product line shows how many units are available and its quantity can't go
+// above that (the server checks it too).
 // <section data-controller="invoice-lines" data-invoice-lines-available-value="%{count} available">
-//   <input type="checkbox" data-invoice-lines-target="stockToggle" data-action="invoice-lines#refresh">
 //   <div data-invoice-lines-target="list">…one data-invoice-lines-target="line" per row…</div>
 //   <template data-invoice-lines-target="template">…a blank row using NEW_LINE as its index…</template>
 //   <button type="button" data-action="invoice-lines#add">
 // </section>
 export default class extends Controller {
-  static targets = ["list", "template", "line", "stockToggle"]
+  static targets = ["list", "template", "line"]
   static values = { available: String }
 
   // Stimulus calls this for every row: the ones rendered by Rails and the ones added later
@@ -48,11 +47,6 @@ export default class extends Controller {
     this.update(event.target.closest("[data-invoice-lines-target='line']"))
   }
 
-  // The "Update stock" switch changed: every line's limit changes with it
-  refresh() {
-    this.lineTargets.forEach((line) => this.update(line))
-  }
-
   // Product or service picked → show its price, hide and disable description/price.
   // "Custom item" picked → the other way round. Disabled inputs aren't submitted.
   update(line) {
@@ -72,13 +66,12 @@ export default class extends Controller {
   }
 
   // Shows "· 5 available" and sets the quantity's max, or removes both when the line
-  // is a custom item or a service (no data-stock), or the "Update stock" switch is off.
+  // is a custom item or a service (no data-stock).
   updateStock(line, option) {
     const quantity = line.querySelector("input[name$='[quantity]']")
     const label = line.querySelector("[data-product-stock]")
-    const tracking = this.hasStockToggleTarget && this.stockToggleTarget.checked
 
-    if (!option || !tracking || option.dataset.stock === undefined) {
+    if (!option || option.dataset.stock === undefined) {
       quantity.removeAttribute("max")
       label.hidden = true
       return

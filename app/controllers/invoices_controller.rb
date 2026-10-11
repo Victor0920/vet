@@ -1,6 +1,7 @@
 class InvoicesController < ApplicationController
   before_action :set_invoice, only: %i[ show edit update ]
   before_action :set_form_options, only: %i[ new create edit update ]
+  before_action :forbid_editing_locked_invoices, only: %i[ edit update ]
 
   def index
     @query = params[:q].to_s.strip
@@ -18,7 +19,7 @@ class InvoicesController < ApplicationController
       format.html
       format.pdf do
         send_data InvoicePdf.new(@invoice).render,
-                  filename: "invoice-#{(@invoice.invoice_id.presence || @invoice.id).to_s.parameterize}.pdf",
+                  filename: "invoice-#{@invoice.display_number.parameterize}.pdf",
                   type: :pdf,
                   disposition: :attachment
       end
@@ -77,7 +78,14 @@ class InvoicesController < ApplicationController
   end
 
   def invoice_params
-    params.expect(invoice: [ :invoice_id, :date, :store_id, :employee_id, :customer_id, :appointment_id, :updates_stock,
+    params.expect(invoice: [ :date, :store_id, :employee_id, :customer_id, :appointment_id,
       invoice_products_attributes: [ [ :id, :item, :description, :price, :quantity, :_destroy ] ] ])
+  end
+
+  def forbid_editing_locked_invoices
+    return unless @invoice.locked?
+
+    message = @invoice.corrective? ? "flash.invoices.rectification_locked" : "flash.invoices.rectified_locked"
+    redirect_to invoice_path(@invoice), alert: t(message)
   end
 end

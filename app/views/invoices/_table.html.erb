@@ -18,8 +18,11 @@
       <% invoices.each do |invoice| %>
         <tr>
           <td>
-            <%= link_to invoice.invoice_id.presence || t("invoices.number", id: invoice.id),
+            <%= link_to invoice.number.presence || t("invoices.number", id: invoice.id),
                   invoice_path(invoice), class: "invoice-cell__number" %>
+            <% if invoice.corrective? %>
+              <span class="badge badge--warning"><%= t("invoices.rectificativa") %></span>
+            <% end %>
           </td>
           <td class="table__numeric"><%= invoice.date ? l(invoice.date, format: :display) : "—" %></td>
           <% if show_customer %>

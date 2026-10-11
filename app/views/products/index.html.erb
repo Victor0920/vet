@@ -65,7 +65,6 @@
             <th><%= t("products.columns.category") %></th>
             <th class="products-table__price"><%= t("products.columns.price") %></th>
             <th class="products-table__stock"><%= t("products.columns.stock") %></th>
-            <th><%= t("products.columns.update_stock") %></th>
           </tr>
         </thead>
         <tbody>
@@ -107,23 +106,6 @@
                   <span class="badge badge--warning"><%= product.stock %></span>
                 <% else %>
                   <%= product.stock %>
-                <% end %>
-              </td>
-              <td>
-                <%# PATCH /products/:product_id/stock → Products::StocksController#update.
-                    Only the clicked button's name/value is sent, so params[:direction]
-                    is "sell" or "restock". The frame's target: "_top" makes the redirect
-                    reload the whole page, so the flash message shows up. %>
-                <%= form_with url: product_stock_path(product), method: :patch, class: "stock-form" do %>
-                  <%= label_tag "quantity_#{product.id}", t("products.stock_form.quantity"), class: "sr-only" %>
-                  <%= number_field_tag :quantity, 1,
-                        id: "quantity_#{product.id}",
-                        min: 1, step: 1, required: true,
-                        class: "input stock-form__quantity" %>
-                  <%= button_tag t("products.stock_form.sell"),
-                        name: "direction", value: "sell", class: "btn btn--sm btn--primary" %>
-                  <%= button_tag t("products.stock_form.restock"),
-                        name: "direction", value: "restock", class: "btn btn--sm btn--secondary" %>
                 <% end %>
               </td>
             </tr>
