@@ -103,6 +103,10 @@ es:
         rectification_number_schema: "Formato de las rectificativas"
         invoice_counter_reset: "Reiniciar numeración"
         login_code: "ID de empresa"
+        logo: "Logo"
+        invoice_layout: "Diseño"
+        invoice_color: "Color de realce"
+        invoice_footer: "Nota al pie"
       appointment:
         title: "Título"
         starts_at: "Inicio"
@@ -250,6 +254,8 @@ es:
       created: "Centro creado"
     enterprise:
       updated: "Datos de la empresa actualizados"
+    invoice_settings:
+      updated: "Ajustes de facturación actualizados"
     appointments:
       created: "Cita creada"
       updated: "Cita actualizada"
@@ -336,6 +342,10 @@ es:
       confirm: "Continuar"
     # unsaved_changes_controller.js: asked when leaving a form with changes
     unsaved_changes_leave: "Salir sin guardar"
+    # shared/_remove_image: el botón "Quitar" de una foto o logo guardado
+    remove_image:
+      undo: "Deshacer"
+      notice: "Se eliminará al guardar."
     unsaved_changes_save: "Guardar y salir"
     unsaved_changes: "Tienes cambios sin guardar. ¿Salir de esta página sin guardarlos?"
     change_photo: "Cambiar foto"
@@ -456,8 +466,6 @@ es:
       images: "Imágenes"
       remove_photo: "Quitar foto"
       remove_logo: "Quitar logo"
-      undo_remove: "Deshacer"
-      remove_notice: "Se eliminará al guardar."
       invoice_code_placeholder: "p. ej. PK"
       invoice_code_hint: "Hasta 10 letras o números. Sustituye a [s] en los números de factura, así cada centro numera sus facturas por separado."
 
@@ -479,6 +487,58 @@ es:
   enterprises:
     edit:
       title: "Editar datos de la empresa"
+      login_code_hint: "De 3 a 30 letras, números o guiones. No puede usarlo otra empresa. Si lo cambias, avisa a tu equipo: todos lo escriben para entrar."
+    show:
+      title: "Datos de la empresa"
+      subtitle: "Cómo aparece tu negocio en las facturas y ante los clientes."
+      edit: "Editar datos"
+      legal_details: "Datos fiscales"
+      legal_details_hint: "Aparecen en todas las facturas."
+      registered: "Alta"
+      stores: "Centros"
+      manage_stores: "Gestionar centros"
+      sign_in: "Acceso"
+      sign_in_hint: "Tu equipo escribe este ID de empresa y después su propio ID de empleado y contraseña."
+    invoice_counter_resets:
+      yearly: "Cada año"
+      monthly: "Cada mes"
+
+  # ---------- Ajustes de facturación (/settings/invoicing) ----------
+  invoice_settings:
+    # Los tres diseños del PDF (InvoicePdf, ::Modern, ::Compact)
+    layouts:
+      classic:
+        name: "Clásica"
+        description: "Logo y empresa a la izquierda, una línea de color bajo la cabecera."
+      modern:
+        name: "Moderna"
+        description: "Una franja de color arriba y el total en un recuadro de color."
+      compact:
+        name: "Compacta"
+        description: "Casi en blanco y negro, más pequeña y densa. Ahorra tinta."
+    show:
+      title: "Facturas"
+      subtitle: "Cómo se numeran tus facturas y cómo es el PDF."
+      edit: "Editar"
+      preview: "Vista previa del PDF"
+      design: "Diseño"
+      design_hint: "Se aplica a todos los PDF de factura, también a los ya emitidos: solo cambia el aspecto, nunca los números ni los importes."
+      logo_alt: "Logo de la empresa"
+      no_logo: "Ninguno (si un centro tiene logo propio, se usa ese)"
+      no_footer: "Ninguna"
+      numbering: "Numeración"
+      numbering_hint: "Cómo se generan los números de factura. Cada factura recibe su número al crearse."
+      default_rectification_schema: "(por defecto: R + formato de factura)"
+    edit:
+      title: "Editar ajustes de facturación"
+      preview: "Vista previa del PDF"
+      preview_hint: "Abre tu factura más reciente en otra pestaña con estas opciones, sin guardarlas."
+      logo_description: "Aparece arriba en las facturas. Si un centro tiene logo propio, en sus facturas se usa ese."
+      logo_hint: "PNG o JPG. Un PNG con fondo transparente queda mejor."
+      logo_hint_change: "Elige una imagen nueva para sustituir el logo actual."
+      remove_logo: "Quitar logo"
+      footer_placeholder: "p. ej. IBAN ES00 0000 0000 0000 0000 0000 · Inscrita en el Registro Mercantil de…"
+      footer_hint: "Aparece al pie de todas las facturas, en lugar de la frase de cierre por defecto («Emitida por… Gracias por confiarnos a tus mascotas.»). Hasta 500 caracteres; se respetan los saltos de línea."
       codes:
         s: "Código de facturación del centro"
         y: "Año (2026)"
@@ -489,24 +549,8 @@ es:
       schema_example_html: "Ejemplo: <code>[y]-[s]/[n]</code> para el centro <code>PK</code> da <code>2026-PK/9</code>."
       rectification_schema_hint: "Las rectificativas necesitan su propia serie. Déjalo en blanco para usar R + el formato de factura."
       counter_reset_hint: "Cuándo vuelve [n] a 1. El formato debe incluir [y], y también [m] si se reinicia cada mes."
-      login_code_hint: "De 3 a 30 letras, números o guiones. No puede usarlo otra empresa. Si lo cambias, avisa a tu equipo: todos lo escriben para entrar."
-    show:
-      title: "Empresa y facturación"
-      subtitle: "Cómo aparece tu negocio en las facturas y ante los clientes."
-      edit: "Editar datos"
-      legal_details: "Datos fiscales"
-      legal_details_hint: "Aparecen en todas las facturas."
-      registered: "Alta"
-      stores: "Centros"
-      manage_stores: "Gestionar centros"
-      invoicing: "Facturación"
-      invoicing_hint: "Cómo se generan los números de factura. Cada factura recibe su número al crearse."
-      default_rectification_schema: "(por defecto: R + formato de factura)"
-      sign_in: "Acceso"
-      sign_in_hint: "Tu equipo escribe este ID de empresa y después su propio ID de empleado y contraseña."
-    invoice_counter_resets:
-      yearly: "Cada año"
-      monthly: "Cada mes"
+    preview:
+      sample_line: "Consulta general"
 
   # ---------- Configuración (área de administración) ----------
   settings:
@@ -515,26 +559,29 @@ es:
       title: "Configuración"
       heading: "Configuración"
       admin_only: "Solo administradores"
-      subtitle: "Gestiona tu negocio: empresa y facturación, centros, equipo, catálogo y comunicación con clientes."
+      subtitle: "Gestiona tu negocio: empresa, centros, equipo, catálogo, facturación y comunicación con clientes."
       coming_soon: "Próximamente"
       groups:
         business:
           title: "Negocio"
-          description: "Tu empresa, cómo se numeran sus facturas y los centros donde trabajas."
+          description: "Los datos de tu empresa y los centros donde trabajas."
         team:
           title: "Equipo"
           description: "Quién trabaja contigo y qué puede hacer."
         catalogue:
           title: "Catálogo"
           description: "Cómo se organizan los productos y servicios."
+        billing:
+          title: "Facturación"
+          description: "La numeración y el aspecto de tus facturas."
         messaging:
           title: "Comunicación"
           description: "Los canales con los que hablas con tus clientes."
       tiles:
         enterprise:
-          title: "Empresa y facturación"
-          description: "Datos fiscales y cómo se numeran tus facturas."
-          items: ["Datos fiscales", "Numeración de facturas", "Rectificativas"]
+          title: "Datos de la empresa"
+          description: "Nombre, datos fiscales, dirección y el ID de empresa con el que entra tu equipo."
+          items: ["Datos fiscales", "ID de empresa"]
         stores:
           title: "Centros y salas"
           description: "Tus clínicas y las salas donde se reservan citas."
@@ -548,6 +595,10 @@ es:
         service_categories:
           title: "Categorías de servicios"
           description: "Agrupa los servicios y elige sus colores."
+        invoicing:
+          title: "Facturas"
+          description: "Cómo se numeran las facturas y cómo es el PDF."
+          items: ["Numeración", "Diseño y color", "Logo", "Nota al pie"]
         whatsapp:
           title: "WhatsApp"
           description: "Conecta el número desde el que escribes a los clientes."

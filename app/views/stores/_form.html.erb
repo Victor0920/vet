@@ -100,7 +100,7 @@
                   <%= store.photo.attached? && store.photo.persisted? ? t(".photo_hint_change") : t(".photo_hint") %>
                 </p>
                 <% if store.photo.attached? && store.photo.persisted? %>
-                  <%= render "remove_image", f: f, field: :remove_photo, label: t(".remove_photo") %>
+                  <%= render "shared/remove_image", f: f, field: :remove_photo, label: t(".remove_photo") %>
                 <% end %>
               </div>
             </div>
@@ -129,7 +129,7 @@
                   <%= store.logo.attached? && store.logo.persisted? ? t(".logo_hint_change") : t(".logo_hint") %>
                 </p>
                 <% if store.logo.attached? && store.logo.persisted? %>
-                  <%= render "remove_image", f: f, field: :remove_logo, label: t(".remove_logo") %>
+                  <%= render "shared/remove_image", f: f, field: :remove_logo, label: t(".remove_logo") %>
                 <% end %>
               </div>
             </div>

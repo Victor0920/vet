@@ -1,0 +1,210 @@
+<% content_for :title, t(".title") %>
+
+<%# The colour radios set --invoice-accent for the layout drawings, so they follow the picked colour
+    with no JavaScript. The shades come from Enterprise::INVOICE_COLORS, the same ones the PDF uses,
+    so this little <style> is generated here instead of copying the hex codes into a CSS file %>
+<style>
+  <% Enterprise::INVOICE_COLORS.each do |name, hex| %>
+    .invoice-design:has(.invoice-color__input[value="<%= name %>"]:checked) { --invoice-accent: #<%= hex %>; }
+  <% end %>
+</style>
+
+<%# Singular resource: model + url, since there's no :id in /settings/invoicing %>
+<%= form_with model: @enterprise, url: invoice_settings_path, method: :patch,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: @enterprise.errors.any? } do |f| %>
+  <div class="resource-form__toolbar">
+    <%= render "shared/back_link", path: invoice_settings_path, label: t("invoice_settings.show.title") %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), invoice_settings_path, class: "btn btn--ghost" %>
+      <%= f.submit t("shared.save_changes"), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+
+    <% if @enterprise.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% @enterprise.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%# ---------- Design: layout + colour ---------- %>
+    <section class="card invoice-design">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("invoice_settings.show.design") %></h2>
+          <p class="card__description"><%= t("invoice_settings.show.design_hint") %></p>
+        </div>
+      </header>
+
+      <div class="card__body stack">
+        <%# Each layout is a real radio button (hidden) with a big <label> card: clicking anywhere
+            on the card picks it, and arrow keys move between them %>
+        <fieldset class="invoice-layouts">
+          <legend class="label"><%= Enterprise.human_attribute_name(:invoice_layout) %></legend>
+          <div class="invoice-layouts__options">
+            <% Enterprise.invoice_layouts.keys.each do |layout| %>
+              <%= f.radio_button :invoice_layout, layout, class: "invoice-layout__input" %>
+              <%= f.label :invoice_layout, value: layout, class: "invoice-layout" do %>
+                <%= render "mockup", layout: layout %>
+                <span class="invoice-layout__name"><%= t("invoice_settings.layouts.#{layout}.name") %></span>
+                <span class="invoice-layout__description"><%= t("invoice_settings.layouts.#{layout}.description") %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </fieldset>
+
+        <%# Same swatch look as the category colour picker (color_picker.css), but filled with
+            the PDF's dark shade, and no "no colour" option: an invoice always has one %>
+        <fieldset class="invoice-colors">
+          <legend class="label"><%= Enterprise.human_attribute_name(:invoice_color) %></legend>
+          <div class="invoice-colors__options">
+            <% Enterprise::INVOICE_COLORS.each do |name, hex| %>
+              <%= f.radio_button :invoice_color, name, class: "invoice-color__input" %>
+              <%= f.label :invoice_color, value: name, title: t(name, scope: "shared.colors"),
+                    class: "invoice-color", style: "--swatch: ##{hex}" do %>
+                <span class="sr-only"><%= t(name, scope: "shared.colors") %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </fieldset>
+
+        <%# A second submit button for the same form: it sends the (unsaved) fields to the preview
+            action in a new tab instead of saving. formmethod="get" so nothing is changed;
+            data-turbo="false" so Turbo leaves it to the browser (Turbo can't open new tabs) %>
+        <div class="invoice-preview-row">
+          <button type="submit" class="btn btn--secondary" formaction="<%= preview_invoice_settings_path %>"
+                  formmethod="get" formtarget="_blank" formnovalidate data-turbo="false">
+            <%= render "shared/icons/document_text" %>
+            <%= t(".preview") %>
+          </button>
+          <p class="form-hint"><%= t(".preview_hint") %></p>
+        </div>
+      </div>
+    </section>
+
+    <%# ---------- Logo ---------- %>
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= Enterprise.human_attribute_name(:logo) %></h2>
+          <p class="card__description"><%= t(".logo_description") %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :logo %></dt>
+          <dd class="field-row__value">
+            <%# Same picker as the store logo: image-preview shows the picked file before saving %>
+            <% saved_logo = @enterprise.logo.attached? && @enterprise.logo.persisted? %>
+            <div class="product-photo-field" data-controller="image-preview">
+              <% if saved_logo %>
+                <%= image_tag @enterprise.logo.variant(:thumb), alt: "",
+                      class: "product-thumb product-thumb--lg product-thumb--contain", data: { image_preview_target: "placeholder" } %>
+              <% else %>
+                <span class="product-thumb product-thumb--lg" data-image-preview-target="placeholder">
+                  <%= render "shared/icons/building_office" %>
+                </span>
+              <% end %>
+              <img alt="" class="product-thumb product-thumb--lg product-thumb--contain" hidden data-image-preview-target="image">
+
+              <div class="product-photo-field__input">
+                <%= f.file_field :logo, accept: "image/png,image/jpeg", class: "file-input",
+                      data: { action: "change->image-preview#show" },
+                      aria: { describedby: "logo_hint", invalid: @enterprise.errors[:logo].any? } %>
+                <p class="form-hint" id="logo_hint"><%= saved_logo ? t(".logo_hint_change") : t(".logo_hint") %></p>
+                <% if saved_logo %>
+                  <%= render "shared/remove_image", f: f, field: :remove_logo, label: t(".remove_logo") %>
+                <% end %>
+              </div>
+            </div>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <%# ---------- Footer note ---------- %>
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= Enterprise.human_attribute_name(:invoice_footer) %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :invoice_footer %></dt>
+          <dd class="field-row__value">
+            <%# maxlength matches the model's length validation (500) %>
+            <%= f.text_area :invoice_footer, class: "textarea", rows: 3, maxlength: 500,
+                  placeholder: t(".footer_placeholder"),
+                  aria: { invalid: @enterprise.errors[:invoice_footer].any?, describedby: "invoice_footer_hint" } %>
+            <p class="form-hint" id="invoice_footer_hint"><%= t(".footer_hint") %></p>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <%# ---------- Numbering (moved here from the company settings) ---------- %>
+    <%# How InvoiceNumber builds numbers: the schemas are plain text with [x] codes in them %>
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("invoice_settings.show.numbering") %></h2>
+          <p class="card__description"><%= t("invoice_settings.show.numbering_hint") %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :invoice_number_schema %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :invoice_number_schema, class: "input input--mono", required: true,
+                  spellcheck: false, autocomplete: "off",
+                  aria: { invalid: @enterprise.errors[:invoice_number_schema].any?, describedby: "schema_codes" } %>
+            <%# The codes the schema understands, with the example from the hint %>
+            <div class="schema-codes" id="schema_codes">
+              <dl class="schema-codes__list">
+                <% %w[s y m d n n4].each do |code| %>
+                  <div>
+                    <dt><code>[<%= code %>]</code></dt>
+                    <dd><%= t(".codes.#{code}") %></dd>
+                  </div>
+                <% end %>
+              </dl>
+              <p class="form-hint"><%= t(".schema_example_html") %></p>
+            </div>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :rectification_number_schema %></dt>
+          <dd class="field-row__value">
+            <%# Blank means "R" + the invoice schema (InvoiceNumber#schema), shown as the placeholder %>
+            <%= f.text_field :rectification_number_schema, class: "input input--mono",
+                  spellcheck: false, autocomplete: "off",
+                  placeholder: "R#{@enterprise.invoice_number_schema_in_database}",
+                  aria: { invalid: @enterprise.errors[:rectification_number_schema].any?, describedby: "rectification_schema_hint" } %>
+            <p class="form-hint" id="rectification_schema_hint"><%= t(".rectification_schema_hint") %></p>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :invoice_counter_reset %></dt>
+          <dd class="field-row__value">
+            <%# Enterprise.invoice_counter_resets → { "yearly" => "yearly", "monthly" => "monthly" } (from the enum) %>
+            <%= f.select :invoice_counter_reset,
+                  Enterprise.invoice_counter_resets.keys.map { |reset| [t("enterprises.invoice_counter_resets.#{reset}"), reset] },
+                  {}, class: "select input--short",
+                  aria: { invalid: @enterprise.errors[:invoice_counter_reset].any?, describedby: "counter_reset_hint" } %>
+            <p class="form-hint" id="counter_reset_hint"><%= t(".counter_reset_hint") %></p>
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+<% end %>

@@ -51,6 +51,9 @@ Rails.application.routes.draw do
     resources :stores, path: "stores" do
       resources :rooms, only: %i[ new create edit update ]
     end
+    resource :invoice_settings, path: "invoicing", only: %i[ show edit update ] do
+      get :preview
+    end
   end
   resource :settings, only: :show
 

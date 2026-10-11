@@ -18,7 +18,7 @@ class InvoicesController < ApplicationController
     respond_to do |format|
       format.html
       format.pdf do
-        send_data InvoicePdf.new(@invoice).render,
+        send_data InvoicePdf.for(@invoice).render,
                   filename: "invoice-#{@invoice.display_number.parameterize}.pdf",
                   type: :pdf,
                   disposition: :attachment

@@ -113,6 +113,10 @@ en:
         rectification_number_schema: "Corrective invoice number format"
         invoice_counter_reset: "Restart numbering"
         login_code: "Company ID"
+        logo: "Logo"
+        invoice_layout: "Layout"
+        invoice_color: "Highlight colour"
+        invoice_footer: "Footer note"
       appointment:
         title: "Title"
         starts_at: "Starts"
@@ -261,6 +265,8 @@ en:
       created: "Store created"
     enterprise:
       updated: "Company details updated"
+    invoice_settings:
+      updated: "Invoice settings updated"
     appointments:
       created: "Appointment created"
       updated: "Appointment updated"
@@ -347,6 +353,10 @@ en:
       confirm: "Continue"
     # unsaved_changes_controller.js: asked when leaving a form with changes
     unsaved_changes_leave: "Leave without saving"
+    # shared/_remove_image: the "Remove" toggle for a saved photo or logo
+    remove_image:
+      undo: "Undo"
+      notice: "Will be deleted when you save."
     unsaved_changes_save: "Save and exit"
     unsaved_changes: "You have unsaved changes. Leave this page without saving them?"
     change_photo: "Change photo"
@@ -467,8 +477,6 @@ en:
       images: "Images"
       remove_photo: "Remove photo"
       remove_logo: "Remove logo"
-      undo_remove: "Undo"
-      remove_notice: "Will be deleted when you save."
       invoice_code_placeholder: "e.g. PK"
       invoice_code_hint: "Up to 10 letters or digits. Replaces [s] in invoice numbers, so each store numbers its invoices on its own."
 
@@ -490,6 +498,58 @@ en:
   enterprises:
     edit:
       title: "Edit company details"
+      login_code_hint: "3 to 30 letters, numbers or dashes. Must not be in use by another company. If you change it, tell your team: everyone types it to sign in."
+    show:
+      title: "Company details"
+      subtitle: "How your business appears on invoices and to customers."
+      edit: "Edit details"
+      legal_details: "Legal details"
+      legal_details_hint: "Printed on every invoice."
+      registered: "Registered"
+      stores: "Stores"
+      manage_stores: "Manage stores"
+      sign_in: "Sign-in"
+      sign_in_hint: "Your staff type this company ID, then their own employee ID and password."
+    invoice_counter_resets:
+      yearly: "Every year"
+      monthly: "Every month"
+
+  # ---------- Invoice settings (/settings/invoicing) ----------
+  invoice_settings:
+    # The three PDF layouts (InvoicePdf, ::Modern, ::Compact)
+    layouts:
+      classic:
+        name: "Classic"
+        description: "Logo and company on the left, a coloured line under the header."
+      modern:
+        name: "Modern"
+        description: "A colour band across the top and the total in a coloured box."
+      compact:
+        name: "Compact"
+        description: "Mostly black and white, smaller and denser. Saves ink."
+    show:
+      title: "Invoices"
+      subtitle: "How your invoices are numbered and how the PDF looks."
+      edit: "Edit"
+      preview: "Preview PDF"
+      design: "Design"
+      design_hint: "Applies to every invoice PDF, including ones already issued: only the look changes, never numbers or amounts."
+      logo_alt: "Company logo"
+      no_logo: "None (a store's own logo is used if it has one)"
+      no_footer: "None"
+      numbering: "Numbering"
+      numbering_hint: "How invoice numbers are generated. Each invoice gets its number when it's created."
+      default_rectification_schema: "(default: R + invoice format)"
+    edit:
+      title: "Edit invoice settings"
+      preview: "Preview PDF"
+      preview_hint: "Opens your most recent invoice in a new tab with these choices, without saving them."
+      logo_description: "Printed at the top of invoices. A store's own logo, if it has one, takes its place on that store's invoices."
+      logo_hint: "PNG or JPG. A transparent PNG looks best."
+      logo_hint_change: "Pick a new image to replace the current logo."
+      remove_logo: "Remove logo"
+      footer_placeholder: "e.g. IBAN ES00 0000 0000 0000 0000 0000 · Registered in the Commercial Register of…"
+      footer_hint: "Printed at the bottom of every invoice, in place of the default closing line (“Issued by… Thank you for trusting us with your pets.”). Up to 500 characters; line breaks are kept."
       codes:
         s: "Store invoice code"
         y: "Year (2026)"
@@ -500,24 +560,8 @@ en:
       schema_example_html: "Example: <code>[y]-[s]/[n]</code> for store <code>PK</code> gives <code>2026-PK/9</code>."
       rectification_schema_hint: "Corrective invoices need their own series. Leave blank to use R + the invoice format."
       counter_reset_hint: "When [n] goes back to 1. The format must include [y], and also [m] if it restarts every month."
-      login_code_hint: "3 to 30 letters, numbers or dashes. Must not be in use by another company. If you change it, tell your team: everyone types it to sign in."
-    show:
-      title: "Company & invoicing"
-      subtitle: "How your business appears on invoices and to customers."
-      edit: "Edit details"
-      legal_details: "Legal details"
-      legal_details_hint: "Printed on every invoice."
-      registered: "Registered"
-      stores: "Stores"
-      manage_stores: "Manage stores"
-      invoicing: "Invoicing"
-      invoicing_hint: "How invoice numbers are generated. Each invoice gets its number when it's created."
-      default_rectification_schema: "(default: R + invoice format)"
-      sign_in: "Sign-in"
-      sign_in_hint: "Your staff type this company ID, then their own employee ID and password."
-    invoice_counter_resets:
-      yearly: "Every year"
-      monthly: "Every month"
+    preview:
+      sample_line: "General consultation"
 
   # ---------- Settings (admin area) ----------
   settings:
@@ -526,26 +570,29 @@ en:
       title: "Settings"
       heading: "Settings"
       admin_only: "Admin only"
-      subtitle: "Manage your business: company and invoicing, clinics, team, catalogue and customer messaging."
+      subtitle: "Manage your business: company, clinics, team, catalogue, invoicing and customer messaging."
       coming_soon: "Coming soon"
       groups:
         business:
           title: "Business"
-          description: "Your company, how its invoices are numbered, and the clinics where you work."
+          description: "Your company details and the clinics where you work."
         team:
           title: "Team"
           description: "Who works with you and what they can do."
         catalogue:
           title: "Catalogue"
           description: "How products and services are organised."
+        billing:
+          title: "Invoicing"
+          description: "Numbering and the look of your invoices."
         messaging:
           title: "Messaging"
           description: "The channels you use to talk to your customers."
       tiles:
         enterprise:
-          title: "Company & invoicing"
-          description: "Legal details and how your invoices are numbered."
-          items: ["Legal details", "Invoice numbering", "Corrective invoices"]
+          title: "Company details"
+          description: "Name, legal details, address and the company ID your team signs in with."
+          items: ["Legal details", "Company ID"]
         stores:
           title: "Stores & rooms"
           description: "Your clinics and the rooms you book appointments in."
@@ -559,6 +606,10 @@ en:
         service_categories:
           title: "Service categories"
           description: "Group services and pick their colours."
+        invoicing:
+          title: "Invoices"
+          description: "How invoices are numbered and how the PDF looks."
+          items: ["Numbering", "Layout & colour", "Logo", "Footer note"]
         whatsapp:
           title: "WhatsApp"
           description: "Connect the number you message customers from."

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_11_170726) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -126,6 +126,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_170726) do
     t.string "rectification_number_schema"
     t.string "invoice_counter_reset", default: "yearly", null: false
     t.string "login_code", null: false
+    t.string "invoice_layout", default: "classic", null: false
+    t.string "invoice_color", default: "teal", null: false
+    t.text "invoice_footer"
     t.index ["login_code"], name: "index_enterprises_on_login_code", unique: true
   end
 
