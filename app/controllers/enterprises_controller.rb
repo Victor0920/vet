@@ -1,4 +1,6 @@
 class EnterprisesController < ApplicationController
+  include AdminOnly
+
   before_action :set_enterprise, only: %i[ show edit update ]
 
   def show

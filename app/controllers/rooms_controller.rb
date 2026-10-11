@@ -1,4 +1,6 @@
 class RoomsController < ApplicationController
+  include AdminOnly
+
   before_action :set_store
   before_action :set_room, only: %i[ edit update ]
 

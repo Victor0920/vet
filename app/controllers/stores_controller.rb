@@ -1,4 +1,6 @@
 class StoresController < ApplicationController
+  include AdminOnly
+
   before_action :set_store, only: %i[ show edit update ]
 
   def index
