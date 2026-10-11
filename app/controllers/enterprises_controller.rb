@@ -22,7 +22,7 @@ class EnterprisesController < ApplicationController
   end
 
   def enterprise_params
-    params.expect(enterprise: [ :name, :legal_name, :cif, :address,
+    params.expect(enterprise: [ :name, :legal_name, :cif, :address, :login_code,
       :invoice_number_schema, :rectification_number_schema, :invoice_counter_reset ])
   end
 end
