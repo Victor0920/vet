@@ -233,6 +233,7 @@ es:
         locked: "no se puede cambiar: forma parte del número de factura"
         doesnt_match_appointment: "no coincide con el cliente de la cita (%{customer}). Para facturar a otra persona, quita la cita"
         png_or_jpg_only: "debe ser una imagen PNG o JPG"
+        jpg_png_or_webp_only: "debe ser una imagen JPG, PNG o WebP"
         inactive_employee: "está desactivado: elige a alguien que siga activo"
       # Mensajes por modelo, usados en lugar del genérico de arriba
       models:
@@ -240,6 +241,19 @@ es:
           attributes:
             number:
               taken: "ya lo usa otra factura"
+        # Feminine fields: the generic "no es válido" would read "Categoría no es válido"
+        product:
+          attributes:
+            product_category:
+              invalid: "no es válida"
+        service:
+          attributes:
+            service_category:
+              invalid: "no es válida"
+        appointment:
+          attributes:
+            room:
+              invalid: "no es válida"
 
   # ---------- Mensajes flash (controladores) ----------
   flash:

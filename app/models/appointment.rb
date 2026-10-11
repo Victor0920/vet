@@ -44,27 +44,27 @@ class Appointment < ApplicationRecord
 
   def ends_after_starts
     return if starts_at.blank? || ends_at.blank?
-    errors.add(:ends_at, "must be after the start time") if ends_at <= starts_at
+    errors.add(:ends_at, :must_be_after_start) if ends_at <= starts_at
   end
 
   def room_is_free
     return if room.nil? || starts_at.blank? || ends_at.blank?
     clash = room.appointments.where.not(id: id).overlapping(starts_at, ends_at)
-    errors.add(:room, "is already booked at that time") if clash.exists?
+    errors.add(:room, :already_booked) if clash.exists?
   end
 
   def room_in_enterprise
     return if room.nil? || enterprise.nil?
-    errors.add(:room, "is not valid") if room.store.enterprise_id != enterprise_id
+    errors.add(:room, :invalid) if room.store.enterprise_id != enterprise_id
   end
 
   def pet_belongs_to_customer
     return if pet.nil? || customer.nil?
-    errors.add(:pet, "doesn't belong to this customer") if pet.customer_id != customer_id
+    errors.add(:pet, :not_this_customers_pet) if pet.customer_id != customer_id
   end
 
   def enterprise_matches_customer
     return if customer.nil? || enterprise.nil?
-    errors.add(:enterprise, "must match the customer's enterprise") if customer.enterprise_id != enterprise_id
+    errors.add(:enterprise, :must_match_customer_enterprise) if customer.enterprise_id != enterprise_id
   end
 end

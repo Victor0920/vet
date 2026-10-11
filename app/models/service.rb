@@ -19,7 +19,7 @@ class Service < ApplicationRecord
 
   def category_belongs_to_same_enterprise
     if service_category && service_category.enterprise_id != enterprise_id
-      errors.add(:service_category, "is not valid")
+      errors.add(:service_category, :invalid)
     end
   end
 end

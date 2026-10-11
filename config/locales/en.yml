@@ -244,6 +244,7 @@ en:
         locked: "can't change: it's part of the invoice number"
         doesnt_match_appointment: "doesn't match the appointment's customer (%{customer}). To bill someone else, remove the appointment"
         png_or_jpg_only: "must be a PNG or JPG image"
+        jpg_png_or_webp_only: "must be a JPG, PNG or WebP image"
         inactive_employee: "has been deactivated: choose someone who is still active"
       # Per-model wording, used instead of the generic message above
       models:
@@ -251,6 +252,19 @@ en:
           attributes:
             number:
               taken: "is already used by another invoice"
+        # Feminine fields: the generic "no es válido" would read "Categoría no es válido"
+        product:
+          attributes:
+            product_category:
+              invalid: "is invalid"
+        service:
+          attributes:
+            service_category:
+              invalid: "is invalid"
+        appointment:
+          attributes:
+            room:
+              invalid: "is invalid"
 
   # ---------- Flash messages (controllers) ----------
   flash:
