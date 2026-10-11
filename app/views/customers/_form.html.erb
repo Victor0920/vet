@@ -1,39 +1,80 @@
-<%# Same layout as customers/edit, but with plain inputs instead of shared/editable_field,
-    all inside one form that is saved with the button in the top right corner. %>
-<%= form_with model: customer do |f| %>
+<%# Shared by customers/new and /edit: every field is a plain input inside one form,
+    saved with the button in the top right corner (same pattern as stores, products…) %>
+<% back_path = customer.persisted? ? customer_path(customer) : customers_path %>
+<%# *_was: the saved name, so a rejected edit doesn't rename the heading before it's saved %>
+<% saved_name = [customer.first_name_was, customer.first_surname_was, customer.second_surname_was].compact_blank.join(" ") %>
+<% saved_photo = customer.photo.attached? && customer.photo.persisted? %>
+
+<%= form_with model: customer,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: customer.errors.any? } do |f| %>
   <div class="customer-form__toolbar">
-    <%= render "shared/back_link", path: customers_path, label: t(".all_customers") %>
+    <%= render "shared/back_link", path: back_path,
+          label: (customer.persisted? ? t(".back_to_customer") : t(".all_customers")) %>
 
     <div class="page-header__actions">
-      <%= link_to t("shared.cancel"), customers_path, class: "btn btn--ghost" %>
-      <%= f.submit t(".submit"), class: "btn btn--primary" %>
+      <%= link_to t("shared.cancel"), back_path, class: "btn btn--ghost" %>
+      <%= f.submit (customer.persisted? ? t("shared.save_changes") : t(".submit")), class: "btn btn--primary" %>
     </div>
   </div>
 
   <div class="customer-profile">
     <aside class="card customer-profile__sidebar">
       <div class="customer-profile__header">
-        <%# The avatar is a <label> for the hidden file input; image-preview shows the picked photo %>
+        <%# The avatar is a <label> for the hidden file input; image-preview shows the picked photo.
+            Nothing is uploaded until the form is saved. %>
         <div class="avatar-upload" data-controller="image-preview">
-          <%= f.label :photo, class: "avatar-upload__trigger", title: t("shared.add_photo") do %>
-            <span class="avatar avatar--xl" data-image-preview-target="placeholder">
-              <svg viewBox="0 0 20 20" fill="currentColor" width="32" height="32" aria-hidden="true"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"/></svg>
-            </span>
+          <%= f.label :photo, class: "avatar-upload__trigger", title: (saved_photo ? t("shared.change_photo") : t("shared.add_photo")) do %>
+            <% if saved_photo %>
+              <%= image_tag customer.photo.variant(:medium), alt: saved_name,
+                    class: "avatar avatar--xl avatar--photo", data: { image_preview_target: "placeholder" } %>
+            <% elsif customer.persisted? %>
+              <span class="avatar avatar--xl" data-image-preview-target="placeholder"><%= customer.first_name_was.to_s.first %><%= customer.first_surname_was.to_s.first %></span>
+            <% else %>
+              <span class="avatar avatar--xl" data-image-preview-target="placeholder">
+                <svg viewBox="0 0 20 20" fill="currentColor" width="32" height="32" aria-hidden="true"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z"/></svg>
+              </span>
+            <% end %>
             <img alt="" class="avatar avatar--xl avatar--photo" hidden data-image-preview-target="image">
             <span class="avatar-upload__overlay">
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
-              <span class="sr-only"><%= t("shared.add_photo") %></span>
+              <span class="sr-only"><%= saved_photo ? t("shared.change_photo") : t("shared.add_photo") %></span>
             </span>
           <% end %>
           <%= f.file_field :photo, accept: "image/*", class: "sr-only", data: { action: "change->image-preview#show" } %>
         </div>
-        <p class="text-subtle text-xs"><%= t(".photo_hint") %></p>
+        <p class="text-subtle text-xs"><%= saved_photo ? t(".photo_hint_change") : t(".photo_hint") %></p>
 
         <div>
-          <h1 class="customer-profile__name"><%= t(".heading") %></h1>
-          <p class="text-subtle text-xs"><%= t(".pets_hint") %></p>
+          <h1 class="customer-profile__name">
+            <%= customer.persisted? ? (saved_name.presence || t("shared.unnamed_customer")) : t(".heading") %>
+          </h1>
+          <p class="text-subtle text-xs">
+            <%= customer.persisted? ? t("shared.customer_number", id: customer.id) : t(".pets_hint") %>
+          </p>
         </div>
       </div>
+
+      <% if customer.persisted? %>
+        <div class="card__body">
+          <dl class="details">
+            <div>
+              <dt><%= t(".pets") %></dt>
+              <dd><%= customer.pets.map(&:name).compact_blank.to_sentence.presence || t(".no_pets") %></dd>
+            </div>
+            <div>
+              <dt><%= t("customers.customer_since") %></dt>
+              <dd><%= l(customer.created_at, format: :display) %></dd>
+            </div>
+            <div>
+              <dt><%= t("shared.last_updated") %></dt>
+              <dd><%= t("shared.time_ago", time: time_ago_in_words(customer.updated_at)) %></dd>
+            </div>
+          </dl>
+        </div>
+      <% end %>
     </aside>
 
     <div class="customer-profile__main stack">

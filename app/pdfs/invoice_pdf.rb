@@ -34,10 +34,23 @@ class InvoicePdf
   # ---------- sections ----------
 
   def issuer
+    logo
     text issuer_name, size: 16, style: :bold, color: PRIMARY
     muted "#{t(:tax_id)}: #{enterprise.cif}" if enterprise.cif.present?
     muted enterprise.address if enterprise.address.present?
   end
+
+  def logo
+    attachment = [ @invoice.store.logo, enterprise.logo ].find(&:attached?)
+    return unless attachment
+
+    # Prawn only reads PNG and JPG, but logos may be WebP: ask for a PNG copy
+    png = attachment.variant(resize_to_limit: [ 480, 180 ], format: :png).processed.download
+    image StringIO.new(png), fit: [ 160, 60 ]
+    move_down 8
+  rescue ActiveStorage::FileNotFoundError, Prawn::Errors::UnsupportedImageType
+     # A missing or unreadable logo shouldn't stop the invoice from rendering
+   end
 
   def heading
     text t(:title).upcase, size: 22, style: :bold, align: :right

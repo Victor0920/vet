@@ -38,10 +38,6 @@
       <%= render "shared/icons/document_text" %>
       <span><%= t("components.top_nav.invoices") %></span>
     <% end %>
-    <%= link_to helpers.reports_sales_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/reports/sales")) } do %>
-      <%= render "shared/icons/chart_bar" %>
-      <span><%= t("components.top_nav.sales_report") %></span>
-    <% end %>
   </nav>
 
   <%# Admin area. Stores live under /settings/stores, so start_with? keeps it highlighted there too %>
@@ -55,31 +51,28 @@
       <%= render "shared/icons/heart" %>
       <span><%= t("components.top_nav.services") %></span>
     <% end %>
+    <%= link_to helpers.reports_sales_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/reports/sales")) } do %>
+      <%= render "shared/icons/chart_bar" %>
+      <span><%= t("components.top_nav.sales_report") %></span>
+    <% end %>
     <%= link_to helpers.settings_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/settings")) } do %>
       <%= render "shared/icons/cog" %>
       <span><%= t("components.top_nav.settings") %></span>
     <% end %>
   </nav>
 
-  <% employee = Current.session&.employee %>
+  <%# You: photo (or initials) and name, linking to /profile, where you also sign out %>
   <div class="sidebar__footer">
-
-    <%= link_to helpers.profile_path, aria: { current: ("page" if request.path == helpers.profile_path) } do %>
-      <span class="avatar avatar--sm"><%= employee&.email_address.to_s.first %></span>
-      <span class="sidebar__user" title="<%= employee&.email_address %>"><%= employee&.email_address %></span>
-    <% end %>
-    <%= button_to helpers.session_path, method: :delete, class: "btn btn--ghost btn--sm", title: t("components.top_nav.sign_out"), aria: { label: t("components.top_nav.sign_out") } do %>
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        aria-hidden="true"
-      ><path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
-        /></svg>
+    <%= link_to helpers.profile_path, class: "sidebar__profile",
+          aria: { current: ("page" if request.path == helpers.profile_path) } do %>
+      <% if @employee.photo.attached? %>
+        <%= image_tag @employee.photo.variant(resize_to_fill: [64, 64]), alt: "", class: "avatar avatar--sm avatar--photo" %>
+      <% else %>
+        <span class="avatar avatar--sm"><%= (
+            @employee.first_name.to_s.first.to_s + @employee.last_name.to_s.first.to_s
+          ).presence || @employee.username.first.upcase %></span>
+      <% end %>
+      <span class="sidebar__user" title="<%= @employee.display_name %>"><%= @employee.display_name %></span>
     <% end %>
   </div>
 </aside>

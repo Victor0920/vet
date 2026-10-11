@@ -10,11 +10,17 @@ class Enterprise < ApplicationRecord
   has_many :invoice_products, through: :invoices
   has_many :services, dependent: :destroy
   has_many :service_categories, dependent: :destroy
+  has_one_attached :logo do |attachable|
+    attachable.variant :thumb, resize_to_limit: [ 320, 320 ], preprocessed: true
+  end
   enum :invoice_counter_reset, { yearly: "yearly", monthly: "monthly" }, prefix: true, validate: true
 
   normalizes :invoice_number_schema, :rectification_number_schema, with: ->(schema) { schema.strip.presence }
   validates :invoice_number_schema, presence: true
   validate :invoice_number_schemas_are_valid
+
+  normalizes :login_code, with: ->(code) { code.strip.downcase }
+  validates :login_code, presence: true, uniqueness: true, format: { with: /\A[a-z0-9-]{3,30}\z/ }
 
   private
 

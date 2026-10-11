@@ -5,9 +5,11 @@ one:
   legal_name: MyString
   cif: MyString
   address: MyString
+  login_code: one
 
 two:
   name: MyString
   legal_name: MyString
   cif: MyString
   address: MyString
+  login_code: two

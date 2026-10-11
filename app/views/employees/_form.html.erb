@@ -1,0 +1,202 @@
+<%# Shared by employees/new and /edit (admins only, under /settings/employees) %>
+<% back_path = employee.persisted? ? employee_path(employee) : employees_path %>
+<%# Admins can't change their own role or deactivate themselves (EmployeesController#employee_params drops
+    those fields), so on your own record they're shown as text instead of inputs %>
+<% editing_self = employee == Current.employee %>
+<% saved_photo = employee.photo.attached? && employee.photo.persisted? %>
+
+<%= form_with model: employee,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: employee.errors.any? } do |f| %>
+  <div class="resource-form__toolbar">
+    <%= render "shared/back_link", path: back_path,
+          label: (employee.persisted? ? t(".back_to_employee") : t("employees.all_employees")) %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), back_path, class: "btn btn--ghost" %>
+      <%= f.submit (employee.persisted? ? t("shared.save_changes") : t(".create")), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title">
+      <%# *_was: the saved name, so a rejected edit doesn't rename the heading before it's saved %>
+      <%= employee.persisted? ? t("employees.edit.title", name: [employee.first_name_was, employee.last_name_was].compact_blank.join(" ").presence || employee.username_was) : t("employees.new.title") %>
+    </h1>
+
+    <% if employee.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% employee.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".personal") %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :first_name %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :first_name, class: "input", autofocus: true, autocomplete: "off",
+                  aria: { invalid: employee.errors[:first_name].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :last_name %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :last_name, class: "input", autocomplete: "off",
+                  aria: { invalid: employee.errors[:last_name].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :photo %></dt>
+          <dd class="field-row__value">
+            <%# Same photo picker as stores and products: image-preview swaps the placeholder for the picked file %>
+            <div class="product-photo-field" data-controller="image-preview">
+              <% if saved_photo %>
+                <%= image_tag employee.photo.variant(resize_to_fill: [160, 160]), alt: "",
+                      class: "product-thumb product-thumb--lg", data: { image_preview_target: "placeholder" } %>
+              <% else %>
+                <span class="product-thumb product-thumb--lg" data-image-preview-target="placeholder">
+                  <%= render "shared/icons/customers" %>
+                </span>
+              <% end %>
+              <img alt="" class="product-thumb product-thumb--lg" hidden data-image-preview-target="image">
+
+              <div class="product-photo-field__input">
+                <%= f.file_field :photo, accept: "image/*", class: "file-input",
+                      data: { action: "change->image-preview#show" },
+                      aria: { describedby: "photo_hint", invalid: employee.errors[:photo].any? } %>
+                <p class="form-hint" id="photo_hint"><%= saved_photo ? t(".photo_hint_change") : t(".photo_hint") %></p>
+              </div>
+            </div>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <%# How they sign in: company ID (from the company settings) + this employee ID + password %>
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t(".sign_in") %></h2>
+          <p class="card__description"><%= t(".sign_in_hint", company: Current.enterprise.login_code) %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :username %></dt>
+          <dd class="field-row__value">
+            <%# Saved in lowercase (Employee normalizes it); pattern gives the browser's own hint first %>
+            <%= f.text_field :username, class: "input input--short input--mono", required: true,
+                  autocomplete: "off", autocapitalize: "none", spellcheck: false, maxlength: 30,
+                  pattern: "[A-Za-z0-9._\\-]{2,30}",
+                  aria: { invalid: employee.errors[:username].any?, describedby: "username_hint" } %>
+            <p class="form-hint" id="username_hint"><%= t(".username_hint") %></p>
+          </dd>
+        </div>
+        <%# autocomplete="new-password": otherwise the browser offers to fill in the admin's OWN saved
+            password here. On edit, blank fields keep the current password (has_secure_password ignores "") %>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :password %></dt>
+          <dd class="field-row__value">
+            <%= f.password_field :password, class: "input", autocomplete: "new-password", maxlength: 72,
+                  required: employee.new_record?,
+                  aria: { invalid: employee.errors[:password].any?, describedby: "password_hint" } %>
+            <p class="form-hint" id="password_hint">
+              <%= employee.persisted? ? t(".password_hint_keep") : t(".password_hint_new") %>
+            </p>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :password_confirmation %></dt>
+          <dd class="field-row__value">
+            <%= f.password_field :password_confirmation, class: "input", autocomplete: "new-password", maxlength: 72,
+                  required: employee.new_record?,
+                  aria: { invalid: employee.errors[:password_confirmation].any? } %>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t(".contact") %></h2>
+          <p class="card__description"><%= t(".contact_hint") %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :email_address %></dt>
+          <dd class="field-row__value">
+            <%= f.email_field :email_address, class: "input", autocomplete: "off",
+                  aria: { invalid: employee.errors[:email_address].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :phone %></dt>
+          <dd class="field-row__value">
+            <%= f.telephone_field :phone, class: "input input--short", autocomplete: "off",
+                  aria: { invalid: employee.errors[:phone].any? } %>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".access") %></h2>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :role %></dt>
+          <dd class="field-row__value">
+            <% if editing_self %>
+              <div class="field-row__display">
+                <span><%= employee.role.present? ? t(employee.role, scope: "employees.roles", default: employee.role.humanize) : "—" %></span>
+              </div>
+            <% else %>
+              <%= f.select :role, Employee::ROLES.map { |role| [t(role, scope: "employees.roles"), role] },
+                    { include_blank: "—" }, class: "select", aria: { invalid: employee.errors[:role].any? } %>
+            <% end %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :locale %></dt>
+          <dd class="field-row__value">
+            <%# Language names in their own language, like the picker on /profile %>
+            <%= f.select :locale, [["Español", "es"], ["English", "en"]], {}, class: "select" %>
+          </dd>
+        </div>
+        <% if employee.persisted? %>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :active %></dt>
+            <dd class="field-row__value">
+              <% if editing_self %>
+                <div class="field-row__display"><span class="text-subtle"><%= t(".self_note") %></span></div>
+              <% else %>
+                <%# f.check_box adds a hidden "0" first, so switching it off still sends active: "0" %>
+                <label class="switch">
+                  <%= f.check_box :active, class: "switch__input", role: "switch",
+                        aria: { describedby: "active_hint" } %>
+                  <span class="switch__track" aria-hidden="true"></span>
+                  <span class="switch__label"><%= t(".active_label") %></span>
+                </label>
+                <p class="form-hint" id="active_hint"><%= t(".active_hint") %></p>
+              <% end %>
+            </dd>
+          </div>
+        <% end %>
+      </dl>
+    </section>
+  </div>
+<% end %>

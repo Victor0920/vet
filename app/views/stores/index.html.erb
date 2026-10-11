@@ -20,7 +20,8 @@
 <% if @stores.any? %>
   <div class="stores-grid">
     <% @stores.each do |store| %>
-      <%= link_to store_path(store), class: "card card--interactive store-card" do %>
+      <%# carried_location: keeps the trail (Company > Stores > Store) when this page was opened with return_to %>
+      <%= link_to store_path(store, return_to: carried_location), class: "card card--interactive store-card" do %>
         <div class="store-card__media">
           <% if store.photo.attached? %>
             <%= image_tag store.photo.variant(resize_to_fill: [640, 320]), alt: "", class: "store-card__photo" %>

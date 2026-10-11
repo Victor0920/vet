@@ -2,7 +2,11 @@
 
 <%# Singular resource: model + url, since there's no :id in /settings/enterprise.
     method: :patch because the record already exists (update) %>
-<%= form_with model: @enterprise, url: enterprise_path, method: :patch do |f| %>
+<%= form_with model: @enterprise, url: enterprise_path, method: :patch,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: @enterprise.errors.any? } do |f| %>
   <div class="resource-form__toolbar">
     <%= render "shared/back_link", path: enterprise_path, label: t("enterprises.show.title") %>
 
@@ -60,6 +64,30 @@
           <dd class="field-row__value">
             <%= f.text_field :address, class: "input", autocomplete: "street-address",
                   aria: { invalid: @enterprise.errors[:address].any? } %>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <%# The company ID people type to sign in. Unique across all companies (validation + database index):
+        if it's taken, the save fails with an error instead of sharing it %>
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("enterprises.show.sign_in") %></h2>
+          <p class="card__description"><%= t("enterprises.show.sign_in_hint") %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :login_code %></dt>
+          <dd class="field-row__value">
+            <%# Saved in lowercase (Enterprise normalizes it); pattern gives the browser's own hint first %>
+            <%= f.text_field :login_code, class: "input input--short input--mono", required: true,
+                  autocomplete: "off", autocapitalize: "none", spellcheck: false, maxlength: 30,
+                  pattern: "[A-Za-z0-9\\-]{3,30}",
+                  aria: { invalid: @enterprise.errors[:login_code].any?, describedby: "login_code_hint" } %>
+            <p class="form-hint" id="login_code_hint"><%= t(".login_code_hint") %></p>
           </dd>
         </div>
       </dl>

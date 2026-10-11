@@ -67,7 +67,7 @@
                       and screen readers (tabindex -1 + aria-hidden) to avoid announcing it twice %>
                   <%= link_to customer_path(customer), tabindex: -1, aria: { hidden: true } do %>
                     <% if customer.photo.attached? %>
-                      <%= image_tag customer.photo.variant(resize_to_fill: [80, 80]),
+                      <%= image_tag customer.photo.variant(:small),
                       alt: "",
                       class: "avatar avatar--photo" %>
                     <% else %>

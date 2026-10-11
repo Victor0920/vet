@@ -3,7 +3,10 @@ class Customer < ApplicationRecord
   has_many :appointments, dependent: :destroy
   has_many :invoices, dependent: :restrict_with_error
   belongs_to :enterprise
-  has_one_attached :photo
+  has_one_attached :photo do |attachable|
+  attachable.variant :small, resize_to_fill: [ 80, 80 ], preprocessed: true
+  attachable.variant :medium, resize_to_fill: [ 192, 192 ], preprocessed: true
+end
 
   def full_name
     [ first_name, first_surname ].compact_blank.join(" ").presence || "Customer ##{id}"

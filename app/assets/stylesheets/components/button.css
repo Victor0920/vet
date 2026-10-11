@@ -75,6 +75,12 @@
   &:hover { background: var(--color-surface-hover); color: var(--color-text); }
 }
 
+/* Opt-in underline on hover, for buttons that read as links (e.g. inside a table row).
+   .btn turns text-decoration off on hover; this comes later, so it wins */
+.btn--underline-hover:hover {
+  text-decoration: underline;
+}
+
 .btn--danger {
   background: var(--color-danger);
   color: var(--white);

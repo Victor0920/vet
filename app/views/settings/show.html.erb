@@ -20,10 +20,13 @@
       <p class="settings-group__description"><%= t(".groups.business.description") %></p>
     </header>
     <div class="settings-group__tiles">
+      <%# Invoicing lives in the company settings (numbering formats are per company) %>
       <%= render "settings/tile", icon: "building_office", path: enterprise_path,
-            title: t(".tiles.enterprise.title"), description: t(".tiles.enterprise.description") %>
+            title: t(".tiles.enterprise.title"), description: t(".tiles.enterprise.description"),
+            items: t(".tiles.enterprise.items") %>
       <%= render "settings/tile", icon: "building_storefront", path: stores_path,
-            title: t(".tiles.stores.title"), description: t(".tiles.stores.description") %>
+            title: t(".tiles.stores.title"), description: t(".tiles.stores.description"),
+            items: t(".tiles.stores.items") %>
     </div>
   </section>
 
@@ -51,14 +54,13 @@
     </div>
   </section>
 
-  <section class="settings-group" aria-labelledby="settings-billing">
+  <%# Channels for talking to customers (WhatsApp now, maybe email/SMS later) %>
+  <section class="settings-group" aria-labelledby="settings-messaging">
     <header class="settings-group__header">
-      <h2 class="settings-group__title" id="settings-billing"><%= t(".groups.billing.title") %></h2>
-      <p class="settings-group__description"><%= t(".groups.billing.description") %></p>
+      <h2 class="settings-group__title" id="settings-messaging"><%= t(".groups.messaging.title") %></h2>
+      <p class="settings-group__description"><%= t(".groups.messaging.description") %></p>
     </header>
     <div class="settings-group__tiles">
-      <%= render "settings/tile", icon: "document_text",
-            title: t(".tiles.invoicing.title"), description: t(".tiles.invoicing.description") %>
       <%= render "settings/tile", icon: "messages",
             title: t(".tiles.whatsapp.title"), description: t(".tiles.whatsapp.description") %>
     </div>

@@ -247,6 +247,23 @@
   }
 }
 
+/* In its room's colour: _appointment.html.erb adds this together with a
+   color-swatch--<name> class, which sets --swatch / --swatch-highlight (color_picker.css).
+   Appointments in a room without a colour keep the teal above. */
+.cal-event--themed {
+  background: var(--swatch-highlight);
+  border-color: color-mix(in srgb, var(--swatch) 35%, transparent);
+  border-left-color: var(--swatch);
+
+  &:hover {
+    background: color-mix(in srgb, var(--swatch-highlight), var(--swatch) 12%);
+  }
+
+  .cal-event__time {
+    color: var(--swatch);
+  }
+}
+
 /* Short appointments don't have room for everything. overflow: hidden (needed for the
    ellipsis) lets a flex item shrink to 0, so without flex-shrink: 0 the title and time
    were squeezed away first. Now they keep their height, the links give way instead,
@@ -374,7 +391,8 @@
 
 /* The room's colour comes from a color-swatch--<name> class on the header cell and the
    column (it sets --swatch and --swatch-highlight). A room without a colour has neither,
-   so every var() falls back to the usual teal. */
+   so every var() falls back to the usual teal. The appointments themselves are
+   coloured by .cal-event--themed, in every view. */
 .time-grid--rooms {
   .time-grid__day {
     border-top: 3px solid var(--swatch, transparent);
@@ -393,20 +411,6 @@
       border-radius: var(--radius-full);
       background: var(--swatch, var(--color-primary));
     }
-  }
-
-  .cal-event {
-    background: var(--swatch-highlight, var(--color-primary-subtle));
-    border-color: color-mix(in srgb, var(--swatch, var(--color-primary)) 35%, transparent);
-    border-left-color: var(--swatch, var(--color-primary));
-
-    &:hover {
-      background: color-mix(in srgb, var(--swatch-highlight, var(--color-primary-subtle)), var(--swatch, var(--color-primary)) 12%);
-    }
-  }
-
-  .cal-event__time {
-    color: var(--swatch, var(--color-primary-text));
   }
 }
 
@@ -549,6 +553,20 @@
 .month-event__title {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* In its room's colour, same idea as .cal-event--themed: color-swatch--<name> on the
+   same link sets --swatch / --swatch-highlight. No room colour → the teal above */
+.month-event--themed {
+  background: var(--swatch-highlight);
+
+  &:hover {
+    background: color-mix(in srgb, var(--swatch-highlight), var(--swatch) 12%);
+  }
+
+  .month-event__time {
+    color: var(--swatch);
+  }
 }
 
 .month-grid__more {

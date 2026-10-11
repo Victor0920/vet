@@ -7,6 +7,14 @@
     <h1 class="page-header__title"><%= t(".heading") %></h1>
     <p class="page-header__subtitle"><%= t(".count", count: @employees.size) %></p>
   </div>
+  <div class="page-header__actions">
+    <%= link_to new_employee_path, class: "btn btn--primary" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+          d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+        /></svg>
+      <%= t(".new_employee") %>
+    <% end %>
+  </div>
 </div>
 
 <% if @employees.any? %>
@@ -20,19 +28,24 @@
           <th><%= Employee.human_attribute_name(:phone) %></th>
           <th><%= Employee.human_attribute_name(:locale) %></th>
           <th><%= t(".columns.status") %></th>
+          <th><span class="sr-only"><%= t(".columns.actions") %></span></th>
         </tr>
       </thead>
       <tbody>
         <% @employees.each do |employee| %>
-          <%# Same initials fallback as employees/show %>
-          <% initials = (employee.first_name.to_s.first.to_s + employee.last_name.to_s.first.to_s).presence ||
-                        employee.email_address.first.upcase %>
-          <tr class="<%= "employees-table__row--inactive" if employee.active == false %>">
+          <%# Same initials fallback as employees/_profile %>
+          <% initials =
+            (
+              employee.first_name.to_s.first.to_s + employee.last_name.to_s.first.to_s
+            ).presence || employee.username.first.upcase %>
+          <tr class="<%= "employees-table__row--inactive" unless employee.active? %>">
             <td class="customers-table__photo">
               <%# Same destination as the name link next to it: hidden from keyboard and screen readers %>
               <%= link_to employee_path(employee), tabindex: -1, aria: { hidden: true } do %>
                 <% if employee.photo.attached? %>
-                  <%= image_tag employee.photo.variant(resize_to_fill: [80, 80]), alt: "", class: "avatar avatar--photo" %>
+                  <%= image_tag employee.photo.variant(resize_to_fill: [80, 80]),
+                  alt: "",
+                  class: "avatar avatar--photo" %>
                 <% else %>
                   <span class="avatar"><%= initials %></span>
                 <% end %>
@@ -40,8 +53,13 @@
             </td>
             <td>
               <div class="customer-cell__text">
-                <%= link_to employee.display_name, employee_path(employee), class: "customer-cell__name" %>
-                <span class="customer-cell__meta"><%= employee.email_address %></span>
+                <%= link_to employee.display_name,
+                employee_path(employee),
+                class: "customer-cell__name" %>
+                <%# Employee ID (what they sign in with), then the optional email %>
+                <span class="customer-cell__meta">
+                  <code><%= employee.username %></code><%= " · #{employee.email_address}" if employee.email_address.present? %>
+                </span>
               </div>
             </td>
             <td>
@@ -52,14 +70,29 @@
               <% end %>
             </td>
             <td class="table__numeric"><%= employee.phone.presence || "—" %></td>
-            <td><%= t(employee.locale, scope: "employees.languages", default: employee.locale.to_s.upcase) %></td>
+            <td><%= t(
+                employee.locale,
+                scope: "employees.languages",
+                default: employee.locale.to_s.upcase,
+              ) %></td>
             <td>
-              <%# active is nil for employees created before the column existed, so only false counts as inactive %>
-              <% if employee.active == false %>
+              <% unless employee.active? %>
                 <span class="badge badge--danger"><%= t("employees.show.inactive") %></span>
               <% else %>
                 <span class="badge badge--success"><%= t("employees.show.active") %></span>
               <% end %>
+            </td>
+            <td class="table__actions">
+              <div class="employees-table__actions">
+                <% if employee == Current.employee %>
+                  <span class="badge"><%= t(".you") %></span>
+                <% else %>
+                  <%= render "employees/activation_button",
+                  employee: employee,
+                  return_to: employees_path,
+                  small: true %>
+                <% end %>
+              </div>
             </td>
           </tr>
         <% end %>

@@ -98,6 +98,7 @@ en:
         address: "Address"
         post_code: "Post code"
         photo: "Photo"
+        logo: "Logo"
         color: "Colour"
         invoice_code: "Invoice code"
       room:
@@ -111,6 +112,7 @@ en:
         invoice_number_schema: "Invoice number format"
         rectification_number_schema: "Corrective invoice number format"
         invoice_counter_reset: "Restart numbering"
+        login_code: "Company ID"
       appointment:
         title: "Title"
         starts_at: "Starts"
@@ -145,6 +147,7 @@ en:
         first_name: "First name"
         last_name: "Last name"
         email_address: "Email"
+        username: "Employee ID"
         phone: "Phone"
         role: "Role"
         active: "Active"
@@ -236,6 +239,8 @@ en:
         missing_invoice_code: "%{store} has no invoice code, which the invoice number needs ([s]). Add it in the store's settings"
         locked: "can't change: it's part of the invoice number"
         doesnt_match_appointment: "doesn't match the appointment's customer (%{customer}). To bill someone else, remove the appointment"
+        png_or_jpg_only: "must be a PNG or JPG image"
+        inactive_employee: "has been deactivated: choose someone who is still active"
       # Per-model wording, used instead of the generic message above
       models:
         invoice:
@@ -277,15 +282,11 @@ en:
       updated: "Employee updated"
       language_updated: "Language updated"
       not_found: "Employee not found"
+      deactivated: "Employee deactivated"
+      reactivated: "Employee reactivated"
     messages:
       created: "Message created"
       failed: "Message failed"
-    passwords:
-      rate_limited: "Try again later."
-      instructions_sent: "Password reset instructions sent (if an employee with that email address exists)."
-      reset: "Password has been reset."
-      mismatch: "Passwords did not match."
-      invalid_token: "Password reset link is invalid or has expired."
     pets:
       created: "Pet created"
       updated: "Pet updated"
@@ -318,7 +319,7 @@ en:
       not_found: "Category not found"
     sessions:
       rate_limited: "Try again later."
-      invalid: "Try another email address or password."
+      invalid: "Check your company ID, employee ID and password."
 
   # ---------- Shared words ----------
   shared:
@@ -340,20 +341,23 @@ en:
     dismiss: "Click to dismiss"
     add_photo: "Add photo"
     cancel: "Cancel"
+    # shared/_confirm_dialog.html.erb: the app's own confirm() popup
+    confirm_dialog:
+      title: "Are you sure?"
+      confirm: "Continue"
+    # unsaved_changes_controller.js: asked when leaving a form with changes
+    unsaved_changes_leave: "Leave without saving"
+    unsaved_changes_save: "Save and exit"
+    unsaved_changes: "You have unsaved changes. Leave this page without saving them?"
     change_photo: "Change photo"
     close: "Close"
     customer_number: "Customer #%{id}"
     delete: "Delete"
-    done_editing: "Done editing"
-    edit: "Edit"
-    edit_field: "Edit %{field}"
     last_updated: "Last updated"
     not_set: "Not set"
-    pencil_hint: "Click the pencil next to a field to edit it."
     pet_number: "Pet #%{id}"
     "yes": "Yes"
     "no": "No"
-    save: "Save"
     save_changes: "Save changes"
     time_ago: "%{time} ago"
     time_ago_by: "%{time} ago by %{name}"
@@ -362,7 +366,6 @@ en:
     unnamed_customer: "Unnamed customer"
     unnamed_pet: "Unnamed pet"
     untitled: "Untitled"
-    upload_photo: "Upload photo"
     message_senders:
       user: "User"
       bot: "Bot"
@@ -392,7 +395,6 @@ en:
       sales_report: "Sales"
       settings: "Settings"
       admin: "Administration"
-      sign_out: "Sign out"
 
   # ---------- Navigation ----------
   # Back-link labels when a page was opened from another section (?return_to=),
@@ -412,6 +414,7 @@ en:
       services: "Services"
       service: "Service"
       service_categories: "Service categories"
+      enterprise: "Company"
       settings: "Settings"
 
   # ---------- Layouts ----------
@@ -442,6 +445,8 @@ en:
       edit_store: "Edit store"
       added: "Added"
       no_invoice_code: "Not set"
+      no_logo: "No logo"
+      logo_alt: "%{name} logo"
       rooms: "Rooms"
       rooms_hint: "Where appointments are booked in this store."
       no_rooms_hint: "Rooms added to this store will show up here."
@@ -457,6 +462,13 @@ en:
       details: "Details"
       photo_hint: "JPG, PNG or WebP. Shown on the stores list."
       photo_hint_change: "Pick a new image to replace the current one."
+      logo_hint: "PNG or JPG. A transparent PNG looks best. Shown uncropped and on invoices."
+      logo_hint_change: "Pick a new image to replace the current logo."
+      images: "Images"
+      remove_photo: "Remove photo"
+      remove_logo: "Remove logo"
+      undo_remove: "Undo"
+      remove_notice: "Will be deleted when you save."
       invoice_code_placeholder: "e.g. PK"
       invoice_code_hint: "Up to 10 letters or digits. Replaces [s] in invoice numbers, so each store numbers its invoices on its own."
 
@@ -488,8 +500,9 @@ en:
       schema_example_html: "Example: <code>[y]-[s]/[n]</code> for store <code>PK</code> gives <code>2026-PK/9</code>."
       rectification_schema_hint: "Corrective invoices need their own series. Leave blank to use R + the invoice format."
       counter_reset_hint: "When [n] goes back to 1. The format must include [y], and also [m] if it restarts every month."
+      login_code_hint: "3 to 30 letters, numbers or dashes. Must not be in use by another company. If you change it, tell your team: everyone types it to sign in."
     show:
-      title: "Company details"
+      title: "Company & invoicing"
       subtitle: "How your business appears on invoices and to customers."
       edit: "Edit details"
       legal_details: "Legal details"
@@ -500,6 +513,8 @@ en:
       invoicing: "Invoicing"
       invoicing_hint: "How invoice numbers are generated. Each invoice gets its number when it's created."
       default_rectification_schema: "(default: R + invoice format)"
+      sign_in: "Sign-in"
+      sign_in_hint: "Your staff type this company ID, then their own employee ID and password."
     invoice_counter_resets:
       yearly: "Every year"
       monthly: "Every month"
@@ -511,28 +526,30 @@ en:
       title: "Settings"
       heading: "Settings"
       admin_only: "Admin only"
-      subtitle: "Manage your business: locations, team, catalogue and billing."
+      subtitle: "Manage your business: company and invoicing, clinics, team, catalogue and customer messaging."
       coming_soon: "Coming soon"
       groups:
         business:
           title: "Business"
-          description: "Your company details and the clinics where you work."
+          description: "Your company, how its invoices are numbered, and the clinics where you work."
         team:
           title: "Team"
           description: "Who works with you and what they can do."
         catalogue:
           title: "Catalogue"
           description: "How products and services are organised."
-        billing:
-          title: "Billing & messaging"
-          description: "Invoices and how you talk to customers."
+        messaging:
+          title: "Messaging"
+          description: "The channels you use to talk to your customers."
       tiles:
         enterprise:
-          title: "Company details"
-          description: "Name, legal name, CIF and address."
+          title: "Company & invoicing"
+          description: "Legal details and how your invoices are numbered."
+          items: ["Legal details", "Invoice numbering", "Corrective invoices"]
         stores:
           title: "Stores & rooms"
           description: "Your clinics and the rooms you book appointments in."
+          items: ["Clinics", "Rooms", "Store invoice codes"]
         employees:
           title: "Employees"
           description: "Invite staff, set roles and deactivate accounts."
@@ -542,9 +559,6 @@ en:
         service_categories:
           title: "Service categories"
           description: "Group services and pick their colours."
-        invoicing:
-          title: "Invoicing"
-          description: "Numbering, taxes and the details printed on invoices."
         whatsapp:
           title: "WhatsApp"
           description: "Connect the number you message customers from."
@@ -567,43 +581,14 @@ en:
     new:
       title: "Sign in"
       heading: "Sign in to Vet"
-      subtitle: "Welcome back! Enter your details below."
-      email: "Email"
-      email_placeholder: "you@clinic.com"
+      subtitle: "Welcome back! Enter your company ID, your employee ID and your password."
+      login_code: "Company ID"
+      login_code_placeholder: "e.g. clinica-sol"
+      username: "Employee ID"
+      username_placeholder: "e.g. maria"
       password: "Password"
-      forgot_password: "Forgot password?"
+      forgot_password: "Forgot your password? Ask an administrator to reset it."
       submit: "Sign in"
-
-  passwords:
-    new:
-      title: "Forgot password"
-      heading: "Forgot your password?"
-      subtitle: "Enter your email and we'll send you a reset link."
-      email: "Email"
-      email_placeholder: "you@clinic.com"
-      submit: "Email reset instructions"
-      remembered: "Remembered it?"
-      back_to_sign_in: "Back to sign in"
-    edit:
-      title: "Reset password"
-      heading: "Set a new password"
-      subtitle: "Choose something you haven't used before."
-      password: "New password"
-      password_confirmation: "Confirm password"
-      submit: "Save password"
-
-  passwords_mailer:
-    reset:
-      subject: "Reset your password"
-      heading: "Reset your password"
-      intro_html: "We received a request to reset the password for %{email}. Click the button below to choose a new one."
-      intro: "We received a request to reset the password for %{email}."
-      button: "Reset password"
-      choose: "Choose a new password here:"
-      expires: "This link will expire in %{time}. If you didn't ask to reset your password, you can safely ignore this email — your password won't change."
-      expires_short: "This link will expire in %{time}."
-      ignore: "If you didn't ask to reset your password, you can safely ignore this email."
-      fallback: "Button not working? Copy and paste this link into your browser:"
 
   invoice_mailer:
     invoice:
@@ -656,16 +641,16 @@ en:
       title: "New customer"
     form:
       all_customers: "All customers"
+      back_to_customer: "Back to customer"
       submit: "Create customer"
       photo_hint: "Click the circle to add a photo"
+      photo_hint_change: "Click the photo to change it"
       heading: "New customer"
       pets_hint: "Pets can be added once the customer is saved"
-    edit:
-      title: "Edit %{name}"
-      photo_hint_change: "Click the photo to change it"
-      photo_hint_upload: "Click the photo to upload it"
       pets: "Pets"
       no_pets: "None yet"
+    edit:
+      title: "Edit %{name}"
     show:
       all_customers: "All customers"
       edit_customer: "Edit customer"
@@ -676,8 +661,14 @@ en:
         one: "1 pet registered"
         other: "%{count} pets registered"
       new_pet: "New pet"
-      age: "Age"
-      microchip: "Microchip"
+      sterilized:
+        male: "Sterilized"
+        female: "Sterilized"
+        other: "Sterilized"
+      not_sterilized:
+        male: "Not sterilized"
+        female: "Not sterilized"
+        other: "Not sterilized"
       no_pets: "No pets yet"
       no_pets_hint: "Pets registered to this customer will show up here."
       appointments: "Appointments"
@@ -730,6 +721,7 @@ en:
       title: "Edit %{name}"
     new:
       title: "New pet"
+    form:
       heading: "New pet"
       back_to: "Back to %{name}"
       submit: "Create pet"
@@ -738,6 +730,12 @@ en:
   # ---------- Employees ----------
   employees:
     all_employees: "All employees"
+    # employees/_activation_button: employees are never deleted, only deactivated
+    deactivate: "Deactivate"
+    reactivate: "Reactivate"
+    deactivate_confirm: "Deactivate %{name}? They'll be signed out and won't be able to sign in until you reactivate them."
+    # Picker label for an already-assigned employee who has since been deactivated
+    inactive_option: "%{name} (inactive)"
     # Translations for employee.role values (the key is what's stored in the database);
     # unknown roles fall back to role.humanize
     roles:
@@ -754,13 +752,40 @@ en:
       columns:
         employee: "Employee"
         status: "Status"
+        actions: "Actions"
+      new_employee: "New employee"
+      edit: "Edit"
+      edit_employee: "Edit %{name}"
+      you: "You"
       empty: "No employees yet"
       empty_hint: "Staff accounts for your company will show up here."
     # Each language in its own language, like the picker on the profile page
     languages:
       es: "Español"
       en: "English"
+    new:
+      title: "New employee"
+    edit:
+      title: "Edit %{name}"
+    form:
+      back_to_employee: "Back to employee"
+      create: "Create employee"
+      personal: "Personal"
+      photo_hint: "JPG, PNG or WebP. Shown next to their name around the app."
+      photo_hint_change: "Pick a new image to replace the current one."
+      sign_in: "Sign-in"
+      sign_in_hint: "They sign in with the company ID (%{company}), this employee ID and the password."
+      username_hint: "2 to 30 letters, numbers, dots, dashes or underscores. Unique within your company."
+      password_hint_new: "Give it to them in person; they can't reset it by email."
+      password_hint_keep: "Leave both fields blank to keep the current password."
+      contact: "Contact"
+      contact_hint: "Optional. Only for getting in touch: not used to sign in."
+      access: "Role & access"
+      active_label: "Can sign in"
+      active_hint: "Switching it off signs them out straight away. Their appointments and invoices stay as they are."
+      self_note: "You can't change your own role or deactivate yourself."
     show:
+      edit: "Edit employee"
       number: "Employee #%{id}"
       active: "Active"
       inactive: "Inactive"
@@ -768,6 +793,7 @@ en:
       employee_since: "Employee since"
       language: "Language"
       language_hint: "Changes the language of the whole app for you."
+      sign_out: "Sign out"
       appointments: "Appointments"
       appointments_count:
         one: "1 appointment assigned"

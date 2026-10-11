@@ -1,0 +1,107 @@
+/*
+ * Confirm dialog — the app's own confirm() popup (shared/_confirm_dialog.html.erb)
+ * A native <dialog> opened with showModal(): the browser draws ::backdrop,
+ * traps focus inside and closes it on Esc.
+ */
+.confirm-dialog {
+  width: min(28rem, calc(100% - var(--space-8)));
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+
+  &::backdrop {
+    background: var(--color-overlay);
+  }
+
+  /* .btn sets display, which would otherwise beat the hidden attribute on the alternate button */
+  [hidden] {
+    display: none;
+  }
+
+  &[open] {
+    animation: confirm-dialog-in var(--duration-fast) var(--ease-out);
+  }
+}
+
+@keyframes confirm-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-dialog[open] {
+    animation: none;
+  }
+}
+
+.confirm-dialog__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+/* Round danger badge with the warning icon, like .alert--danger's colours */
+.confirm-dialog__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  background: var(--color-danger-subtle);
+  color: var(--color-danger-text);
+
+  svg {
+    width: var(--icon-md);
+    height: var(--icon-md);
+  }
+}
+
+.confirm-dialog__title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+}
+
+.confirm-dialog__message {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+}
+
+.confirm-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-top: var(--border);
+  background: var(--color-surface-sunken);
+}
+
+/* "Leave without saving" (danger-ghost next to "Save and exit"): framed like .btn--secondary
+   so it reads as a button, with red text so it still reads as the destructive choice */
+.confirm-dialog__footer .btn--danger-ghost {
+  background: var(--color-surface);
+  border-color: var(--color-danger-border);
+  box-shadow: var(--shadow-xs);
+
+  &:hover { background: var(--color-danger-subtle); }
+}
+
+/* Three buttons don't fit side by side on a phone: stack them, main action on top
+   (column-reverse, as Cancel comes first in the HTML) */
+@media (max-width: 30rem) {
+  .confirm-dialog__footer {
+    flex-direction: column-reverse;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}

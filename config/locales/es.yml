@@ -88,6 +88,7 @@ es:
         address: "Dirección"
         post_code: "Código postal"
         photo: "Foto"
+        logo: "Logo"
         color: "Color"
         invoice_code: "Código de facturación"
       room:
@@ -101,6 +102,7 @@ es:
         invoice_number_schema: "Formato del número de factura"
         rectification_number_schema: "Formato de las rectificativas"
         invoice_counter_reset: "Reiniciar numeración"
+        login_code: "ID de empresa"
       appointment:
         title: "Título"
         starts_at: "Inicio"
@@ -135,6 +137,7 @@ es:
         first_name: "Nombre"
         last_name: "Apellidos"
         email_address: "Correo electrónico"
+        username: "ID de empleado"
         phone: "Teléfono"
         role: "Rol"
         active: "Activo"
@@ -225,6 +228,8 @@ es:
         missing_invoice_code: "%{store} no tiene código de facturación, y el número de factura lo necesita ([s]). Añádelo en la configuración del centro"
         locked: "no se puede cambiar: forma parte del número de factura"
         doesnt_match_appointment: "no coincide con el cliente de la cita (%{customer}). Para facturar a otra persona, quita la cita"
+        png_or_jpg_only: "debe ser una imagen PNG o JPG"
+        inactive_employee: "está desactivado: elige a alguien que siga activo"
       # Mensajes por modelo, usados en lugar del genérico de arriba
       models:
         invoice:
@@ -266,15 +271,11 @@ es:
       updated: "Empleado actualizado"
       language_updated: "Idioma actualizado"
       not_found: "No se ha encontrado el empleado"
+      deactivated: "Empleado desactivado"
+      reactivated: "Empleado reactivado"
     messages:
       created: "Mensaje creado"
       failed: "No se ha podido enviar el mensaje"
-    passwords:
-      rate_limited: "Inténtalo de nuevo más tarde."
-      instructions_sent: "Te hemos enviado las instrucciones para restablecer la contraseña (si existe un empleado con ese correo)."
-      reset: "La contraseña se ha restablecido."
-      mismatch: "Las contraseñas no coinciden."
-      invalid_token: "El enlace para restablecer la contraseña no es válido o ha caducado."
     pets:
       created: "Mascota creada"
       updated: "Mascota actualizada"
@@ -307,7 +308,7 @@ es:
       not_found: "No se ha encontrado la categoría"
     sessions:
       rate_limited: "Inténtalo de nuevo más tarde."
-      invalid: "Prueba con otro correo o contraseña."
+      invalid: "Revisa el ID de empresa, el ID de empleado y la contraseña."
 
   # ---------- Palabras compartidas ----------
   shared:
@@ -329,20 +330,23 @@ es:
     dismiss: "Haz clic para cerrar"
     add_photo: "Añadir foto"
     cancel: "Cancelar"
+    # shared/_confirm_dialog.html.erb: the app's own confirm() popup
+    confirm_dialog:
+      title: "¿Seguro?"
+      confirm: "Continuar"
+    # unsaved_changes_controller.js: asked when leaving a form with changes
+    unsaved_changes_leave: "Salir sin guardar"
+    unsaved_changes_save: "Guardar y salir"
+    unsaved_changes: "Tienes cambios sin guardar. ¿Salir de esta página sin guardarlos?"
     change_photo: "Cambiar foto"
     close: "Cerrar"
     customer_number: "Cliente n.º %{id}"
     delete: "Eliminar"
-    done_editing: "Terminar edición"
-    edit: "Editar"
-    edit_field: "Editar %{field}"
     last_updated: "Última actualización"
     not_set: "Sin especificar"
-    pencil_hint: "Pulsa el lápiz junto a un campo para editarlo."
     pet_number: "Mascota n.º %{id}"
     "yes": "Sí"
     "no": "No"
-    save: "Guardar"
     save_changes: "Guardar cambios"
     time_ago: "hace %{time}"
     time_ago_by: "hace %{time} por %{name}"
@@ -351,7 +355,6 @@ es:
     unnamed_customer: "Cliente sin nombre"
     unnamed_pet: "Mascota sin nombre"
     untitled: "Sin título"
-    upload_photo: "Subir foto"
     message_senders:
       user: "Usuario"
       bot: "Bot"
@@ -381,7 +384,6 @@ es:
       sales_report: "Ventas"
       settings: "Configuración"
       admin: "Administración"
-      sign_out: "Cerrar sesión"
 
   # ---------- Navegación ----------
   # Textos del enlace "volver" cuando la página se abrió desde otra sección (?return_to=),
@@ -401,6 +403,7 @@ es:
       services: "Servicios"
       service: "Servicio"
       service_categories: "Categorías de servicios"
+      enterprise: "Empresa"
       settings: "Configuración"
 
   # ---------- Layouts ----------
@@ -430,6 +433,8 @@ es:
     show:
       edit_store: "Editar centro"
       no_invoice_code: "Sin definir"
+      no_logo: "Sin logo"
+      logo_alt: "Logo de %{name}"
       added: "Alta"
       rooms: "Salas"
       rooms_hint: "Donde se reservan las citas en este centro."
@@ -446,6 +451,13 @@ es:
       details: "Detalles"
       photo_hint: "JPG, PNG o WebP. Se muestra en la lista de centros."
       photo_hint_change: "Elige una imagen nueva para sustituir la actual."
+      logo_hint: "PNG o JPG. Un PNG con fondo transparente queda mejor. Se muestra sin recortar y en las facturas."
+      logo_hint_change: "Elige una imagen nueva para sustituir el logo actual."
+      images: "Imágenes"
+      remove_photo: "Quitar foto"
+      remove_logo: "Quitar logo"
+      undo_remove: "Deshacer"
+      remove_notice: "Se eliminará al guardar."
       invoice_code_placeholder: "p. ej. PK"
       invoice_code_hint: "Hasta 10 letras o números. Sustituye a [s] en los números de factura, así cada centro numera sus facturas por separado."
 
@@ -477,8 +489,9 @@ es:
       schema_example_html: "Ejemplo: <code>[y]-[s]/[n]</code> para el centro <code>PK</code> da <code>2026-PK/9</code>."
       rectification_schema_hint: "Las rectificativas necesitan su propia serie. Déjalo en blanco para usar R + el formato de factura."
       counter_reset_hint: "Cuándo vuelve [n] a 1. El formato debe incluir [y], y también [m] si se reinicia cada mes."
+      login_code_hint: "De 3 a 30 letras, números o guiones. No puede usarlo otra empresa. Si lo cambias, avisa a tu equipo: todos lo escriben para entrar."
     show:
-      title: "Datos de la empresa"
+      title: "Empresa y facturación"
       subtitle: "Cómo aparece tu negocio en las facturas y ante los clientes."
       edit: "Editar datos"
       legal_details: "Datos fiscales"
@@ -489,6 +502,8 @@ es:
       invoicing: "Facturación"
       invoicing_hint: "Cómo se generan los números de factura. Cada factura recibe su número al crearse."
       default_rectification_schema: "(por defecto: R + formato de factura)"
+      sign_in: "Acceso"
+      sign_in_hint: "Tu equipo escribe este ID de empresa y después su propio ID de empleado y contraseña."
     invoice_counter_resets:
       yearly: "Cada año"
       monthly: "Cada mes"
@@ -500,28 +515,30 @@ es:
       title: "Configuración"
       heading: "Configuración"
       admin_only: "Solo administradores"
-      subtitle: "Gestiona tu negocio: centros, equipo, catálogo y facturación."
+      subtitle: "Gestiona tu negocio: empresa y facturación, centros, equipo, catálogo y comunicación con clientes."
       coming_soon: "Próximamente"
       groups:
         business:
           title: "Negocio"
-          description: "Los datos de tu empresa y los centros donde trabajas."
+          description: "Tu empresa, cómo se numeran sus facturas y los centros donde trabajas."
         team:
           title: "Equipo"
           description: "Quién trabaja contigo y qué puede hacer."
         catalogue:
           title: "Catálogo"
           description: "Cómo se organizan los productos y servicios."
-        billing:
-          title: "Facturación y mensajes"
-          description: "Facturas y cómo hablas con tus clientes."
+        messaging:
+          title: "Comunicación"
+          description: "Los canales con los que hablas con tus clientes."
       tiles:
         enterprise:
-          title: "Datos de la empresa"
-          description: "Nombre, razón social, CIF y dirección."
+          title: "Empresa y facturación"
+          description: "Datos fiscales y cómo se numeran tus facturas."
+          items: ["Datos fiscales", "Numeración de facturas", "Rectificativas"]
         stores:
           title: "Centros y salas"
           description: "Tus clínicas y las salas donde se reservan citas."
+          items: ["Centros", "Salas", "Códigos de facturación"]
         employees:
           title: "Empleados"
           description: "Da de alta al equipo, asigna roles y desactiva cuentas."
@@ -531,9 +548,6 @@ es:
         service_categories:
           title: "Categorías de servicios"
           description: "Agrupa los servicios y elige sus colores."
-        invoicing:
-          title: "Facturación"
-          description: "Numeración, impuestos y los datos que salen en las facturas."
         whatsapp:
           title: "WhatsApp"
           description: "Conecta el número desde el que escribes a los clientes."
@@ -556,43 +570,14 @@ es:
     new:
       title: "Iniciar sesión"
       heading: "Inicia sesión en Vet"
-      subtitle: "¡Hola de nuevo! Introduce tus datos."
-      email: "Correo electrónico"
-      email_placeholder: "tu@clinica.com"
+      subtitle: "¡Hola de nuevo! Introduce el ID de tu empresa, tu ID de empleado y tu contraseña."
+      login_code: "ID de empresa"
+      login_code_placeholder: "p. ej. clinica-sol"
+      username: "ID de empleado"
+      username_placeholder: "p. ej. maria"
       password: "Contraseña"
-      forgot_password: "¿Has olvidado tu contraseña?"
+      forgot_password: "¿Has olvidado tu contraseña? Pide a un administrador que la restablezca."
       submit: "Iniciar sesión"
-
-  passwords:
-    new:
-      title: "Contraseña olvidada"
-      heading: "¿Has olvidado tu contraseña?"
-      subtitle: "Introduce tu correo y te enviaremos un enlace para restablecerla."
-      email: "Correo electrónico"
-      email_placeholder: "tu@clinica.com"
-      submit: "Enviar instrucciones"
-      remembered: "¿Ya la recuerdas?"
-      back_to_sign_in: "Volver a iniciar sesión"
-    edit:
-      title: "Restablecer contraseña"
-      heading: "Elige una nueva contraseña"
-      subtitle: "Usa una que no hayas utilizado antes."
-      password: "Nueva contraseña"
-      password_confirmation: "Confirmar contraseña"
-      submit: "Guardar contraseña"
-
-  passwords_mailer:
-    reset:
-      subject: "Restablece tu contraseña"
-      heading: "Restablece tu contraseña"
-      intro_html: "Hemos recibido una solicitud para restablecer la contraseña de %{email}. Pulsa el botón para elegir una nueva."
-      intro: "Hemos recibido una solicitud para restablecer la contraseña de %{email}."
-      button: "Restablecer contraseña"
-      choose: "Elige una nueva contraseña aquí:"
-      expires: "Este enlace caduca en %{time}. Si no has pedido restablecer tu contraseña, puedes ignorar este correo: tu contraseña no cambiará."
-      expires_short: "Este enlace caduca en %{time}."
-      ignore: "Si no has pedido restablecer tu contraseña, puedes ignorar este correo."
-      fallback: "¿No funciona el botón? Copia y pega este enlace en tu navegador:"
 
   invoice_mailer:
     invoice:
@@ -645,16 +630,16 @@ es:
       title: "Nuevo cliente"
     form:
       all_customers: "Todos los clientes"
+      back_to_customer: "Volver al cliente"
       submit: "Crear cliente"
       photo_hint: "Pulsa el círculo para añadir una foto"
+      photo_hint_change: "Pulsa la foto para cambiarla"
       heading: "Nuevo cliente"
       pets_hint: "Podrás añadir mascotas cuando guardes el cliente"
-    edit:
-      title: "Editar %{name}"
-      photo_hint_change: "Pulsa la foto para cambiarla"
-      photo_hint_upload: "Pulsa la foto para subirla"
       pets: "Mascotas"
       no_pets: "Ninguna todavía"
+    edit:
+      title: "Editar %{name}"
     show:
       all_customers: "Todos los clientes"
       edit_customer: "Editar cliente"
@@ -665,8 +650,14 @@ es:
         one: "1 mascota registrada"
         other: "%{count} mascotas registradas"
       new_pet: "Nueva mascota"
-      age: "Edad"
-      microchip: "Microchip"
+      sterilized:
+        male: "Esterilizado"
+        female: "Esterilizada"
+        other: "Esterilizado"
+      not_sterilized:
+        male: "No esterilizado"
+        female: "No esterilizada"
+        other: "No esterilizado"
       no_pets: "Todavía no hay mascotas"
       no_pets_hint: "Las mascotas de este cliente aparecerán aquí."
       appointments: "Citas"
@@ -719,6 +710,7 @@ es:
       title: "Editar %{name}"
     new:
       title: "Nueva mascota"
+    form:
       heading: "Nueva mascota"
       back_to: "Volver a %{name}"
       submit: "Crear mascota"
@@ -727,6 +719,12 @@ es:
   # ---------- Empleados ----------
   employees:
     all_employees: "Todos los empleados"
+    # employees/_activation_button: los empleados nunca se eliminan, solo se desactivan
+    deactivate: "Desactivar"
+    reactivate: "Reactivar"
+    deactivate_confirm: "¿Desactivar a %{name}? Se cerrará su sesión y no podrá entrar hasta que lo reactives."
+    # Picker label for an already-assigned employee who has since been deactivated
+    inactive_option: "%{name} (inactivo)"
     roles:
       admin: "Admin"
       vet: "Vet"
@@ -741,13 +739,40 @@ es:
       columns:
         employee: "Empleado"
         status: "Estado"
+        actions: "Acciones"
+      new_employee: "Nuevo empleado"
+      edit: "Editar"
+      edit_employee: "Editar a %{name}"
+      you: "Tú"
       empty: "Todavía no hay empleados"
       empty_hint: "Las cuentas del equipo de tu empresa aparecerán aquí."
     # Cada idioma en su propio idioma, como el selector del perfil
     languages:
       es: "Español"
       en: "English"
+    new:
+      title: "Nuevo empleado"
+    edit:
+      title: "Editar a %{name}"
+    form:
+      back_to_employee: "Volver al empleado"
+      create: "Crear empleado"
+      personal: "Datos personales"
+      photo_hint: "JPG, PNG o WebP. Se muestra junto a su nombre en la aplicación."
+      photo_hint_change: "Elige una imagen nueva para sustituir la actual."
+      sign_in: "Acceso"
+      sign_in_hint: "Entra con el ID de empresa (%{company}), este ID de empleado y la contraseña."
+      username_hint: "De 2 a 30 letras, números, puntos, guiones o guiones bajos. Único dentro de tu empresa."
+      password_hint_new: "Dásela en persona; no puede restablecerla por correo."
+      password_hint_keep: "Deja los dos campos vacíos para mantener la contraseña actual."
+      contact: "Contacto"
+      contact_hint: "Opcional. Solo para contactar: no se usa para entrar."
+      access: "Rol y acceso"
+      active_label: "Puede iniciar sesión"
+      active_hint: "Al desactivarlo se cierra su sesión al momento. Sus citas y facturas se quedan como están."
+      self_note: "No puedes cambiar tu propio rol ni desactivarte."
     show:
+      edit: "Editar empleado"
       number: "Empleado n.º %{id}"
       active: "Activo"
       inactive: "Inactivo"
@@ -755,6 +780,7 @@ es:
       employee_since: "Empleado desde"
       language: "Idioma"
       language_hint: "Cambia el idioma de toda la aplicación para ti."
+      sign_out: "Cerrar sesión"
       appointments: "Citas"
       appointments_count:
         one: "1 cita asignada"

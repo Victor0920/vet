@@ -5,7 +5,7 @@
     Locals:
       employee     - the Employee
       appointments - their upcoming appointments (the controller loads them)
-      own_profile  - true on /profile: shows the language picker %>
+      own_profile  - true on /profile: shows the language picker and "Sign out" %>
 <div class="customer-profile">
   <aside class="card customer-profile__sidebar">
     <div class="customer-profile__header">
@@ -14,9 +14,10 @@
         alt: employee.display_name,
         class: "avatar avatar--xl avatar--photo" %>
       <% else %>
+        <%# Initials, or the first letter of the employee ID (email is optional now) %>
         <span class="avatar avatar--xl"><%= (
             employee.first_name.to_s.first.to_s + employee.last_name.to_s.first.to_s
-          ).presence || employee.email_address.first.upcase %></span>
+          ).presence || employee.username.first.upcase %></span>
       <% end %>
       <div>
         <h1 class="customer-profile__name"><%= employee.display_name %></h1>
@@ -26,8 +27,7 @@
         <% if employee.role.present? %>
           <span class="badge badge--primary"><%= t(employee.role, scope: "employees.roles", default: employee.role.humanize) %></span>
         <% end %>
-        <%# active is nil for employees created before the column existed, so only false counts as inactive %>
-        <% if employee.active == false %>
+        <% unless employee.active? %>
           <span class="badge badge--danger"><%= t("employees.show.inactive") %></span>
         <% else %>
           <span class="badge badge--success"><%= t("employees.show.active") %></span>
@@ -38,8 +38,12 @@
     <div class="card__body">
       <dl class="details">
         <div>
+          <dt><%= Employee.human_attribute_name(:username) %></dt>
+          <dd><code><%= employee.username %></code></dd>
+        </div>
+        <div>
           <dt><%= Employee.human_attribute_name(:email_address) %></dt>
-          <dd><%= mail_to employee.email_address %></dd>
+          <dd><%= employee.email_address.present? ? mail_to(employee.email_address) : "—" %></dd>
         </div>
         <div>
           <dt><%= Employee.human_attribute_name(:phone) %></dt>
@@ -65,7 +69,7 @@
         url + method because /profile is a singular resource: there's no id in the URL to build it from.
         Language names are written in their own language, so everyone can find theirs. %>
     <% if own_profile %>
-      <footer class="card__footer">
+      <footer class="card__footer profile-footer">
         <%= form_with model: employee, url: profile_path, method: :patch, class: "form-field",
               data: { controller: "auto-submit" } do |f| %>
           <%= f.label :locale, t("employees.show.language"), class: "label" %>
@@ -73,6 +77,12 @@
                 class: "select select--sm",
                 data: { action: "change->auto-submit#submit" } %>
           <p class="form-hint"><%= t("employees.show.language_hint") %></p>
+        <% end %>
+
+        <%# Signing out lives here rather than in the sidebar: DELETE /session, so button_to (a small form), not a link %>
+        <%= button_to session_path, method: :delete, class: "btn btn--secondary btn--block" do %>
+          <%= render "shared/icons/sign_out" %>
+          <%= t("employees.show.sign_out") %>
         <% end %>
       </footer>
     <% end %>

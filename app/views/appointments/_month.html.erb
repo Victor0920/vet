@@ -28,7 +28,10 @@
         <ul class="month-grid__events">
           <% day_appointments.first(max_visible).each do |appointment| %>
             <li>
-              <%= link_to edit_appointment_path(appointment, view: @view, filter_room_id: @room&.id), class: "month-event", data: { turbo_frame: "modal" } do %>
+              <%# Same room colour classes as _appointment.html.erb (see .month-event--themed) %>
+              <%= link_to edit_appointment_path(appointment, view: @view, filter_room_id: @room&.id),
+                    class: class_names("month-event", "month-event--themed color-swatch--#{appointment.room.color}" => appointment.room.color),
+                    data: { turbo_frame: "modal" } do %>
                 <span class="month-event__time"><%= l(appointment.starts_at, format: :hour) %></span>
                 <span class="month-event__title"><%= appointment.title %></span>
               <% end %>

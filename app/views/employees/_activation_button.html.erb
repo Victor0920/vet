@@ -1,0 +1,16 @@
+<%# Deactivate / Reactivate: a one-field PATCH to EmployeesController#update (active: false/true),
+    so it needs no route of its own. return_to: where update redirects afterwards (the list or this page).
+    Deactivating asks first (shared/_confirm_dialog), since it signs them out straight away.
+    Locals: employee, return_to, small (optional, for table rows) %>
+<% size = local_assigns[:small] ? " btn--sm" : "" %>
+<% if employee.active? %>
+  <%= button_to t("employees.deactivate"), employee_path(employee), method: :patch,
+        params: { employee: { active: false }, return_to: return_to },
+        class: "btn btn--danger-ghost#{size}",
+        form: { data: { turbo_confirm: t("employees.deactivate_confirm", name: employee.display_name),
+                        confirm_button: t("employees.deactivate") } } %>
+<% else %>
+  <%= button_to t("employees.reactivate"), employee_path(employee), method: :patch,
+        params: { employee: { active: true }, return_to: return_to },
+        class: "btn btn--secondary#{size}" %>
+<% end %>

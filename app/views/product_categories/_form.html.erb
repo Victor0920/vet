@@ -1,7 +1,11 @@
 <%# Shared by product_categories/new and /edit %>
 <% back_path = category.persisted? ? product_category_path(category) : product_categories_path %>
 
-<%= form_with model: category do |f| %>
+<%= form_with model: category,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: category.errors.any? } do |f| %>
   <div class="resource-form__toolbar">
     <%= render "shared/back_link", path: back_path, label: (category.persisted? ? t(".back_to_category") : t("product_categories.all_categories")) %>
 

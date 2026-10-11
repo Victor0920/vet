@@ -6,18 +6,29 @@
     <p class="auth-card__subtitle"><%= t(".subtitle") %></p>
   </div>
 
+  <%# Company ID + employee ID + password. The company ID comes back filled in (@login_code: the cookie
+      from the last sign-in on this computer, or what was typed before a failed attempt), so the
+      cursor starts on the first empty field. %>
   <%= form_with url: session_path, class: "form" do |form| %>
     <div class="form-field">
-      <%= form.label :email_address, t(".email"), class: "label" %>
-      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: t(".email_placeholder"), value: params[:email_address], class: "input" %>
+      <%= form.label :login_code, t(".login_code"), class: "label" %>
+      <%= form.text_field :login_code, value: @login_code, required: true, autofocus: @login_code.blank?,
+            autocomplete: "organization", autocapitalize: "none", spellcheck: false,
+            placeholder: t(".login_code_placeholder"), class: "input" %>
     </div>
 
     <div class="form-field">
-      <div class="label-row">
-        <%= form.label :password, t(".password"), class: "label" %>
-        <%= link_to t(".forgot_password"), new_password_path %>
-      </div>
-      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "••••••••", maxlength: 72, class: "input" %>
+      <%= form.label :username, t(".username"), class: "label" %>
+      <%= form.text_field :username, value: params[:username], required: true, autofocus: @login_code.present?,
+            autocomplete: "username", autocapitalize: "none", spellcheck: false,
+            placeholder: t(".username_placeholder"), class: "input" %>
+    </div>
+
+    <div class="form-field">
+      <%= form.label :password, t(".password"), class: "label" %>
+      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "••••••••",
+            maxlength: 72, class: "input", aria: { describedby: "forgot_password_hint" } %>
+      <p class="form-hint" id="forgot_password_hint"><%= t(".forgot_password") %></p>
     </div>
 
     <%= form.submit t(".submit"), class: "btn btn--primary btn--block btn--lg" %>

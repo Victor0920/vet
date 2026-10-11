@@ -1,7 +1,11 @@
 <%# Shared by services/new and services/edit. form_with model: picks POST /services
     for a new record and PATCH /services/:id for an existing one.
     Same layout as products/_form, minus the stock card: services have no stock. %>
-<%= form_with model: service do |f| %>
+<%= form_with model: service,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: service.errors.any? } do |f| %>
   <div class="resource-form__toolbar">
     <%= render "shared/back_link", path: (service.persisted? ? service_path(service) : services_path), label: (service.persisted? ? t(".back_to_service") : t("services.all_services")) %>
 

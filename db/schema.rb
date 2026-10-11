@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_10_184449) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_11_170726) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -99,7 +99,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_184449) do
   end
 
   create_table "employees", force: :cascade do |t|
-    t.string "email_address", null: false
+    t.string "email_address"
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -108,9 +108,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_184449) do
     t.integer "enterprise_id", null: false
     t.string "role"
     t.string "phone"
-    t.boolean "active"
+    t.boolean "active", default: true, null: false
     t.string "locale", default: "es", null: false
-    t.index ["email_address"], name: "index_employees_on_email_address", unique: true
+    t.string "username", null: false
+    t.index ["enterprise_id", "username"], name: "index_employees_on_enterprise_id_and_username", unique: true
     t.index ["enterprise_id"], name: "index_employees_on_enterprise_id"
   end
 
@@ -124,6 +125,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_10_184449) do
     t.string "invoice_number_schema", default: "[y]/[n]", null: false
     t.string "rectification_number_schema"
     t.string "invoice_counter_reset", default: "yearly", null: false
+    t.string "login_code", null: false
+    t.index ["login_code"], name: "index_enterprises_on_login_code", unique: true
   end
 
   create_table "invoice_products", force: :cascade do |t|

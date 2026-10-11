@@ -11,7 +11,7 @@
   <aside class="card customer-profile__sidebar">
     <div class="customer-profile__header">
       <% if @customer.photo.attached? %>
-        <%= image_tag @customer.photo.variant(resize_to_fill: [192, 192]),
+        <%= image_tag @customer.photo.variant(:medium),
         alt: full_name,
         class: "avatar avatar--xl avatar--photo" %>
       <% else %>
@@ -21,19 +21,6 @@
         <h1 class="customer-profile__name"><%= full_name.presence || t("shared.unnamed_customer") %></h1>
         <p class="text-subtle text-xs"><%= t("shared.customer_number", id: @customer.id) %></p>
       </div>
-      <%= link_to edit_customer_path(@customer), class: "btn btn--secondary btn--sm" do %>
-        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
-            d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
-          /><path
-            d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
-          /></svg>
-        <%= t(".edit_customer") %>
-      <% end %>
-      <%# Opens the calendar in "booking for this customer" mode (see appointments/index) %>
-      <%= link_to appointments_path(customer_id: @customer.id), class: "btn btn--primary btn--sm" do %>
-        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/></svg>
-        <%= t(".new_appointment") %>
-      <% end %>
     </div>
 
     <div class="card__body">
@@ -89,24 +76,45 @@
         <h2 class="section__title"><%= t(".pets") %></h2>
         <p class="text-muted"><%= t(".pets_count", count: @pets.size) %></p>
       </div>
-      <%= link_to new_customer_pet_path(@customer), class: "btn btn--primary" do %>
-        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
-            d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
-          /></svg>
-        <%= t(".new_pet") %>
-      <% end %>
+      <%# The customer's actions, top right of the page. One primary button (the most
+          common thing to do here: book them in), the rest secondary %>
+      <div class="customer-profile__actions">
+        <%= link_to edit_customer_path(@customer), class: "btn btn--secondary" do %>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+              d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
+            /><path
+              d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
+            /></svg>
+          <%= t(".edit_customer") %>
+        <% end %>
+        <%= link_to new_customer_pet_path(@customer), class: "btn btn--secondary" do %>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+              d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+            /></svg>
+          <%= t(".new_pet") %>
+        <% end %>
+        <%# Opens the calendar in "booking for this customer" mode (see appointments/index) %>
+        <%= link_to appointments_path(customer_id: @customer.id), class: "btn btn--primary" do %>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/></svg>
+          <%= t(".new_appointment") %>
+        <% end %>
+      </div>
     </header>
 
     <% if @pets.any? %>
       <div class="pets-grid">
         <% @pets.each do |pet| %>
+          <%# Compact card: small square photo on the left, the facts as two short lines
+              ("Labrador · Male · 3 years" / "Black · Sterilized") so many pets fit on screen %>
           <%= link_to customer_pet_path(@customer, pet, return_to: request.fullpath), class: "pet-link" do %>
             <article class="card card--interactive pet-card">
               <div class="pet-card__media">
                 <% if pet.photo.attached? %>
-                  <%= image_tag pet.photo.variant(resize_to_fill: [640, 400]),
+                  <%# 128×128 for a 64px thumbnail, sharp on retina screens %>
+                  <%= image_tag pet.photo.variant(resize_to_fill: [128, 128]),
                   alt: pet.name.to_s,
-                  class: "pet-card__photo" %>
+                  class: "pet-card__photo",
+                  loading: "lazy" %>
                 <% else %>
                   <span class="pet-card__placeholder"><%= render "shared/paw_icon" %></span>
                 <% end %>
@@ -119,33 +127,32 @@
                     <span class="badge badge--primary"><%= pet.species %></span>
                   <% end %>
                 </div>
-                <% if pet.breed.present? %>
-                  <p class="pet-card__breed"><%= pet.breed %></p>
+
+                <% about = [
+                  pet.breed,
+                  (t(pet.sex.downcase, scope: "pets.sex", default: pet.sex) if pet.sex.present?),
+                  (distance_of_time_in_words(pet.born_on, Date.current) if pet.born_on),
+                ].compact_blank %>
+                <% if about.any? %>
+                  <p class="pet-card__meta"><%= about.join(" · ") %></p>
                 <% end %>
 
-                <dl class="pet-card__facts">
-                  <div>
-                    <dt><%= Pet.human_attribute_name(:sex) %></dt>
-                    <dd><%= pet.sex.present? ? t(pet.sex.downcase, scope: "pets.sex", default: pet.sex) : "—" %></dd>
-                  </div>
-                  <div>
-                    <dt><%= t(".age") %></dt>
-                    <dd><%= pet.born_on ? distance_of_time_in_words(pet.born_on, Date.current) : "—" %></dd>
-                  </div>
-                  <div>
-                    <dt><%= Pet.human_attribute_name(:color) %></dt>
-                    <dd><%= pet.color.presence || "—" %></dd>
-                  </div>
-                  <div>
-                    <dt><%= t(".microchip") %></dt>
-                    <dd title="<%= pet.transponder_location %>"><%= pet.transponder_number.presence || "—" %></dd>
-                  </div>
-                </dl>
-              </div>
+                <%# sterilized can be true, false or nil (not recorded yet): nil shows nothing.
+                    The label agrees with the pet's sex in Spanish (Esterilizado / Esterilizada),
+                    so the locale has one per sex, plus "other" for pets without a sex set %>
+                <% sex_key = pet.sex.to_s.downcase.presence_in(%w[ male female ]) || "other" %>
+                <% details = [
+                  pet.color,
+                  (t(pet.sterilized ? ".sterilized.#{sex_key}" : ".not_sterilized.#{sex_key}") unless pet.sterilized.nil?),
+                ].compact_blank %>
+                <% if details.any? %>
+                  <p class="pet-card__meta pet-card__meta--subtle"><%= details.join(" · ") %></p>
+                <% end %>
 
-              <% if pet.notes.present? %>
-                <footer class="card__footer pet-card__notes"><p><%= pet.notes %></p></footer>
-              <% end %>
+                <% if pet.notes.present? %>
+                  <p class="pet-card__notes"><%= pet.notes %></p>
+                <% end %>
+              </div>
             </article>
           <% end %>
         <% end %>
@@ -225,7 +232,7 @@
       <% else %>
         <div class="history-toolbar">
           <p class="history-toolbar__count"><%= t(".appointments_count", count: @appointments.size) %></p>
-          <%# Same calendar "booking for this customer" mode as the sidebar button %>
+          <%# Same calendar "booking for this customer" mode as the button at the top %>
           <%= link_to appointments_path(customer_id: @customer.id), class: "btn btn--secondary btn--sm" do %>
             <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
                 d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
@@ -275,7 +282,7 @@
                         <%= link_to appointment.invoice.number.presence || t("invoices.number", id: appointment.invoice.id),
                               invoice_path(appointment.invoice, return_to: request.fullpath), class: "badge badge--success" %>
                       <% else %>
-                        <%= link_to t(".create_invoice"), new_invoice_path(appointment_id: appointment.id), class: "btn btn--ghost btn--sm" %>
+                        <%= link_to t(".create_invoice"), new_invoice_path(appointment_id: appointment.id), class: "btn btn--ghost btn--sm btn--underline-hover" %>
                       <% end %>
                     </td>
                   </tr>

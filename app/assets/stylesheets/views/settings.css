@@ -45,7 +45,7 @@
 
 .settings-tile {
   display: flex;
-  align-items: center;
+  align-items: center; /* icon and arrow centred against the text, chips included */
   gap: var(--space-4);
   padding: var(--space-4);
 
@@ -88,6 +88,14 @@
 .settings-tile__description {
   color: var(--color-text-muted);
   font-size: var(--text-sm);
+}
+
+/* "What's inside" chips under the description */
+.settings-tile__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-1-5);
 }
 
 .settings-tile__arrow {
@@ -221,27 +229,69 @@
 
 /* ---------- stores#show ---------- */
 
+/* photo | details | logo. Flex rather than grid so a store without a photo just drops that column */
 .store-details {
+  --store-media-size: 10rem;
+
   display: flex;
   align-items: flex-start;
   gap: var(--space-6);
 
   .details {
     flex: 1;
+    min-width: 0;
   }
 }
 
 .store-details__photo {
   flex-shrink: 0;
-  width: 10rem;
-  height: 10rem;
+  width: var(--store-media-size);
+  height: var(--store-media-size);
   border-radius: var(--radius-lg);
   object-fit: cover;
 }
 
+/* Same square as the photo, framed: logos come in any shape, so the image is contained, never cropped */
+.store-details__logo {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  width: var(--store-media-size);
+  height: var(--store-media-size);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  /* Placeholder icon when there's no logo */
+  svg {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+/* Phones: photo and logo side by side on top, details full width below */
 @media (max-width: 40rem) {
   .store-details {
-    flex-direction: column;
+    --store-media-size: 8rem;
+
+    flex-wrap: wrap;
+    gap: var(--space-4);
+
+    .details {
+      order: 1;
+      flex-basis: 100%;
+    }
   }
 }
 
@@ -293,7 +343,35 @@
 
 /* ---------- employees#index ---------- */
 
-/* Deactivated accounts stay listed, but faded so active staff stand out */
-.employees-table__row--inactive td {
+/* Deactivated accounts stay listed, but faded so active staff stand out
+   (not the actions cell: "Reactivate" should look as clickable as anything else) */
+.employees-table__row--inactive td:not(.table__actions) {
   opacity: 0.6;
+}
+
+/* Edit · Deactivate at the end of each row, right-aligned and never wrapping */
+.table__actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.employees-table__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* ---------- profiles#show: language picker, then "Sign out" below it ---------- */
+
+.profile-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ---------- enterprises#show: sign-in card ---------- */
+
+.enterprise-access {
+  margin-top: var(--space-4);
 }

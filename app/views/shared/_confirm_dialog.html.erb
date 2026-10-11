@@ -1,0 +1,28 @@
+<%# Styled replacement for the browser's confirm() popup, rendered once in the layout.
+    Used by every data-turbo-confirm (add data-confirm-button for the button text, e.g. "Delete")
+    and by unsaved_changes_controller.js, which also shows the third (alternate) button: "Save and exit".
+    See confirm_dialog_controller.js.
+    <form method="dialog">: clicking a button closes the dialog with that button's value. %>
+<dialog id="confirm-dialog" class="confirm-dialog" data-turbo-permanent
+        data-controller="confirm-dialog" data-confirm-dialog-confirm-label-value="<%= t("shared.confirm_dialog.confirm") %>"
+        data-action="click->confirm-dialog#backdropClick"
+        aria-labelledby="confirm-dialog-title" aria-describedby="confirm-dialog-message">
+  <form method="dialog">
+    <div class="confirm-dialog__body">
+      <span class="confirm-dialog__icon">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+      </span>
+      <div>
+        <h2 id="confirm-dialog-title" class="confirm-dialog__title"><%= t("shared.confirm_dialog.title") %></h2>
+        <p id="confirm-dialog-message" class="confirm-dialog__message" data-confirm-dialog-target="message"></p>
+      </div>
+    </div>
+
+    <footer class="confirm-dialog__footer">
+      <%# autofocus: Enter/Space on open cancels, the safe choice for something destructive %>
+      <button type="submit" value="cancel" class="btn btn--secondary" autofocus><%= t("shared.cancel") %></button>
+      <button type="submit" value="confirm" class="btn btn--danger" data-confirm-dialog-target="confirmButton"></button>
+      <button type="submit" value="alternate" class="btn btn--primary" hidden data-confirm-dialog-target="alternateButton"></button>
+    </footer>
+  </form>
+</dialog>

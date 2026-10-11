@@ -3,9 +3,14 @@
 one:
   email_address: one@example.com
   enterprise: one
+  username: one
   password_digest: <%= password_digest %>
+  active: true
+
 
 two:
   email_address: two@example.com
   enterprise: two
+  username: two
   password_digest: <%= password_digest %>
+  active: true

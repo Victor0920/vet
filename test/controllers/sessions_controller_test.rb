@@ -9,25 +9,23 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create with valid credentials" do
-    post session_path, params: { email_address: @employee.email_address, password: "password" }
+    post session_path, params: { login_code: "one", username: "one", password: "password" }
 
     assert_redirected_to root_path
     assert cookies[:session_id]
   end
 
   test "create with invalid credentials" do
-    post session_path, params: { email_address: @employee.email_address, password: "wrong" }
+    post session_path, params: { login_code: "one", username: "one", password: "wrong" }
 
-    assert_redirected_to new_session_path
+    assert_response :unprocessable_entity
     assert_nil cookies[:session_id]
   end
 
-  test "destroy" do
-    sign_in_as(@employee)
+  test "create with another company's ID" do
+    post session_path, params: { login_code: "two", username: "one", password: "password" }
 
-    delete session_path
-
-    assert_redirected_to new_session_path
-    assert_empty cookies[:session_id]
+    assert_response :unprocessable_entity
+    assert_nil cookies[:session_id]
   end
 end
