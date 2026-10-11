@@ -1,6 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  customer: one
   name: MyString
   species: MyString
   breed: MyString
@@ -12,6 +13,7 @@ one:
   transponder_location: MyString
 
 two:
+  customer: two
   name: MyString
   species: MyString
   breed: MyString
