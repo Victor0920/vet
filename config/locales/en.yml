@@ -523,7 +523,7 @@ en:
         description: "Logo and company on the left, a coloured line under the header."
       modern:
         name: "Modern"
-        description: "A colour band across the top and the total in a coloured box."
+        description: "A pale colour band across the top with the text in the colour, and the total in a tinted box."
       compact:
         name: "Compact"
         description: "Mostly black and white, smaller and denser. Saves ink."

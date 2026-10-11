@@ -104,17 +104,20 @@
   background: var(--bar-light);
 }
 
-/* Modern: a colour band with light bars on it, coloured table header, total in a coloured box */
+/* Modern (InvoicePdf::Modern): a pale tint of the colour behind the header band, the table header
+   and the total, with the "text" in the colour itself */
 .invoice-mockup--modern {
+  --invoice-tint: color-mix(in srgb, var(--invoice-accent) 14%, #fff);
+
   .invoice-mockup__header {
     margin: -0.625rem -0.625rem 0;
     padding: 0.625rem;
-    background: var(--invoice-accent);
+    background: var(--invoice-tint);
   }
 
   .invoice-mockup__brand,
   .invoice-mockup__title {
-    background: rgb(255 255 255 / 0.85);
+    background: var(--invoice-accent);
   }
 
   .invoice-mockup__rule {
@@ -122,13 +125,16 @@
   }
 
   .invoice-mockup__table .invoice-mockup__thead {
-    background: var(--invoice-accent);
+    background: var(--invoice-tint);
   }
 
+  /* A tinted box with a bar in the colour inside it, like the PDF's "TOTAL  86,00 €" */
   .invoice-mockup__total {
     height: 0.75rem;
     border-radius: 2px;
-    background: var(--invoice-accent);
+    background:
+      linear-gradient(var(--invoice-accent), var(--invoice-accent)) right 0.1875rem center / 45% 0.25rem no-repeat,
+      var(--invoice-tint);
   }
 }
 

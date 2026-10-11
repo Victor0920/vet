@@ -512,7 +512,7 @@ es:
         description: "Logo y empresa a la izquierda, una línea de color bajo la cabecera."
       modern:
         name: "Moderna"
-        description: "Una franja de color arriba y el total en un recuadro de color."
+        description: "Una franja de color suave arriba con el texto en el color, y el total en un recuadro tintado."
       compact:
         name: "Compacta"
         description: "Casi en blanco y negro, más pequeña y densa. Ahorra tinta."
