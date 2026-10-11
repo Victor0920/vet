@@ -1,21 +1,28 @@
 # Draws an invoice as a PDF with Prawn. Used by InvoicesController#show (format.pdf).
 # InvoicePdf.new(invoice).render # => the PDF as a binary string
 class InvoicePdf
-  include Prawn::View # lets this class call text, table, move_down… directly
+  include Prawn::View
 
+  # PRIMARY stays as the fallback colour
   PRIMARY = "0F766E"
   TEXT = "18181B"
   MUTED = "52525B"
   SUBTLE = "A1A1AA"
   BORDER = "E4E4E7"
   SURFACE = "F4F4F5"
+  WHITE = "FFFFFF"
+
+  # The right class for the invoice's company: InvoicePdf.for(invoice).render
+  def self.for(invoice)
+    { "modern" => InvoicePdf::Modern, "compact" => InvoicePdf::Compact }
+      .fetch(invoice.enterprise.invoice_layout, InvoicePdf).new(invoice)
+  end
 
   def initialize(invoice)
     @invoice = invoice
-    font_size 10
+    font_size base_font_size
 
-    side_by_side(:issuer, :heading)
-    rule(PRIMARY, 2)
+    header
     move_down 20
     side_by_side(:billed_to, :store_details, :staff_details)
     move_down 20
@@ -29,15 +36,65 @@ class InvoicePdf
     @document ||= Prawn::Document.new(page_size: "A4", margin: 43) # 43pt ≈ 1.5cm
   end
 
-    private
+  private
+
+  # ---------- what each layout changes (see InvoicePdf::Modern, ::Compact) ----------
+
+  def accent = Enterprise::INVOICE_COLORS.fetch(enterprise.invoice_color, PRIMARY)
+  def base_font_size = 10
+  def issuer_name_color = accent
+  def header_rule_width = 2
+  def table_padding = [ 7, 8 ]
+  def total_color = TEXT
+
+  def style_header_row(row)
+    row.background_color = SURFACE
+    row.font_style = :bold
+    row.size = 7
+    row.text_color = MUTED
+  end
 
   # ---------- sections ----------
 
+  def header
+    side_by_side(:issuer, :heading)
+    rule(accent, header_rule_width)
+  end
+
+  def footer
+    move_down 30
+    rule(BORDER, 0.75)
+    move_down 6
+    # The company's own note replaces the default closing line; without one, the default uses the trading name
+    if enterprise.invoice_footer.present?
+      text enterprise.invoice_footer, size: 8, color: MUTED
+    else
+      text t(:footer, name: brand_name), size: 8, color: SUBTLE
+    end
+    number_pages "<page>/<total>", at: [ 0, -12 ], width: bounds.width, align: :right, size: 8, color: SUBTLE
+  end
+
   def issuer
-    text issuer_name, size: 16, style: :bold, color: PRIMARY
+    logo
+    text brand_name, size: 16, style: :bold, color: issuer_name_color
+    # The legal name is required on Spanish invoices; shown when it differs from the trading name
+    muted enterprise.legal_name if enterprise.legal_name.present? && enterprise.legal_name != brand_name
     muted "#{t(:tax_id)}: #{enterprise.cif}" if enterprise.cif.present?
     muted enterprise.address if enterprise.address.present?
   end
+
+
+  def logo
+    attachment = [ @invoice.store.logo, enterprise.logo ].find(&:attached?)
+    return unless attachment
+
+    # Prawn only reads PNG and JPG, but logos may be WebP: ask for a PNG copy
+    png = attachment.variant(resize_to_limit: [ 480, 180 ], format: :png).processed.download
+    image StringIO.new(png), fit: [ 160, 60 ]
+    move_down 8
+  rescue ActiveStorage::FileNotFoundError, Prawn::Errors::UnsupportedImageType
+     # A missing or unreadable logo shouldn't stop the invoice from rendering
+   end
 
   def heading
     text t(:title).upcase, size: 22, style: :bold, align: :right
@@ -94,27 +151,15 @@ class InvoicePdf
     table(rows, header: true, width: bounds.width, column_widths: { 1 => 60, 2 => 85, 3 => 85 }) do |grid|
       grid.cells.borders = [ :bottom ]
       grid.cells.border_color = BORDER
-      grid.cells.padding = [ 7, 8 ]
+      grid.cells.padding = table_padding
       grid.columns(1..3).align = :right
-      grid.row(0).background_color = SURFACE
-      grid.row(0).font_style = :bold
-      grid.row(0).size = 7
-      grid.row(0).text_color = MUTED
+      style_header_row(grid.row(0))
     end
   end
 
   def total
     move_down 14
-    text "#{column(:total).upcase}    #{money(@invoice.total)}", size: 14, style: :bold, align: :right
-  end
-
-  def footer
-    move_down 30
-    rule(BORDER, 0.75)
-    move_down 6
-    text t(:footer, name: issuer_name), size: 8, color: SUBTLE
-    # Page numbers in the bottom margin of every page
-    number_pages "<page>/<total>", at: [ 0, -12 ], width: bounds.width, align: :right, size: 8, color: SUBTLE
+    text "#{column(:total).upcase}    #{money(@invoice.total)}", size: 14, style: :bold, align: :right, color: total_color
   end
 
   # ---------- small drawing helpers ----------
@@ -152,6 +197,7 @@ class InvoicePdf
 
   def enterprise = @invoice.enterprise
   def issuer_name = enterprise.legal_name.presence || enterprise.name.to_s
+  def brand_name = enterprise.name.presence || enterprise.legal_name.to_s
   def number = @invoice.display_number
   def date = @invoice.date ? I18n.l(@invoice.date.to_date, format: :display) : "—"
 

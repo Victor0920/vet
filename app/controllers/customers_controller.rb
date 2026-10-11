@@ -50,11 +50,10 @@ class CustomersController < ApplicationController
   end
 
   def update
-    # Back to the edit page, so you can keep editing other fields
     if @customer.update(customer_params)
-      redirect_to edit_customer_path(@customer), notice: t("flash.customers.updated")
+      redirect_to customer_path(@customer), notice: t("flash.customers.updated")
     else
-      redirect_to edit_customer_path(@customer), alert: @customer.errors.full_messages.to_sentence
+      render :edit, status: :unprocessable_entity
     end
   end
 

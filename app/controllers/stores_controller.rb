@@ -1,4 +1,6 @@
 class StoresController < ApplicationController
+  include AdminOnly
+
   before_action :set_store, only: %i[ show edit update ]
 
   def index
@@ -41,6 +43,6 @@ class StoresController < ApplicationController
   end
 
   def store_params
-    params.expect(store: [ :name, :address, :post_code, :photo, :invoice_code ])
+    params.expect(store: [ :name, :address, :post_code, :photo, :remove_photo, :logo, :remove_logo, :invoice_code ])
   end
 end

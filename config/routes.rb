@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   resource :session
-  resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -48,9 +47,12 @@ Rails.application.routes.draw do
 
   scope "settings" do
     resource :enterprise, only: %i[ show edit update ]
-    resources :employees, path: "employees"
+    resources :employees, path: "employees", except: :destroy
     resources :stores, path: "stores" do
       resources :rooms, only: %i[ new create edit update ]
+    end
+    resource :invoice_settings, path: "invoicing", only: %i[ show edit update ] do
+      get :preview
     end
   end
   resource :settings, only: :show

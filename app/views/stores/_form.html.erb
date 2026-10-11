@@ -1,7 +1,11 @@
 <%# Shared by stores/new and /edit %>
 <% back_path = store.persisted? ? store_path(store) : stores_path %>
 
-<%= form_with model: store do |f| %>
+<%= form_with model: store,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: store.errors.any? } do |f| %>
   <div class="resource-form__toolbar">
     <%= render "shared/back_link", path: back_path, label: (store.persisted? ? t(".back_to_store") : t("stores.all_stores")) %>
 
@@ -70,7 +74,7 @@
     <%# form_with switches to multipart/form-data by itself when it contains a file_field %>
     <section class="card">
       <header class="card__header">
-        <h2 class="card__title"><%= Store.human_attribute_name(:photo) %></h2>
+        <h2 class="card__title"><%= t(".images") %></h2>
       </header>
       <dl class="field-list">
         <div class="field-row">
@@ -95,6 +99,38 @@
                 <p class="form-hint" id="photo_hint">
                   <%= store.photo.attached? && store.photo.persisted? ? t(".photo_hint_change") : t(".photo_hint") %>
                 </p>
+                <% if store.photo.attached? && store.photo.persisted? %>
+                  <%= render "shared/remove_image", f: f, field: :remove_photo, label: t(".remove_photo") %>
+                <% end %>
+              </div>
+            </div>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :logo %></dt>
+          <dd class="field-row__value">
+            <%# Logos keep their proportions: :thumb (resize_to_limit, see Store) + --contain instead of the photo's square crop %>
+            <div class="product-photo-field" data-controller="image-preview">
+              <% if store.logo.attached? && store.logo.persisted? %>
+                <%= image_tag store.logo.variant(:thumb), alt: "",
+                      class: "product-thumb product-thumb--lg product-thumb--contain", data: { image_preview_target: "placeholder" } %>
+              <% else %>
+                <span class="product-thumb product-thumb--lg" data-image-preview-target="placeholder">
+                  <%= render "shared/icons/building_office" %>
+                </span>
+              <% end %>
+              <img alt="" class="product-thumb product-thumb--lg product-thumb--contain" hidden data-image-preview-target="image">
+
+              <div class="product-photo-field__input">
+                <%= f.file_field :logo, accept: "image/png,image/jpeg", class: "file-input",
+                      data: { action: "change->image-preview#show" },
+                      aria: { describedby: "logo_hint", invalid: store.errors[:logo].any? } %>
+                <p class="form-hint" id="logo_hint">
+                  <%= store.logo.attached? && store.logo.persisted? ? t(".logo_hint_change") : t(".logo_hint") %>
+                </p>
+                <% if store.logo.attached? && store.logo.persisted? %>
+                  <%= render "shared/remove_image", f: f, field: :remove_logo, label: t(".remove_logo") %>
+                <% end %>
               </div>
             </div>
           </dd>

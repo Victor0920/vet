@@ -18,6 +18,8 @@ class Product < ApplicationRecord
     end
   }
 
+  scope :low_stock, -> { where("products.stock < products.show_warning_when_stock_under_x_items") }
+
   def adjust_stock(amount)
     with_lock do
       self.stock += amount
@@ -33,13 +35,13 @@ class Product < ApplicationRecord
 
   def category_belongs_to_same_enterprise
     if product_category && product_category.enterprise_id != enterprise_id
-      errors.add(:product_category, "is not valid")
+      errors.add(:product_category, :invalid)
     end
   end
 
   def photo_is_an_image
     if photo.attached? && !photo.content_type.in?(%w[image/jpeg image/png image/webp])
-      errors.add(:photo, "is not valid")
+      errors.add(:photo, :jpg_png_or_webp_only)
     end
   end
 end

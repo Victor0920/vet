@@ -1,6 +1,10 @@
 <%# Shared by products/new and products/edit. form_with model: picks POST /products
     for a new record and PATCH /products/:id for an existing one. %>
-<%= form_with model: product do |f| %>
+<%= form_with model: product,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: product.errors.any? } do |f| %>
   <div class="resource-form__toolbar">
     <%= render "shared/back_link", path: (product.persisted? ? product_path(product) : products_path), label: (product.persisted? ? t(".back_to_product") : t("products.all_products")) %>
 

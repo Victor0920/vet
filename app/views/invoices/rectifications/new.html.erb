@@ -4,7 +4,11 @@
 <%# POST /invoices/:invoice_id/rectifications → Invoices::RectificationsController#create.
     The url is given because form_with model: @invoice alone would post to /invoices.
     Params still arrive as invoice[…], which is what rectification_params expects. %>
-<%= form_with model: @invoice, url: invoice_rectifications_path(@original) do |f| %>
+<%= form_with model: @invoice, url: invoice_rectifications_path(@original),
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: @invoice.errors.any? } do |f| %>
   <div class="resource-form__toolbar">
     <%= render "shared/back_link", path: invoice_path(@original), label: t("invoices.form.back_to_invoice") %>
 

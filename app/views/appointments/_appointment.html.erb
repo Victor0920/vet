@@ -1,8 +1,10 @@
 <%# One appointment block inside a time grid.
     The title link is "stretched" over the whole block (see .cal-event__title::after),
     so clicking anywhere opens the edit modal. The customer/pet links sit above it,
-    because links can't be nested inside other links. %>
-<div class="cal-event" style="<%= style %>">
+    because links can't be nested inside other links.
+    A room with a colour adds color-swatch--<name> (sets --swatch / --swatch-highlight, see
+    color_picker.css) and cal-event--themed, which paints the block with them (calendar.css) %>
+<div class="cal-event <%= "cal-event--themed color-swatch--#{appointment.room.color}" if appointment.room.color %>" style="<%= style %>">
   <%= link_to appointment.title.presence || t("shared.untitled"), edit_appointment_path(appointment, view: @view, filter_room_id: @room&.id),
         class: "cal-event__title",
         data: { turbo_frame: "modal" } %>

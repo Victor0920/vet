@@ -19,7 +19,7 @@
 <%# Same pattern as customers#index: typing or picking a category submits the form
     (debounced by search_controller.js) into the "products" frame, so only the table
     is replaced. Both params end up in the URL: /products?q=…&category_id=… %>
-<%= form_with url: products_path, method: :get, role: "search", class: "products-filters",
+<%= form_with url: products_path, method: :get, role: "search", class: "products-filters products-filters--with-toggle",
     data: { controller: "search", turbo_frame: "products", turbo_action: "replace" } do %>
   <div class="search-field products-filters__search">
     <%= render "shared/icons/magnifying_glass" %>
@@ -43,6 +43,16 @@
           class: "select",
           data: { action: "change->search#submit", item_picker_target: "select" } %>
   </div>
+
+  <%# A plain checkbox styled as a switch (components/switch.css). When it's off the browser
+      sends nothing, so params[:low_stock] is missing and the controller treats it as false %>
+  <label class="switch products-filters__low-stock">
+    <%= check_box_tag :low_stock, "1", @low_stock,
+          class: "switch__input", role: "switch",
+          data: { action: "change->search#submit" } %>
+    <span class="switch__track" aria-hidden="true"></span>
+    <span class="switch__label"><%= t(".low_stock_only") %></span>
+  </label>
 <% end %>
 
 <%# target: "_top" so links inside (product names) open the full page, not the frame %>
@@ -113,7 +123,7 @@
         </tbody>
       </table>
     </div>
-  <% elsif @query.present? || @category_id.present? %>
+  <% elsif @query.present? || @category_id.present? || @low_stock %>
     <div class="empty-state">
       <%= render "shared/icons/magnifying_glass" %>
       <p class="empty-state__title"><%= t(".no_matches") %></p>

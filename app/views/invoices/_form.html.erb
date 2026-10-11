@@ -3,7 +3,11 @@
     Coming from an appointment ("Create invoice"), the controller has already filled in
     appointment, customer, employee and store, so the selects below start pre-selected. %>
 <% back_path = invoice.persisted? ? invoice_path(invoice) : invoices_path %>
-<%= form_with model: invoice do |f| %>
+<%= form_with model: invoice,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: invoice.errors.any? } do |f| %>
   <div class="resource-form__toolbar">
     <%= render "shared/back_link", path: back_path, label: (invoice.persisted? ? t(".back_to_invoice") : t("invoices.all_invoices")) %>
 
@@ -77,7 +81,9 @@
           <div class="field-row">
             <dt class="field-row__label"><%= f.label :employee_id %></dt>
             <dd class="field-row__value">
-              <%= f.collection_select :employee_id, @employees, :id, :display_name,
+              <%# Active staff, plus the one already assigned, labelled if they've since been deactivated %>
+              <%= f.collection_select :employee_id, @employees, :id,
+                    ->(employee) { employee.active? ? employee.display_name : t("employees.inactive_option", name: employee.display_name) },
                     { prompt: t(".choose_employee") },
                     class: "select", required: true,
                     aria: { invalid: invoice.errors[:employee].any? } %>

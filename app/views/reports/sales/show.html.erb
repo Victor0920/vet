@@ -34,7 +34,8 @@
         <tr>
           <th><%= t(".employee") %></th>
           <th><%= t(".product") %></th>
-          <th class="sales-table__units"><%= t(".units") %></th>
+          <th class="sales-table__units"><%= t(".units_sold") %></th>
+          <th class="sales-table__stock"><%= t(".stock") %></th>
         </tr>
       </thead>
       <tbody>
@@ -47,6 +48,17 @@
                     product_path(row[:product], return_to: request.fullpath) %>
             </td>
             <td class="table__numeric sales-table__units"><%= row[:units] %></td>
+            <%# Current stock, not stock at the time of the sale. Same colours as products#index:
+                out of stock → red, under the product's warning threshold → orange %>
+            <td class="table__numeric sales-table__stock">
+              <% if row[:product].stock.zero? %>
+                <span class="badge badge--danger"><%= row[:product].stock %></span>
+              <% elsif row[:product].low_stock? %>
+                <span class="badge badge--warning"><%= row[:product].stock %></span>
+              <% else %>
+                <%= row[:product].stock %>
+              <% end %>
+            </td>
           </tr>
         <% end %>
       </tbody>

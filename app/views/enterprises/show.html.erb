@@ -52,34 +52,19 @@
   </div>
 </section>
 
-<section class="card enterprise-invoicing">
+<%# What staff type on the sign-in page, so the admin can pass it on %>
+<section class="card enterprise-access">
   <header class="card__header">
     <div>
-      <h2 class="card__title"><%= t(".invoicing") %></h2>
-      <p class="card__description"><%= t(".invoicing_hint") %></p>
+      <h2 class="card__title"><%= t(".sign_in") %></h2>
+      <p class="card__description"><%= t(".sign_in_hint") %></p>
     </div>
   </header>
   <div class="card__body">
-    <dl class="details details--grid">
+    <dl class="details">
       <div>
-        <dt><%= Enterprise.human_attribute_name(:invoice_number_schema) %></dt>
-        <dd><code><%= @enterprise.invoice_number_schema %></code></dd>
-      </div>
-      <div>
-        <dt><%= Enterprise.human_attribute_name(:rectification_number_schema) %></dt>
-        <dd>
-          <% if @enterprise.rectification_number_schema.present? %>
-            <code><%= @enterprise.rectification_number_schema %></code>
-          <% else %>
-            <%# Same fallback as InvoiceNumber#schema %>
-            <code>R<%= @enterprise.invoice_number_schema %></code>
-            <span class="text-subtle"><%= t(".default_rectification_schema") %></span>
-          <% end %>
-        </dd>
-      </div>
-      <div>
-        <dt><%= Enterprise.human_attribute_name(:invoice_counter_reset) %></dt>
-        <dd><%= t("enterprises.invoice_counter_resets.#{@enterprise.invoice_counter_reset}") %></dd>
+        <dt><%= Enterprise.human_attribute_name(:login_code) %></dt>
+        <dd><code><%= @enterprise.login_code %></code></dd>
       </div>
     </dl>
   </div>
@@ -90,14 +75,15 @@
     <h2 class="section__title"><%= t(".stores") %></h2>
     <p class="text-muted"><%= t("stores.index.count", count: @enterprise.stores.size) %></p>
   </div>
-  <%= link_to t(".manage_stores"), stores_path, class: "btn btn--ghost" %>
+  <%# return_to: the stores pages' back links come back here instead of to Settings (see NavigationHelper) %>
+  <%= link_to t(".manage_stores"), stores_path(return_to: enterprise_path), class: "btn btn--ghost" %>
 </header>
 
 <% if @enterprise.stores.any? %>
   <ul class="rooms-list">
     <% @enterprise.stores.each do |store| %>
       <li>
-        <%= link_to store_path(store), class: "card card--interactive rooms-list__item" do %>
+        <%= link_to store_path(store, return_to: enterprise_path), class: "card card--interactive rooms-list__item" do %>
           <span class="rooms-list__icon"><%= render "shared/icons/building_storefront" %></span>
           <span class="rooms-list__text">
             <span class="rooms-list__name"><%= store.name.presence || t("stores.unnamed") %></span>

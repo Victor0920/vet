@@ -1,0 +1,21 @@
+<%# A tiny drawing of an invoice page in one of the three layouts (InvoicePdf, ::Modern, ::Compact),
+    made of grey bars: it shows where the colour goes, not real content.
+    Its colour is the CSS variable --invoice-accent: set inline on the show page, and by the
+    colour radios on the edit page (see invoice_settings.css).
+    Locals: layout - "classic", "modern" or "compact" %>
+<div class="invoice-mockup invoice-mockup--<%= layout %>" aria-hidden="true">
+  <div class="invoice-mockup__header">
+    <span class="invoice-mockup__brand"></span>
+    <span class="invoice-mockup__title"></span>
+  </div>
+  <span class="invoice-mockup__rule"></span>
+  <div class="invoice-mockup__parties">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="invoice-mockup__table">
+    <span class="invoice-mockup__thead"></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+  <span class="invoice-mockup__total"></span>
+  <span class="invoice-mockup__footer"></span>
+</div>

@@ -26,8 +26,9 @@
   margin-bottom: var(--space-3);
 }
 
-/* Units right-aligned so the digits line up */
-.table .sales-table__units {
+/* Units and stock right-aligned so the digits line up */
+.table .sales-table__units,
+.table .sales-table__stock {
   text-align: right;
   color: var(--color-text);
 }

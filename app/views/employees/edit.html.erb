@@ -1,0 +1,3 @@
+<% content_for :title, t(".title", name: [@employee.first_name_was, @employee.last_name_was].compact_blank.join(" ").presence || @employee.username_was) %>
+
+<%= render "form", employee: @employee %>

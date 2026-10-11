@@ -1,12 +1,13 @@
 class EmployeesController < ApplicationController
+  include AdminOnly
   before_action :set_employee, only: %i[ show edit update ]
 
   def index
-    @employees = Current.enterprise.employees.all
+    @employees = Current.enterprise.employees.order(:first_name, :last_name)
   end
 
   def new
-    @employee = Employee.new
+    @employee = Current.enterprise.employees.new
   end
 
   def show
@@ -17,7 +18,7 @@ class EmployeesController < ApplicationController
   end
 
   def create
-    @employee = Current.enterprise.employee.new(employee_params)
+    @employee = Current.enterprise.employees.new(employee_params)
 
     if @employee.save
       redirect_to employee_path(@employee), notice: t("flash.employees.created")
@@ -28,16 +29,15 @@ class EmployeesController < ApplicationController
 
   def update
     if @employee.update(employee_params)
-      key = @employee.saved_change_to_locale? ? "flash.employees.language_updated" : "flash.employees.updated"
-      # This action still runs in the OLD language, so build the message in the new one
-      notice = I18n.with_locale(@employee.locale) { t(key) }
-      redirect_to employee_path(@employee), notice: notice
+      key = @employee.saved_change_to_active? ? (@employee.active? ? "reactivated" : "deactivated") : "updated"
+      # url_from: only follows return_to if it points to this site (e.g. back to the list after "Deactivate")
+      redirect_to url_from(params[:return_to]) || employee_path(@employee), notice: t("flash.employees.#{key}")
     else
-      redirect_to employee_path(@employee), alert: @employee.errors.full_messages.to_sentence
+      render :edit, status: :unprocessable_entity
     end
   end
 
-  private
+    private
 
   def set_employee
     @employee = Current.enterprise.employees.find_by(id: params[:id])
@@ -46,6 +46,10 @@ class EmployeesController < ApplicationController
 
   # Strong parameters: only these fields can be changed from a form
   def employee_params
-    params.expect(employee: [ :first_name, :last_name, :email_address, :phone, :role, :active, :photo, :locale ])
+    fields = [ :first_name, :last_name, :username, :password, :password_confirmation,
+               :email_address, :phone, :role, :active, :photo, :locale ]
+    # Admins can't change their own role or deactivate themselves, so there's always an admin left
+    fields -= [ :role, :active ] if @employee == Current.employee
+    params.expect(employee: fields)
   end
 end

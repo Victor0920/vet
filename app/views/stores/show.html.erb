@@ -51,6 +51,16 @@
         <dd><%= l(@store.created_at, format: :display) %></dd>
       </div>
     </dl>
+
+    <%# Framed square matching the photo, so photo | details | logo line up whatever shape the logo is %>
+    <div class="store-details__logo">
+      <% if @store.logo.attached? %>
+        <%= image_tag @store.logo.variant(:thumb), alt: t(".logo_alt", name: @store.name.to_s) %>
+      <% else %>
+        <%= render "shared/icons/building_office" %>
+        <span><%= t(".no_logo") %></span>
+      <% end %>
+    </div>
   </div>
 </section>
 

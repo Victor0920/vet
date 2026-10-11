@@ -17,6 +17,20 @@
   flex: 0 1 14rem;
 }
 
+/* products#index has a third filter (the low-stock switch): widen the row so it
+   fits next to the other two, and centre it vertically against the inputs.
+   services#index doesn't use this modifier, so it keeps the 40rem row */
+.products-filters--with-toggle {
+  max-width: 50rem;
+  align-items: center;
+}
+
+/* Sits at the end of the row, never shrinks so its label stays on one line */
+.products-filters__low-stock {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .products-filters__count {
   margin-bottom: var(--space-2);
   color: var(--color-text-muted);
@@ -88,6 +102,12 @@ turbo-frame#services {
   height: 5rem;
 }
 
+/* Logos (stores/_form): show the whole image instead of cropping it to the square */
+.product-thumb--contain {
+  object-fit: contain;
+  padding: var(--space-1);
+}
+
 /* Just wide enough for the 40px thumbnail */
 .table .products-table__photo {
   width: 1%;
@@ -114,6 +134,45 @@ turbo-frame#services {
   flex-direction: column;
   gap: var(--space-1);
   min-width: 0;
+}
+
+/* "Remove" toggle for a saved image (stores/_remove_image): a checkbox styled as a button.
+   Ticked = deleted on save, so the button, thumbnail and hint all switch to a "pending removal" look */
+.image-remove {
+  align-self: flex-start;
+  margin-top: var(--space-1);
+
+  /* The checkbox itself is .sr-only: show keyboard focus on the button instead */
+  &:has(:focus-visible) {
+    box-shadow: var(--focus-ring);
+  }
+
+  .image-remove__on {
+    display: none;
+  }
+
+  &:has(:checked) {
+    background: var(--color-danger-subtle);
+
+    .image-remove__off { display: none; }
+    .image-remove__on { display: inline; }
+  }
+}
+
+.image-remove__notice {
+  display: none;
+  color: var(--color-danger-text);
+}
+
+.product-photo-field:has(.image-remove :checked) {
+  /* The saved image (not a newly picked one, which would replace it instead) */
+  [data-image-preview-target="placeholder"] {
+    opacity: 0.35;
+    box-shadow: 0 0 0 2px var(--color-danger);
+  }
+
+  .form-hint:not(.image-remove__notice) { display: none; }
+  .image-remove__notice { display: block; }
 }
 
 /* Native file input, with its button styled like .btn--secondary */

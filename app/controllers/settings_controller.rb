@@ -1,5 +1,5 @@
 class SettingsController < ApplicationController
-  before_action :require_admin
+  include AdminOnly
 
   def show
   end

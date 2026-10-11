@@ -5,8 +5,8 @@ class InvoiceMailer < ApplicationMailer
     @message = message
     @number = invoice.display_number
 
-    attachments["invoice-#{@number.parameterize}.pdf"] = InvoicePdf.new(invoice).render
+    attachments["invoice-#{@number.parameterize}.pdf"] = InvoicePdf.for(invoice).render
     mail to: to, subject: t(".subject", number: @number,
-                                         name: invoice.enterprise.legal_name.presence || invoice.enterprise.name)
+      name: invoice.enterprise.legal_name.presence || invoice.enterprise.name)
   end
 end

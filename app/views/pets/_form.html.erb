@@ -1,0 +1,170 @@
+<%# Shared by pets/new and /edit: every field is a plain input inside one form,
+    saved with the button in the top right corner (same pattern as customers, stores…) %>
+<% owner_name = [customer.first_name, customer.first_surname].compact_blank.join(" ").presence || t("shared.customer_number", id: customer.id) %>
+<%# name_was: the saved name, so a rejected edit doesn't rename the heading before it's saved %>
+<% pet_name = pet.name_was.presence || t("shared.pet_number", id: pet.id) %>
+<% back_path = pet.persisted? ? customer_pet_path(customer, pet) : customer_path(customer) %>
+<% saved_photo = pet.photo.attached? && pet.photo.persisted? %>
+
+<%= form_with model: [customer, pet],
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: pet.errors.any? } do |f| %>
+  <div class="customer-form__toolbar">
+    <%= render "shared/back_link", path: back_path, label: t(".back_to", name: pet.persisted? ? pet_name : owner_name) %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), back_path, class: "btn btn--ghost" %>
+      <%= f.submit (pet.persisted? ? t("shared.save_changes") : t(".submit")), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="customer-profile">
+    <aside class="card customer-profile__sidebar">
+      <%# The photo is a <label> for the hidden file input; image-preview shows the picked photo
+          before the form is saved (nothing is uploaded until then). %>
+      <div class="pet-photo" data-controller="image-preview">
+        <%= f.label :photo, class: "pet-photo__trigger" do %>
+          <img alt="" class="pet-photo__image" hidden data-image-preview-target="image">
+          <% if saved_photo %>
+            <%= image_tag pet.photo.variant(resize_to_fill: [576, 576]), alt: pet_name,
+                  class: "pet-photo__image", data: { image_preview_target: "placeholder" } %>
+          <% else %>
+            <span class="pet-photo__placeholder" data-image-preview-target="placeholder"><%= render "shared/paw_icon" %></span>
+          <% end %>
+          <span class="pet-photo__overlay">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/></svg>
+            <%= saved_photo ? t("shared.change_photo") : t("shared.add_photo") %>
+          </span>
+        <% end %>
+        <%= f.file_field :photo, accept: "image/*", class: "sr-only", data: { action: "change->image-preview#show" } %>
+      </div>
+
+      <div class="customer-profile__header">
+        <div>
+          <h1 class="customer-profile__name"><%= pet.persisted? ? pet_name : t(".heading") %></h1>
+          <p class="text-subtle text-xs">
+            <% if pet.persisted? %>
+              <%= [pet.species_was, pet.breed_was].compact_blank.join(" · ").presence || t("shared.pet_number", id: pet.id) %>
+            <% else %>
+              <%= t(".photo_hint") %>
+            <% end %>
+          </p>
+        </div>
+      </div>
+
+      <div class="card__body">
+        <dl class="details">
+          <div>
+            <dt><%= t("pets.owner") %></dt>
+            <dd>
+              <%= link_to customer_path(customer), class: "pet-owner" do %>
+                <% if customer.photo.attached? %>
+                  <%= image_tag customer.photo.variant(:small), alt: "", class: "avatar avatar--sm avatar--photo" %>
+                <% else %>
+                  <span class="avatar avatar--sm"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
+                <% end %>
+                <%= owner_name %>
+              <% end %>
+            </dd>
+          </div>
+          <% if pet.persisted? %>
+            <div>
+              <dt><%= t("pets.added") %></dt>
+              <dd><%= l(pet.created_at, format: :display) %></dd>
+            </div>
+            <div>
+              <dt><%= t("shared.last_updated") %></dt>
+              <dd><%= t("shared.time_ago", time: time_ago_in_words(pet.updated_at)) %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+    </aside>
+
+    <div class="customer-profile__main stack">
+      <% if pet.errors.any? %>
+        <div class="alert alert--danger" role="alert">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+          <ul class="form-errors">
+            <% pet.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title"><%= t("pets.sections.general") %></h2>
+        </header>
+        <dl class="field-list">
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :name %></dt>
+            <dd class="field-row__value">
+              <%= f.text_field :name, class: "input", required: true, autofocus: true,
+                    aria: { invalid: pet.errors[:name].any? } %>
+            </dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :species %></dt>
+            <dd class="field-row__value"><%= f.text_field :species, class: "input" %></dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :breed %></dt>
+            <dd class="field-row__value"><%= f.text_field :breed, class: "input" %></dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :sterilized %></dt>
+            <dd class="field-row__value">
+              <%= f.select :sterilized, [[t("shared.yes"), true], [t("shared.no"), false]], { include_blank: "—" }, class: "select" %>
+            </dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :sex %></dt>
+            <dd class="field-row__value">
+              <%= f.select :sex, [[t("pets.sex.male"), "Male"], [t("pets.sex.female"), "Female"]], { include_blank: "—" }, class: "select" %>
+            </dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :born_on %></dt>
+            <dd class="field-row__value"><%= f.date_field :born_on, class: "input" %></dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :color %></dt>
+            <dd class="field-row__value"><%= f.text_field :color, class: "input" %></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title"><%= t("pets.sections.identification") %></h2>
+        </header>
+        <dl class="field-list">
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :transponder_number %></dt>
+            <dd class="field-row__value"><%= f.text_field :transponder_number, class: "input" %></dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :transponder_location %></dt>
+            <dd class="field-row__value"><%= f.text_field :transponder_location, class: "input" %></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title"><%= t("pets.sections.notes") %></h2>
+        </header>
+        <dl class="field-list">
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :notes %></dt>
+            <dd class="field-row__value"><%= f.text_area :notes, class: "textarea", rows: 4 %></dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+  </div>
+<% end %>

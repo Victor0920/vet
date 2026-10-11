@@ -13,11 +13,10 @@ class PetsController < ApplicationController
   end
 
   def update
-    # Back to the edit page, so you can keep editing other fields
     if @pet.update(pet_params)
-      redirect_to edit_customer_pet_path(@customer, @pet), notice: t("flash.pets.updated")
+      redirect_to customer_pet_path(@customer, @pet), notice: t("flash.pets.updated")
     else
-      redirect_to edit_customer_pet_path(@customer, @pet), alert: @pet.errors.full_messages.to_sentence
+      render :edit, status: :unprocessable_entity
     end
   end
 
