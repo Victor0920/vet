@@ -1,8 +1,10 @@
 class PetsController < ApplicationController
   before_action :set_customer
   before_action :set_pet, only: %i[ show edit update ]
+  before_action :set_employees, only: %i[ new create edit update ]
 
   def show
+    @weights = @pet.pet_weights.order(:measured_on)
   end
 
   def edit
@@ -42,9 +44,15 @@ class PetsController < ApplicationController
     redirect_to customers_url, alert: t("flash.pets.not_found") if @pet.nil?
   end
 
+  # Active staff, plus the pet's current usual vet even if they've been deactivated
+  def set_employees
+    employees = Current.enterprise.employees
+    @employees = employees.active.or(employees.where(id: @pet&.usual_employee_id)).order(:first_name, :last_name)
+  end
+
   # Strong parameters: only these fields can be changed from a form
   def pet_params
-    params.expect(pet: [ :name, :species, :breed, :sex, :born_on, :color,
-                         :transponder_number, :transponder_location, :notes, :photo, :sterilized ])
+    params.expect(pet: [ :name, :species, :breed, :sex, :born_on, :color, :usual_employee_id,
+      :transponder_number, :transponder_location, :notes, :photo, :sterilized ])
   end
 end

@@ -1,0 +1,62 @@
+<% content_for :title, t(".title") %>
+<% back_path = customer_pet_path(@customer, @pet) %>
+
+<%# Loaded into the empty <turbo-frame id="modal"> at the bottom of pets/show, so it
+    appears over the pet. modal#close (Esc, ✕, Cancel, backdrop) empties the frame;
+    modal#submitEnd: after saving, show the pet page (with the flash) in full. %>
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal modal--overlay" data-controller="modal"
+       data-action="keydown.esc@window->modal#close turbo:submit-end->modal#submitEnd">
+    <%= link_to "", back_path, class: "modal__backdrop", tabindex: -1,
+          aria: { hidden: true }, data: { action: "modal#close", turbo_frame: "_top" } %>
+
+    <div class="modal__panel card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="card__header">
+        <h2 class="card__title" id="modal-title"><%= t(".title") %></h2>
+        <%= link_to back_path, class: "btn btn--ghost btn--icon btn--sm", aria: { label: t("shared.close") },
+              data: { action: "modal#close", turbo_frame: "_top" } do %>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+        <% end %>
+      </header>
+
+      <%# POST /customers/:customer_id/pets/:pet_id/weights → Pets::WeightsController#create %>
+      <%= form_with model: @weight, url: customer_pet_weights_path(@customer, @pet), id: "pet-weight-form" do |f| %>
+        <div class="card__body form">
+          <% if @weight.errors.any? %>
+            <div class="alert alert--danger" role="alert">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+              <ul class="form-errors">
+                <% @weight.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <%= f.label :weight, class: "label" %>
+              <%= f.number_field :weight, class: "input", step: 0.01, min: 0.01, max: 999.99,
+                    required: true, autofocus: true, inputmode: "decimal", placeholder: "0.00",
+                    aria: { invalid: @weight.errors[:weight].any? } %>
+            </div>
+            <div class="form-field">
+              <%= f.label :measured_on, class: "label" %>
+              <%= f.date_field :measured_on, class: "input", required: true, max: Date.current,
+                    aria: { invalid: @weight.errors[:measured_on].any? } %>
+            </div>
+          </div>
+          <p class="form-hint"><%= t(".same_day_hint") %></p>
+        </div>
+      <% end %>
+
+      <footer class="card__footer modal__footer">
+        <div class="modal__footer-actions">
+          <%= link_to t("shared.cancel"), back_path, class: "btn btn--ghost",
+                data: { action: "modal#close", turbo_frame: "_top" } %>
+          <%= button_tag t(".submit"), type: "submit", form: "pet-weight-form", class: "btn btn--primary" %>
+        </div>
+      </footer>
+    </div>
+  </div>
+<% end %>

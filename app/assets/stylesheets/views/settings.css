@@ -379,8 +379,8 @@
   gap: var(--space-4);
 }
 
-/* ---------- enterprises#show: sign-in card ---------- */
+/* ---------- access#show: the company ID, a bit larger so it's easy to read out to the team ---------- */
 
-.enterprise-access {
-  margin-top: var(--space-4);
+.access-code {
+  font-size: var(--text-md);
 }

@@ -68,29 +68,5 @@
         </div>
       </dl>
     </section>
-
-    <%# The company ID people type to sign in. Unique across all companies (validation + database index):
-        if it's taken, the save fails with an error instead of sharing it %>
-    <section class="card">
-      <header class="card__header">
-        <div>
-          <h2 class="card__title"><%= t("enterprises.show.sign_in") %></h2>
-          <p class="card__description"><%= t("enterprises.show.sign_in_hint") %></p>
-        </div>
-      </header>
-      <dl class="field-list">
-        <div class="field-row">
-          <dt class="field-row__label"><%= f.label :login_code %></dt>
-          <dd class="field-row__value">
-            <%# Saved in lowercase (Enterprise normalizes it); pattern gives the browser's own hint first %>
-            <%= f.text_field :login_code, class: "input input--short input--mono", required: true,
-                  autocomplete: "off", autocapitalize: "none", spellcheck: false, maxlength: 30,
-                  pattern: "[A-Za-z0-9\\-]{3,30}",
-                  aria: { invalid: @enterprise.errors[:login_code].any?, describedby: "login_code_hint" } %>
-            <p class="form-hint" id="login_code_hint"><%= t(".login_code_hint") %></p>
-          </dd>
-        </div>
-      </dl>
-    </section>
   </div>
 <% end %>

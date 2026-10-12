@@ -22,7 +22,9 @@ Rails.application.routes.draw do
   # get "/conversations/:id", to: "conversations#show"
   resources :conversations
   resources :customers do
-    resources :pets
+    resources :pets do
+      resources :weights, only: %i[ new create destroy ], module: :pets
+    end
   end
 
   resource :profile, only: %i[ show update ]
@@ -54,6 +56,7 @@ Rails.application.routes.draw do
     resource :invoice_settings, path: "invoicing", only: %i[ show edit update ] do
       get :preview
     end
+    resource :access, only: %i[ show edit update ], controller: :access
   end
   resource :settings, only: :show
 

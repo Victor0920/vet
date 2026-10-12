@@ -95,11 +95,12 @@
         </div>
       <% end %>
 
+      <%# field-list--columns: General and Identification show their fields in two columns %>
       <section class="card">
         <header class="card__header">
           <h2 class="card__title"><%= t("pets.sections.general") %></h2>
         </header>
-        <dl class="field-list">
+        <dl class="field-list field-list--columns">
           <div class="field-row">
             <dt class="field-row__label"><%= f.label :name %></dt>
             <dd class="field-row__value">
@@ -135,6 +136,15 @@
             <dt class="field-row__label"><%= f.label :color %></dt>
             <dd class="field-row__value"><%= f.text_field :color, class: "input" %></dd>
           </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= f.label :usual_employee_id %></dt>
+            <dd class="field-row__value">
+              <%# Active staff, plus the current usual vet, labelled if they've since been deactivated %>
+              <%= f.collection_select :usual_employee_id, employees, :id,
+                    ->(employee) { employee.active? ? employee.display_name : t("employees.inactive_option", name: employee.display_name) },
+                    { include_blank: "—" }, class: "select" %>
+            </dd>
+          </div>
         </dl>
       </section>
 
@@ -142,7 +152,7 @@
         <header class="card__header">
           <h2 class="card__title"><%= t("pets.sections.identification") %></h2>
         </header>
-        <dl class="field-list">
+        <dl class="field-list field-list--columns">
           <div class="field-row">
             <dt class="field-row__label"><%= f.label :transponder_number %></dt>
             <dd class="field-row__value"><%= f.text_field :transponder_number, class: "input" %></dd>

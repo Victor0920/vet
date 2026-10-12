@@ -1,0 +1,21 @@
+<%# One read-only card on pets#show: a title plus a list of [label, value] pairs.
+    Pass columns: true to show the fields in two columns. %>
+<section class="card">
+  <header class="card__header">
+    <h2 class="card__title"><%= title %></h2>
+  </header>
+  <dl class="field-list <%= "field-list--columns" if local_assigns[:columns] %>">
+    <% fields.each do |label, value| %>
+      <div class="field-row">
+        <dt class="field-row__label"><%= label %></dt>
+        <dd class="field-row__value">
+          <div class="field-row__display">
+            <span class="<%= "text-subtle" if value.blank? %> <%= "field-row__text--multiline" if label == Pet.human_attribute_name(:notes) %>">
+              <%= value.presence || t("shared.not_set") %>
+            </span>
+          </div>
+        </dd>
+      </div>
+    <% end %>
+  </dl>
+</section>

@@ -162,6 +162,11 @@ es:
         sterilized: "Esterilizado"
         photo: "Foto"
         customer: "Propietario"
+        usual_employee: "Veterinario habitual"
+        usual_employee_id: "Veterinario habitual"
+      pet_weight:
+        weight: "Peso (kg)"
+        measured_on: "Fecha"
       product:
         name: "Nombre"
         description: "Descripción"
@@ -270,6 +275,8 @@ es:
       updated: "Datos de la empresa actualizados"
     invoice_settings:
       updated: "Ajustes de facturación actualizados"
+    access:
+      updated: "ID de empresa actualizado"
     appointments:
       created: "Cita creada"
       updated: "Cita actualizada"
@@ -300,6 +307,9 @@ es:
       created: "Mascota creada"
       updated: "Mascota actualizada"
       not_found: "No se ha encontrado la mascota"
+    pet_weights:
+      created: "Peso guardado"
+      deleted: "Peso eliminado"
     invoices:
       created: "Factura creada"
       updated: "Factura actualizada"
@@ -501,7 +511,6 @@ es:
   enterprises:
     edit:
       title: "Editar datos de la empresa"
-      login_code_hint: "De 3 a 30 letras, números o guiones. No puede usarlo otra empresa. Si lo cambias, avisa a tu equipo: todos lo escriben para entrar."
     show:
       title: "Datos de la empresa"
       subtitle: "Cómo aparece tu negocio en las facturas y ante los clientes."
@@ -511,11 +520,22 @@ es:
       registered: "Alta"
       stores: "Centros"
       manage_stores: "Gestionar centros"
-      sign_in: "Acceso"
-      sign_in_hint: "Tu equipo escribe este ID de empresa y después su propio ID de empleado y contraseña."
     invoice_counter_resets:
       yearly: "Cada año"
       monthly: "Cada mes"
+
+  # ---------- Acceso (/settings/access) ----------
+  access:
+    show:
+      title: "Acceso"
+      subtitle: "Cómo entra tu equipo en Vet."
+      edit: "Editar ID de empresa"
+      sign_in: "Acceso"
+      sign_in_hint: "Tu equipo escribe este ID de empresa y después su propio ID de empleado y contraseña."
+    edit:
+      title: "Editar ID de empresa"
+      warning: "Todo tu equipo escribe este ID para entrar. Si lo cambias, avisa antes de que vuelvan a iniciar sesión: el anterior deja de funcionar al momento."
+      login_code_hint: "De 3 a 30 letras, números o guiones. No puede usarlo otra empresa. Si lo cambias, avisa a tu equipo: todos lo escriben para entrar."
 
   # ---------- Ajustes de facturación (/settings/invoicing) ----------
   invoice_settings:
@@ -594,8 +614,8 @@ es:
       tiles:
         enterprise:
           title: "Datos de la empresa"
-          description: "Nombre, datos fiscales, dirección y el ID de empresa con el que entra tu equipo."
-          items: ["Datos fiscales", "ID de empresa"]
+          description: "Nombre, datos fiscales y dirección, tal como salen en las facturas."
+          items: ["Datos fiscales", "Dirección"]
         stores:
           title: "Centros y salas"
           description: "Tus clínicas y las salas donde se reservan citas."
@@ -603,6 +623,9 @@ es:
         employees:
           title: "Empleados"
           description: "Da de alta al equipo, asigna roles y desactiva cuentas."
+        access:
+          title: "Acceso"
+          description: "El ID de empresa que escribe tu equipo para entrar."
         product_categories:
           title: "Categorías de productos"
           description: "Agrupa los productos y elige sus colores."
@@ -780,6 +803,21 @@ es:
       back_to: "Volver a %{name}"
       submit: "Crear mascota"
       photo_hint: "Pulsa la imagen para añadir una foto"
+    weights:
+      title: "Peso"
+      add: "Añadir peso"
+      latest: "Peso"
+      kg: "%{value} kg"
+      change: "Variación"
+      actions: "Acciones"
+      empty: "Todavía no hay pesos"
+      empty_hint: "Añade el primer peso para ver cómo evoluciona con el tiempo."
+      delete: "Eliminar peso"
+      delete_confirm: "¿Eliminar este peso?"
+      new:
+        title: "Añadir peso"
+        submit: "Guardar peso"
+        same_day_hint: "Si ya hay un peso para esta fecha, se sustituirá."
 
   # ---------- Empleados ----------
   employees:
@@ -891,6 +929,7 @@ es:
       search_customers: "Busca clientes…"
       no_customers_match: "Ningún cliente coincide"
       no_pet: "Sin mascota"
+      usual_vet_selected: "Seleccionando a %{name} porque es el veterinario habitual de esta mascota"
       view_customer: "Ver cliente · %{name}"
       view_pet: "Ver mascota · %{name}"
       delete_confirm: "¿Eliminar esta cita?"

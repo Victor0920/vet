@@ -55,9 +55,12 @@
       <%= render "shared/icons/chart_bar" %>
       <span><%= t("components.top_nav.sales_report") %></span>
     <% end %>
-    <%= link_to helpers.settings_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/settings")) } do %>
-      <%= render "shared/icons/cog" %>
-      <span><%= t("components.top_nav.settings") %></span>
+
+    <% if @employee.role == "admin" %>
+      <%= link_to helpers.settings_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/settings")) } do %>
+        <%= render "shared/icons/cog" %>
+        <span><%= t("components.top_nav.settings") %></span>
+      <% end %>
     <% end %>
   </nav>
 
@@ -66,7 +69,9 @@
     <%= link_to helpers.profile_path, class: "sidebar__profile",
           aria: { current: ("page" if request.path == helpers.profile_path) } do %>
       <% if @employee.photo.attached? %>
-        <%= image_tag @employee.photo.variant(resize_to_fill: [64, 64]), alt: "", class: "avatar avatar--sm avatar--photo" %>
+        <%= image_tag @employee.photo.variant(resize_to_fill: [64, 64]),
+        alt: "",
+        class: "avatar avatar--sm avatar--photo" %>
       <% else %>
         <span class="avatar avatar--sm"><%= (
             @employee.first_name.to_s.first.to_s + @employee.last_name.to_s.first.to_s

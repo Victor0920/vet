@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_061904) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -181,6 +181,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
     t.index ["whatsapp_message_id"], name: "index_messages_on_whatsapp_message_id"
   end
 
+  create_table "pet_species", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
+  end
+
+  create_table "pet_weights", force: :cascade do |t|
+    t.integer "pet_id", null: false
+    t.decimal "weight", precision: 5, scale: 2, null: false
+    t.date "measured_on", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pet_id", "measured_on"], name: "index_pet_weights_on_pet_id_and_measured_on", unique: true
+    t.index ["pet_id"], name: "index_pet_weights_on_pet_id"
+  end
+
   create_table "pets", force: :cascade do |t|
     t.string "name"
     t.string "species"
@@ -195,7 +211,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
     t.datetime "updated_at", null: false
     t.integer "customer_id", null: false
     t.boolean "sterilized"
+    t.integer "usual_employee_id"
     t.index ["customer_id"], name: "index_pets_on_customer_id"
+    t.index ["usual_employee_id"], name: "index_pets_on_usual_employee_id"
   end
 
   create_table "product_categories", force: :cascade do |t|
@@ -311,7 +329,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
   add_foreign_key "invoices", "invoices", column: "original_invoice_id"
   add_foreign_key "invoices", "stores"
   add_foreign_key "messages", "conversations"
+  add_foreign_key "pet_weights", "pets"
   add_foreign_key "pets", "customers"
+  add_foreign_key "pets", "employees", column: "usual_employee_id"
   add_foreign_key "product_categories", "employees", column: "updated_by_id", on_delete: :nullify
   add_foreign_key "product_categories", "enterprises"
   add_foreign_key "products", "employees", column: "updated_by_id", on_delete: :nullify
