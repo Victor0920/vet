@@ -123,8 +123,8 @@
               <div class="pet-card__body">
                 <div class="pet-card__header">
                   <h3 class="pet-card__name"><%= pet.name.presence || t("shared.unnamed_pet") %></h3>
-                  <% if pet.species.present? %>
-                    <span class="badge badge--primary"><%= pet.species %></span>
+                  <% if pet.pet_species %>
+                    <span class="badge badge--primary"><%= pet.pet_species.display_name %></span>
                   <% end %>
                 </div>
 
@@ -150,7 +150,8 @@
                 <% end %>
 
                 <% if pet.notes.present? %>
-                  <p class="pet-card__notes"><%= pet.notes %></p>
+                  <%# Plain text: the card shows a one-line preview, not the formatting %>
+                  <p class="pet-card__notes"><%= pet.notes.to_plain_text %></p>
                 <% end %>
               </div>
             </article>

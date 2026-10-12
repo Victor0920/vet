@@ -1,6 +1,11 @@
 <%# A product or service category as a pill linking to its page, in the category's
     colour (badge--red, badge--blue… see badge.css), or the default teal when it has none.
     polymorphic_path builds product_category_path / service_category_path from the record;
-    return_to: brings the category page's back link back here. %>
-<%= link_to category.name.presence || t("shared.unnamed"), polymorphic_path(category, return_to: request.fullpath),
-      class: ["badge", category.color ? "badge--#{category.color}" : "badge--primary"] %>
+    return_to: brings the category page's back link back here.
+    A nil category (it was deleted) shows a plain grey "Uncategorized" pill, with no link. %>
+<% if category %>
+  <%= link_to category.name.presence || t("shared.unnamed"), polymorphic_path(category, return_to: request.fullpath),
+        class: ["badge", category.color ? "badge--#{category.color}" : "badge--primary"] %>
+<% else %>
+  <span class="badge"><%= t("shared.uncategorized") %></span>
+<% end %>

@@ -14,7 +14,7 @@ class CustomersController < ApplicationController
   end
 
   def show
-    @pets = @customer.pets
+    @pets = @customer.pets.includes(:pet_species, :rich_text_notes)
     @history = params[:history] == "invoices" ? "invoices" : "appointments"
     @query = params[:q].to_s.strip
     @from = date_param(:from)

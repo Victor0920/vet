@@ -1,0 +1,62 @@
+<% content_for :title, t(".title") %>
+
+<%# Singular resource: model + url, since there's no :id in /settings/access %>
+<%= form_with model: @enterprise, url: access_path, method: :patch,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: @enterprise.errors.any? } do |f| %>
+  <div class="resource-form__toolbar">
+    <%= render "shared/back_link", path: access_path, label: t("access.show.title") %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), access_path, class: "btn btn--ghost" %>
+      <%= f.submit t("shared.save_changes"), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+
+    <% if @enterprise.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% @enterprise.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%# Changing it changes everyone's sign-in: say so before they save, not after %>
+    <div class="alert alert--warning" role="note">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+      <p><%= t(".warning") %></p>
+    </div>
+
+    <%# The company ID people type to sign in. Unique across all companies (validation + database index):
+        if it's taken, the save fails with an error instead of sharing it %>
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("access.show.sign_in") %></h2>
+          <p class="card__description"><%= t("access.show.sign_in_hint") %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :login_code %></dt>
+          <dd class="field-row__value">
+            <%# Saved in lowercase (Enterprise normalizes it); pattern gives the browser's own hint first %>
+            <%= f.text_field :login_code, class: "input input--short input--mono", required: true, autofocus: true,
+                  autocomplete: "off", autocapitalize: "none", spellcheck: false, maxlength: 30,
+                  pattern: "[A-Za-z0-9\\-]{3,30}",
+                  aria: { invalid: @enterprise.errors[:login_code].any?, describedby: "login_code_hint" } %>
+            <p class="form-hint" id="login_code_hint"><%= t(".login_code_hint") %></p>
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+<% end %>

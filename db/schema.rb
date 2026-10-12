@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -52,7 +62,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
     t.integer "pet_id"
     t.integer "employee_id", null: false
     t.string "title"
-    t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "enterprise_id", null: false
@@ -181,13 +190,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
     t.index ["whatsapp_message_id"], name: "index_messages_on_whatsapp_message_id"
   end
 
+  create_table "pet_species", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name", null: false
+    t.index ["name"], name: "index_pet_species_on_name", unique: true
+  end
+
+  create_table "pet_weights", force: :cascade do |t|
+    t.integer "pet_id", null: false
+    t.decimal "weight", precision: 5, scale: 2, null: false
+    t.date "measured_on", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pet_id", "measured_on"], name: "index_pet_weights_on_pet_id_and_measured_on", unique: true
+    t.index ["pet_id"], name: "index_pet_weights_on_pet_id"
+  end
+
   create_table "pets", force: :cascade do |t|
     t.string "name"
-    t.string "species"
     t.string "breed"
     t.string "sex"
     t.date "born_on"
-    t.string "notes"
     t.string "color"
     t.string "transponder_number"
     t.string "transponder_location"
@@ -195,7 +219,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
     t.datetime "updated_at", null: false
     t.integer "customer_id", null: false
     t.boolean "sterilized"
+    t.integer "usual_employee_id"
+    t.integer "pet_species_id"
     t.index ["customer_id"], name: "index_pets_on_customer_id"
+    t.index ["pet_species_id"], name: "index_pets_on_pet_species_id"
+    t.index ["usual_employee_id"], name: "index_pets_on_usual_employee_id"
   end
 
   create_table "product_categories", force: :cascade do |t|
@@ -216,11 +244,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "product_category_id", null: false
+    t.integer "product_category_id"
     t.integer "stock", default: 0, null: false
     t.integer "show_warning_when_stock_under_x_items", default: 5, null: false
     t.integer "updated_by_id"
     t.string "barcode"
+    t.datetime "archived_at"
     t.index ["enterprise_id"], name: "index_products_on_enterprise_id"
     t.index ["product_category_id"], name: "index_products_on_product_category_id"
     t.index ["updated_by_id"], name: "index_products_on_updated_by_id"
@@ -253,8 +282,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "service_category_id", null: false
+    t.integer "service_category_id"
     t.integer "updated_by_id"
+    t.datetime "archived_at"
     t.index ["enterprise_id"], name: "index_services_on_enterprise_id"
     t.index ["service_category_id"], name: "index_services_on_service_category_id"
     t.index ["updated_by_id"], name: "index_services_on_updated_by_id"
@@ -311,7 +341,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_175301) do
   add_foreign_key "invoices", "invoices", column: "original_invoice_id"
   add_foreign_key "invoices", "stores"
   add_foreign_key "messages", "conversations"
+  add_foreign_key "pet_weights", "pets"
   add_foreign_key "pets", "customers"
+  add_foreign_key "pets", "employees", column: "usual_employee_id"
+  add_foreign_key "pets", "pet_species"
   add_foreign_key "product_categories", "employees", column: "updated_by_id", on_delete: :nullify
   add_foreign_key "product_categories", "enterprises"
   add_foreign_key "products", "employees", column: "updated_by_id", on_delete: :nullify

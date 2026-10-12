@@ -1,0 +1,8 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# name is a translation key under pets.species (see PetSpecies#display_name)
+
+dog:
+  name: dog
+
+cat:
+  name: cat

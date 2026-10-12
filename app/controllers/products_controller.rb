@@ -1,17 +1,20 @@
  class ProductsController < ApplicationController
-   before_action :set_product, only: %i[ show edit update ]
+   before_action :set_product, only: %i[ show edit update destroy ]
+   before_action :require_admin, only: :destroy
    before_action :set_categories, only: %i[ index new create edit update ]
 
    def index
      @query = params[:q].to_s.strip
      @category_id = params[:category_id].presence
      @low_stock = params[:low_stock] == "1"
+     @archived = params[:archived] == "1"
      @products = Current.enterprise.products
        .search(@query)
        .includes(:product_category, photo_attachment: :blob) # avoids one query per row for the category badge
        .order(:name)
      @products = @products.where(product_category_id: @category_id) if @category_id
      @products = @products.low_stock if @low_stock
+     @products = @archived ? @products.archived : @products.active
    end
 
    def show
@@ -39,6 +42,15 @@
        redirect_to product_path(@product), notice: t("flash.products.updated")
      else
        render :edit, status: :unprocessable_entity
+     end
+   end
+
+   # destroy returns false when the product is on an invoice (restrict_with_error)
+   def destroy
+     if @product.archive
+       redirect_to product_path(@product), notice: t("flash.products.archived"), status: :see_other
+     else
+       redirect_to product_path(@product), alert: @product.errors.full_messages.to_sentence, status: :see_other
      end
    end
 

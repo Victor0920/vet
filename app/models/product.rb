@@ -1,7 +1,11 @@
 class Product < ApplicationRecord
   include TracksUpdatedBy
+  include Archivable
+
   belongs_to :enterprise
-  belongs_to :product_category
+  belongs_to :product_category, optional: true # nil = uncategorized
+  # Invoices are legal records, so a product that's been invoiced can't be deleted
+  has_many :invoice_products, dependent: :restrict_with_error
   has_one_attached :photo
 
   validates :name, presence: true

@@ -17,8 +17,29 @@
         /></svg>
       <%= t(".edit_product") %>
     <% end %>
+    <%# Admins only. Products are never deleted, only archived: that hides them from lists
+        and new invoices but keeps old invoices (legal records) intact %>
+    <% if admin? %>
+      <% if @product.archived? %>
+        <%= button_to product_archive_path(@product), method: :delete, class: "btn btn--secondary" do %>
+          <%= render "shared/icons/archive_box" %>
+          <%= t(".unarchive") %>
+        <% end %>
+      <% else %>
+        <%= button_to product_archive_path(@product), class: "btn btn--secondary" do %>
+          <%= render "shared/icons/archive_box" %>
+          <%= t(".archive") %>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
 </div>
+
+<% if @product.archived? %>
+  <div class="alert alert--warning archived-notice" role="status">
+    <%= t(".archived_notice", date: l(@product.archived_at.to_date, format: :long)) %>
+  </div>
+<% end %>
 
 <section class="card product-card">
   <div class="card__body product-card__layout">

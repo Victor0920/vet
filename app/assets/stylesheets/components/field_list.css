@@ -54,6 +54,60 @@
   }
 }
 
+/*
+ * Narrower label column, for a one-column card under a field-list--columns card
+ * (pets notes): 9rem lines its labels up with the two-column card's above it.
+ * The phone layout (label above value) still applies below 640px.
+ */
+@media (min-width: 641px) {
+  .field-list--narrow-label .field-row {
+    grid-template-columns: 9rem minmax(0, 1fr);
+  }
+}
+
+/*
+ * Two columns of rows: <dl class="field-list field-list--columns"> (pets#show, pets#edit).
+ * Fills row by row: 1 2 / 3 4 / … The card is the size container, so the list
+ * drops back to one column whenever the card itself gets narrow.
+ */
+.card:has(> .field-list--columns) {
+  container-type: inline-size;
+}
+
+.field-list--columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--space-8);
+
+  .field-row {
+    grid-template-columns: 9rem minmax(0, 1fr);
+  }
+
+  /* The last row is the bottom of both columns: with an even number of rows,
+     the one before it has no border either */
+  .field-row:nth-last-child(2):nth-child(odd) {
+    border-bottom: 0;
+  }
+}
+
+@container (max-width: 44rem) {
+  .field-list--columns {
+    grid-template-columns: 1fr;
+
+    .field-row:nth-last-child(2):nth-child(odd) {
+      border-bottom: var(--border);
+    }
+  }
+}
+
+/* Phone-sized card: label above value, like the plain .field-list below 640px */
+@container (max-width: 28rem) {
+  .field-list--columns .field-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+}
+
 @media (max-width: 640px) {
   .field-row {
     grid-template-columns: 1fr;

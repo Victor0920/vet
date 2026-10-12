@@ -8,7 +8,6 @@ one:
   pet: one
   employee: one
   title: MyString
-  description: MyString
   starts_at: 2026-10-08 10:00:00
   ends_at: 2026-10-08 10:30:00
 
@@ -20,6 +19,5 @@ two:
   pet: two
   employee: two
   title: MyString
-  description: MyString
   starts_at: 2026-10-08 11:00:00
   ends_at: 2026-10-08 11:30:00

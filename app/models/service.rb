@@ -1,7 +1,11 @@
 class Service < ApplicationRecord
   include TracksUpdatedBy
+  include Archivable
+
   belongs_to :enterprise
-  belongs_to :service_category
+  belongs_to :service_category, optional: true # nil = uncategorized
+  # Invoices are legal records, so a service that's been invoiced can't be deleted
+  has_many :invoice_products, dependent: :restrict_with_error
 
   validates :name, presence: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true

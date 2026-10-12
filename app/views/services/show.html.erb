@@ -17,8 +17,29 @@
         /></svg>
       <%= t(".edit_service") %>
     <% end %>
+    <%# Admins only. Services are never deleted, only archived: that hides them from lists
+        and new invoices but keeps old invoices (legal records) intact %>
+    <% if admin? %>
+      <% if @service.archived? %>
+        <%= button_to service_archive_path(@service), method: :delete, class: "btn btn--secondary" do %>
+          <%= render "shared/icons/archive_box" %>
+          <%= t(".unarchive") %>
+        <% end %>
+      <% else %>
+        <%= button_to service_archive_path(@service), class: "btn btn--secondary" do %>
+          <%= render "shared/icons/archive_box" %>
+          <%= t(".archive") %>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
 </div>
+
+<% if @service.archived? %>
+  <div class="alert alert--warning archived-notice" role="status">
+    <%= t(".archived_notice", date: l(@service.archived_at.to_date, format: :long)) %>
+  </div>
+<% end %>
 
 <section class="card product-card">
   <div class="card__body">

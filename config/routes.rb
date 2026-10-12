@@ -22,7 +22,9 @@ Rails.application.routes.draw do
   # get "/conversations/:id", to: "conversations#show"
   resources :conversations
   resources :customers do
-    resources :pets
+    resources :pets do
+      resources :weights, only: %i[ new create destroy ], module: :pets
+    end
   end
 
   resource :profile, only: %i[ show update ]
@@ -31,12 +33,16 @@ Rails.application.routes.draw do
   scope "products" do
     resources :product_categories, path: "categories"
   end
-  resources :products
+  resources :products do
+    resource :archive, only: %i[ create destroy ], module: :products
+  end
 
   scope "services" do
     resources :service_categories, path: "categories"
   end
-  resources :services
+  resources :services do
+    resource :archive, only: %i[ create destroy ], module: :services
+  end
 
   resources :invoices do
     resource :email, only: %i[ new create ], module: :invoices
@@ -54,6 +60,7 @@ Rails.application.routes.draw do
     resource :invoice_settings, path: "invoicing", only: %i[ show edit update ] do
       get :preview
     end
+    resource :access, only: %i[ show edit update ], controller: :access
   end
   resource :settings, only: :show
 

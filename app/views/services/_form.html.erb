@@ -44,14 +44,15 @@
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :service_category_id %></dt>
           <dd class="field-row__value">
-            <%# item_picker_controller.js adds a search box to the category list
+            <%# Optional: the blank option saves it uncategorized (also what deleting a category does).
+                item_picker_controller.js adds a search box to the category list
                 (same dropdown as the invoice lines and the services list filter) %>
             <div class="item-picker" data-controller="item-picker"
                  data-item-picker-placeholder-value="<%= t(".search_categories") %>"
                  data-item-picker-empty-value="<%= t(".no_categories_match") %>">
               <%= f.collection_select :service_category_id, categories, :id, :name,
-                    { prompt: t(".choose_category") },
-                    class: "select", required: true,
+                    { include_blank: t(".no_category") },
+                    class: "select",
                     data: { item_picker_target: "select" },
                     aria: { invalid: service.errors[:service_category].any? } %>
             </div>

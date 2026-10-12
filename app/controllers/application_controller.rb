@@ -7,8 +7,20 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   around_action :switch_locale
+  helper_method :admin?
 
   private
+
+  # Views use this to hide admin-only buttons; require_admin is what actually blocks the request
+  def admin?
+    Current.employee&.admin?
+  end
+
+  # include AdminOnly to protect a whole controller, or
+  # before_action :require_admin, only: ... for single actions
+  def require_admin
+    redirect_to root_path, alert: t("flash.not_authorized") unless admin?
+  end
 
   # Runs every request in the signed-in employee's language (Spanish on the login pages)
   def switch_locale(&action)

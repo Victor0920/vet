@@ -2,7 +2,7 @@ class ProfilesController < ApplicationController
   before_action :set_employee
 
   def show
-    @appointments = @employee.appointments.upcoming.includes(:customer, { pet: :customer }, :room)
+    @appointments = @employee.appointments.on_day(Date.current).includes(:customer, { pet: :customer }, :room)
   end
 
   def update

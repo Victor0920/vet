@@ -19,7 +19,7 @@
 <%# Same pattern as products#index: typing or picking a category submits the form
     (debounced by search_controller.js) into the "services" frame, so only the table
     is replaced. Both params end up in the URL: /services?q=…&category_id=… %>
-<%= form_with url: services_path, method: :get, role: "search", class: "products-filters",
+<%= form_with url: services_path, method: :get, role: "search", class: "products-filters products-filters--with-toggle",
     data: { controller: "search", turbo_frame: "services", turbo_action: "replace" } do %>
   <div class="search-field products-filters__search">
     <%= render "shared/icons/magnifying_glass" %>
@@ -43,6 +43,16 @@
           class: "select",
           data: { action: "change->search#submit", item_picker_target: "select" } %>
   </div>
+
+  <%# A plain checkbox styled as a switch (components/switch.css). On, the list shows only
+      archived services; off, the browser sends nothing and the controller hides them %>
+  <label class="switch products-filters__toggle">
+    <%= check_box_tag :archived, "1", @archived,
+          class: "switch__input", role: "switch",
+          data: { action: "change->search#submit" } %>
+    <span class="switch__track" aria-hidden="true"></span>
+    <span class="switch__label"><%= t("shared.show_archived") %></span>
+  </label>
 <% end %>
 
 <%# target: "_top" so links inside (service names) open the full page, not the frame %>
@@ -74,6 +84,9 @@
                 <div class="product-cell">
                   <%= link_to service.name.presence || t("services.unnamed"), service_path(service),
                         class: "product-cell__name" %>
+                  <% if service.archived? %>
+                    <span class="badge product-cell__archived"><%= t("shared.archived") %></span>
+                  <% end %>
                   <% if service.description.present? %>
                     <span class="product-cell__meta"><%= service.description %></span>
                   <% end %>
@@ -90,7 +103,7 @@
         </tbody>
       </table>
     </div>
-  <% elsif @query.present? || @category_id.present? %>
+  <% elsif @query.present? || @category_id.present? || @archived %>
     <div class="empty-state">
       <%= render "shared/icons/magnifying_glass" %>
       <p class="empty-state__title"><%= t(".no_matches") %></p>

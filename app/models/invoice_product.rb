@@ -11,6 +11,7 @@
    validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
    validate :product_or_service
    validate :catalog_item_in_same_enterprise
+   validate :catalog_item_not_archived, unless: -> { invoice&.corrective? }
 
    # Product lines (not services or custom items) from invoices in a date range.
    # Either end may be nil, like Invoice.dated_between.
@@ -60,6 +61,14 @@
    def catalog_item_in_same_enterprise
      if catalog_item && catalog_item.enterprise_id != invoice&.enterprise_id
        errors.add(product ? :product : :service, :invalid)
+     end
+   end
+
+   # Only checked when the item is picked or changed, so old lines stay valid.
+   # (Corrective invoices are skipped above: they must be able to refund an archived product.)
+   def catalog_item_not_archived
+     if catalog_item&.archived? && (product_id_changed? || service_id_changed?)
+       errors.add(product ? :product : :service, :archived)
      end
    end
  end

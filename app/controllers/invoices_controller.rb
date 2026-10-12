@@ -73,8 +73,14 @@ class InvoicesController < ApplicationController
     @employees = Current.enterprise.employees.order(:first_name)
     @customers = Current.enterprise.customers.order(:first_name)
     @appointments = Current.enterprise.appointments.includes(:customer).order(starts_at: :desc)
-    @products = Current.enterprise.products.order(:name)
-    @services = Current.enterprise.services.order(:name)
+
+    # Archived items can't be picked for new lines, but lines that already use one
+    # (when editing) still need it in the select. @invoice is only set on edit/update.
+    lines = @invoice ? @invoice.invoice_products : []
+    products = Current.enterprise.products
+    services = Current.enterprise.services
+    @products = products.active.or(products.where(id: lines.map(&:product_id))).order(:name)
+    @services = services.active.or(services.where(id: lines.map(&:service_id))).order(:name)
   end
 
   def invoice_params

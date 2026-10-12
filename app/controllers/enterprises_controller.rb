@@ -24,6 +24,6 @@ class EnterprisesController < ApplicationController
   end
 
   def enterprise_params
-    params.expect(enterprise: [ :name, :legal_name, :cif, :address, :login_code ])
+    params.expect(enterprise: [ :name, :legal_name, :cif, :address ])
   end
 end

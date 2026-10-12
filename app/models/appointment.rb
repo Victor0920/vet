@@ -6,6 +6,7 @@ class Appointment < ApplicationRecord
   belongs_to :room
   belongs_to :enterprise, default: -> { Current.enterprise }
   has_one :invoice, dependent: :restrict_with_error
+  has_rich_text :description
 
   before_validation :fill_in_from_associations
 
@@ -18,7 +19,7 @@ class Appointment < ApplicationRecord
 
   # Appointments that overlap the period from..to, even partly
   scope :overlapping, ->(from, to) { where("starts_at < ? AND ends_at > ?", to, from) }
-  scope :upcoming, -> { where("starts_at >= ?", Time.current).order(:starts_at) }
+  scope :on_day, ->(date) { where(starts_at: date.all_day).order(:starts_at) }
 
   # Matches the appointment title or the pet's name
   scope :search, ->(query) {

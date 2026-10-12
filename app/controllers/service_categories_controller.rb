@@ -1,5 +1,6 @@
 class ServiceCategoriesController < ApplicationController
-  before_action :set_category, only: %i[ show edit update ]
+  before_action :set_category, only: %i[ show edit update destroy ]
+  before_action :require_admin, only: :destroy
 
   def index
     # includes(:services) so category.services.size in the table doesn't run a query per row
@@ -34,6 +35,12 @@ class ServiceCategoriesController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  # Its services aren't deleted: dependent: :nullify leaves them uncategorized
+  def destroy
+    @category.destroy
+    redirect_to service_categories_path, notice: t("flash.service_categories.deleted"), status: :see_other
   end
 
     private

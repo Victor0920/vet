@@ -161,7 +161,8 @@ en:
         photo: "Photo"
       pet:
         name: "Name"
-        species: "Species"
+        pet_species: "Species"
+        pet_species_id: "Species"
         breed: "Breed"
         sex: "Sex"
         born_on: "Born"
@@ -172,6 +173,11 @@ en:
         sterilized: "Sterilized"
         photo: "Photo"
         customer: "Owner"
+        usual_employee: "Usual vet"
+        usual_employee_id: "Usual vet"
+      pet_weight:
+        weight: "Weight (kg)"
+        measured_on: "Date"
       product:
         name: "Name"
         description: "Description"
@@ -246,6 +252,7 @@ en:
         png_or_jpg_only: "must be a PNG or JPG image"
         jpg_png_or_webp_only: "must be a JPG, PNG or WebP image"
         inactive_employee: "has been deactivated: choose someone who is still active"
+        archived: "has been archived and can't be added to new invoices"
       # Per-model wording, used instead of the generic message above
       models:
         invoice:
@@ -281,6 +288,8 @@ en:
       updated: "Company details updated"
     invoice_settings:
       updated: "Invoice settings updated"
+    access:
+      updated: "Company ID updated"
     appointments:
       created: "Appointment created"
       updated: "Appointment updated"
@@ -311,10 +320,14 @@ en:
       created: "Pet created"
       updated: "Pet updated"
       not_found: "Pet not found"
+    pet_weights:
+      created: "Weight saved"
+      deleted: "Weight deleted"
     product_categories:
       created: "Category created"
       updated: "Category updated"
       not_found: "Category not found"
+      deleted: "Category deleted"
     invoices:
       created: "Invoice created"
       updated: "Invoice updated"
@@ -329,14 +342,19 @@ en:
       created: "Product created"
       updated: "Product updated"
       not_found: "Product not found"
+      archived: "Product archived"
+      unarchived: "Product restored"
     services:
       created: "Service created"
       updated: "Service updated"
       not_found: "Service not found"
+      archived: "Service archived"
+      unarchived: "Service restored"
     service_categories:
       created: "Category created"
       updated: "Category updated"
       not_found: "Category not found"
+      deleted: "Category deleted"
     sessions:
       rate_limited: "Try again later."
       invalid: "Check your company ID, employee ID and password."
@@ -361,6 +379,9 @@ en:
     dismiss: "Click to dismiss"
     add_photo: "Add photo"
     cancel: "Cancel"
+    uncategorized: "Uncategorized"
+    archived: "Archived"
+    show_archived: "Show archived"
     # shared/_confirm_dialog.html.erb: the app's own confirm() popup
     confirm_dialog:
       title: "Are you sure?"
@@ -512,7 +533,6 @@ en:
   enterprises:
     edit:
       title: "Edit company details"
-      login_code_hint: "3 to 30 letters, numbers or dashes. Must not be in use by another company. If you change it, tell your team: everyone types it to sign in."
     show:
       title: "Company details"
       subtitle: "How your business appears on invoices and to customers."
@@ -522,11 +542,22 @@ en:
       registered: "Registered"
       stores: "Stores"
       manage_stores: "Manage stores"
-      sign_in: "Sign-in"
-      sign_in_hint: "Your staff type this company ID, then their own employee ID and password."
     invoice_counter_resets:
       yearly: "Every year"
       monthly: "Every month"
+
+  # ---------- Sign-in access (/settings/access) ----------
+  access:
+    show:
+      title: "Sign-in"
+      subtitle: "How your team signs in to Vet."
+      edit: "Edit company ID"
+      sign_in: "Sign-in"
+      sign_in_hint: "Your staff type this company ID, then their own employee ID and password."
+    edit:
+      title: "Edit company ID"
+      warning: "Everyone in your company types this ID to sign in. If you change it, tell your team before they next sign in: the old one stops working straight away."
+      login_code_hint: "3 to 30 letters, numbers or dashes. Must not be in use by another company. If you change it, tell your team: everyone types it to sign in."
 
   # ---------- Invoice settings (/settings/invoicing) ----------
   invoice_settings:
@@ -605,8 +636,8 @@ en:
       tiles:
         enterprise:
           title: "Company details"
-          description: "Name, legal details, address and the company ID your team signs in with."
-          items: ["Legal details", "Company ID"]
+          description: "Name, legal details and address, as printed on invoices."
+          items: ["Legal details", "Address"]
         stores:
           title: "Stores & rooms"
           description: "Your clinics and the rooms you book appointments in."
@@ -614,6 +645,9 @@ en:
         employees:
           title: "Employees"
           description: "Invite staff, set roles and deactivate accounts."
+        access:
+          title: "Sign-in"
+          description: "The company ID your team types to sign in."
         product_categories:
           title: "Product categories"
           description: "Group products and pick their colours."
@@ -771,6 +805,34 @@ en:
   # ---------- Pets ----------
   pets:
     owner: "Owner"
+    # Labels for the fixed pet_species rows, keyed by pet_species.name (see db/seeds.rb)
+    species:
+      dog: "Dog"
+      cat: "Cat"
+      rabbit: "Rabbit"
+      ferret: "Ferret"
+      guinea_pig: "Guinea pig"
+      hamster: "Hamster"
+      gerbil: "Gerbil"
+      rat: "Rat"
+      mouse: "Mouse"
+      chinchilla: "Chinchilla"
+      degu: "Degu"
+      hedgehog: "Hedgehog"
+      squirrel: "Squirrel"
+      bird: "Bird"
+      turtle: "Turtle"
+      lizard: "Lizard"
+      snake: "Snake"
+      fish: "Fish"
+      horse: "Horse"
+      donkey: "Donkey"
+      goat: "Goat"
+      sheep: "Sheep"
+      pig: "Pig"
+      cow: "Cow"
+      chicken: "Chicken"
+      other: "Other"
     sex:
       male: "Male"
       female: "Female"
@@ -778,7 +840,6 @@ en:
     born_value: "%{date} · %{age} old"
     sections:
       general: "General"
-      identification: "Identification"
       notes: "Notes"
     show:
       edit_pet: "Edit pet"
@@ -791,6 +852,23 @@ en:
       back_to: "Back to %{name}"
       submit: "Create pet"
       photo_hint: "Click the image to add a photo"
+      search_species: "Search species…"
+      no_species_match: "No species match"
+    weights:
+      title: "Weight"
+      add: "Add weight"
+      latest: "Weight"
+      kg: "%{value} kg"
+      change: "Change"
+      actions: "Actions"
+      empty: "No weights yet"
+      empty_hint: "Add the first weight to start tracking how it changes over time."
+      delete: "Delete weight"
+      delete_confirm: "Delete this weight?"
+      new:
+        title: "Add weight"
+        submit: "Save weight"
+        same_day_hint: "If there's already a weight for this date, it will be replaced."
 
   # ---------- Employees ----------
   employees:
@@ -871,6 +949,12 @@ en:
         room: "Room"
       empty: "No appointments yet"
       empty_hint: "Appointments assigned to this employee will show up here."
+      today_appointments: "Today's appointments"
+      today_appointments_count:
+        one: "1 appointment today"
+        other: "%{count} appointments today"
+      today_empty: "No appointments today"
+      today_empty_hint: "Appointments assigned to you for today will show up here."
 
   # ---------- Appointments / calendar ----------
   appointments:
@@ -904,6 +988,7 @@ en:
       search_customers: "Search customers…"
       no_customers_match: "No customers match"
       no_pet: "No pet"
+      usual_vet_selected: "Selecting %{name} because they're this pet's usual vet"
       view_customer: "View customer · %{name}"
       view_pet: "View pet · %{name}"
       delete_confirm: "Delete this appointment?"
@@ -1008,13 +1093,16 @@ en:
         one: "1 product matching “%{query}”"
         other: "%{count} products matching “%{query}”"
       no_matches: "No products match these filters"
-      no_matches_hint: "Try another search, pick “All categories” or turn off “Low stock only”."
+      no_matches_hint: "Try another search, pick “All categories” or turn off the switches."
       empty: "No products yet"
       empty_hint: "Products will show up here once the first is created."
     show:
       edit_product: "Edit product"
       created: "Created"
       view_photo: "Open the full-size photo"
+      archive: "Archive"
+      unarchive: "Unarchive"
+      archived_notice: "Archived on %{date}. It's hidden from the products list and can't be added to new invoices; existing invoices are unchanged."
     new:
       title: "New product"
     edit:
@@ -1023,7 +1111,7 @@ en:
       back_to_product: "Back to product"
       create: "Create product"
       details: "Details"
-      choose_category: "Choose a category…"
+      no_category: "No category"
       search_categories: "Search categories…"
       no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
@@ -1062,6 +1150,10 @@ en:
       updated_by: "Updated %{time} ago by %{name}"
       view_in_products: "View in products"
       edit_category: "Edit category"
+      delete_confirm: "This category will be deleted."
+      delete_confirm_with_products:
+        one: "There is 1 product assigned to this category. If you delete the category, the product will be uncategorized."
+        other: "There are %{count} products assigned to this category. If you delete the category, the products will be uncategorized."
       empty: "No products in this category"
       empty_hint: "Pick this category when creating or editing a product."
     new:
@@ -1101,12 +1193,15 @@ en:
         one: "1 service matching “%{query}”"
         other: "%{count} services matching “%{query}”"
       no_matches: "No services match these filters"
-      no_matches_hint: "Try another search or pick “All categories”."
+      no_matches_hint: "Try another search, pick “All categories” or turn off “Show archived”."
       empty: "No services yet"
       empty_hint: "Services will show up here once the first is created."
     show:
       edit_service: "Edit service"
       created: "Created"
+      archive: "Archive"
+      unarchive: "Unarchive"
+      archived_notice: "Archived on %{date}. It's hidden from the services list and can't be added to new invoices; existing invoices are unchanged."
     new:
       title: "New service"
     edit:
@@ -1115,7 +1210,7 @@ en:
       back_to_service: "Back to service"
       create: "Create service"
       details: "Details"
-      choose_category: "Choose a category…"
+      no_category: "No category"
       search_categories: "Search categories…"
       no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
@@ -1148,6 +1243,10 @@ en:
       updated_by: "Updated %{time} ago by %{name}"
       view_in_services: "View in services"
       edit_category: "Edit category"
+      delete_confirm: "This category will be deleted."
+      delete_confirm_with_services:
+        one: "There is 1 service assigned to this category. If you delete the category, the service will be uncategorized."
+        other: "There are %{count} services assigned to this category. If you delete the category, the services will be uncategorized."
       empty: "No services in this category"
       empty_hint: "Pick this category when creating or editing a service."
     new:

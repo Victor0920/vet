@@ -1,5 +1,6 @@
 class ProductCategoriesController < ApplicationController
-  before_action :set_category, only: %i[ show edit update ]
+  before_action :set_category, only: %i[ show edit update destroy ]
+  before_action :require_admin, only: :destroy
 
   def index
     # includes(:products) so category.products.size in the table doesn't run a query per row
@@ -34,6 +35,12 @@ class ProductCategoriesController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  # Its products aren't deleted: dependent: :nullify leaves them uncategorized
+  def destroy
+    @category.destroy
+    redirect_to product_categories_path, notice: t("flash.product_categories.deleted"), status: :see_other
   end
 
     private

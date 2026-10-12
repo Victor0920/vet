@@ -1,5 +1,6 @@
 <%= form_with model: appointment, id: "appointment-form",
-      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+      data: { controller: "unsaved-changes usual-vet", usual_vet_message_value: t(".usual_vet_selected", name: "%{name}"),
+              unsaved_changes_message_value: t("shared.unsaved_changes"),
               unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
               unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
               unsaved_changes_dirty_value: appointment.errors.any? } do |f| %>
@@ -19,6 +20,11 @@
     <%= hidden_field_tag :store_id, @store.id %>
     <%= hidden_field_tag :view, params[:view] %>
     <%= hidden_field_tag :filter_room_id, params[:filter_room_id] %>
+    <%# Set when opened from another page (e.g. /profile): go back there instead of the calendar.
+        Only rendered when present, so calendar forms don't send an empty return_to %>
+    <% if params[:return_to].present? %>
+      <%= hidden_field_tag :return_to, params[:return_to] %>
+    <% end %>
 
     <div class="form-field">
       <%= f.label :title, class: "label" %>
@@ -53,7 +59,9 @@
         <%# Active staff, plus the one already assigned, labelled if they've since been deactivated %>
         <%= f.collection_select :employee_id, @employees, :id,
               ->(employee) { employee.active? ? employee.display_name : t("employees.inactive_option", name: employee.display_name) },
-              {}, class: "select" %>
+              {}, class: "select", data: { usual_vet_target: "employee" } %>
+        <%# usual_vet_controller.js fills this in when picking a pet selects its usual vet %>
+        <p class="form-hint" hidden data-usual-vet-target="hint"></p>
       </div>
     </div>
 
@@ -80,18 +88,19 @@
         <%= hidden_field_tag "appointment[pet_id]", "", id: nil %>
         <%= f.select :pet_id,
               @customers.flat_map { |customer|
-                customer.pets.map { |pet| [pet.name.presence || t("shared.unnamed_pet"), pet.id, { data: { customer_id: customer.id } }] }
+                customer.pets.map { |pet| [pet.name.presence || t("shared.unnamed_pet"), pet.id, { data: { customer_id: customer.id, usual_employee_id: pet.usual_employee_id } }] }
               },
               { include_blank: t(".no_pet") },
               class: "select",
-              data: { pet_filter_target: "pet" },
+              data: { pet_filter_target: "pet", usual_vet_target: "pet", action: "change->usual-vet#select" },
               aria: { invalid: appointment.errors[:pet].any? } %>
       </div>
     </div>
 
     <div class="form-field">
       <%= f.label :description, class: "label" %>
-      <%= f.text_area :description, class: "textarea", rows: 3 %>
+      <%# Lexxy editor (Action Text), text only like the pet notes: see pets/_form %>
+      <%= f.rich_textarea :description, attachments: false %>
     </div>
 
     <% if appointment.persisted? %>
@@ -123,7 +132,8 @@
 
 <footer class="card__footer modal__footer">
   <% if appointment.persisted? %>
-    <%= button_to appointment_path(appointment, view: params[:view], filter_room_id: params[:filter_room_id].presence),
+    <%= button_to appointment_path(appointment, view: params[:view], filter_room_id: params[:filter_room_id].presence,
+                                   return_to: params[:return_to].presence),
           method: :delete,
           class: "btn btn--danger-ghost",
           form: { data: { turbo_confirm: t(".delete_confirm"), confirm_button: t("shared.delete"), turbo_frame: "_top" } } do %>

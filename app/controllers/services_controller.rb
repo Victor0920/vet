@@ -1,15 +1,18 @@
 class ServicesController < ApplicationController
-  before_action :set_service, only: %i[ show edit update ]
+  before_action :set_service, only: %i[ show edit update destroy ]
+  before_action :require_admin, only: :destroy
   before_action :set_categories, only: %i[ index new create edit update ]
 
   def index
     @query = params[:q].to_s.strip
     @category_id = params[:category_id].presence
+    @archived = params[:archived] == "1"
     @services = Current.enterprise.services
       .search(@query)
       .includes(:service_category) # avoids one query per row for the category badge
       .order(:name)
     @services= @services.where(service_category_id: @category_id) if @category_id
+    @services = @archived ? @services.archived : @services.active
   end
 
   def show
@@ -37,6 +40,15 @@ class ServicesController < ApplicationController
       redirect_to service_path(@service), notice: t("flash.services.updated")
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  # destroy returns false when the service is on an invoice (restrict_with_error)
+  def destroy
+    if @service.archive
+      redirect_to service_path(@service), notice: t("flash.services.archived"), status: :see_other
+    else
+      redirect_to service_path(@service), alert: @service.errors.full_messages.to_sentence, status: :see_other
     end
   end
 

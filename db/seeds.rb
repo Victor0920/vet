@@ -7,3 +7,12 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Fixed list of species. `name` is a stable key; the label comes from
+# config/locales (pets.species.<name>), so add a translation when adding one here.
+%w[
+  dog cat rabbit ferret guinea_pig hamster gerbil rat mouse chinchilla degu hedgehog squirrel
+  bird turtle lizard snake fish
+  horse donkey goat sheep pig cow chicken
+  other
+].each { |name| PetSpecies.find_or_create_by!(name: name) }
