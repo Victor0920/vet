@@ -1,0 +1,114 @@
+<% content_for :title, t(".title") %>
+
+<%# No "New pet" button: a pet always belongs to a customer, so it's added from the customer's page %>
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".heading") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+</div>
+
+<%# Same live search as customers#index: typing (debounced by search_controller.js) or picking
+    a species submits this form into the "pets" frame below, so only the table is replaced.
+    Both params end up in the URL: /pets?q=…&species_id=… %>
+<%= form_with url: pets_path, method: :get, role: "search", class: "products-filters",
+    data: { controller: "search", turbo_frame: "pets", turbo_action: "replace" } do %>
+  <div class="search-field products-filters__search">
+    <%= render "shared/icons/magnifying_glass" %>
+    <%= label_tag :q, t(".search_label"), class: "sr-only" %>
+    <%= search_field_tag :q, @query,
+          class: "input",
+          placeholder: t(".search_placeholder"),
+          autocomplete: "off",
+          data: { action: "input->search#submit" } %>
+  </div>
+
+  <%# item_picker_controller.js (same as the products category filter) adds a search box to the list %>
+  <div class="item-picker products-filters__category" data-controller="item-picker"
+       data-item-picker-placeholder-value="<%= t(".search_species") %>"
+       data-item-picker-empty-value="<%= t(".no_species_match") %>">
+    <%= label_tag :species_id, t(".species"), class: "sr-only" %>
+    <%= select_tag :species_id,
+          options_from_collection_for_select(@species_options, :id, :display_name, @species_id),
+          include_blank: t(".all_species"),
+          class: "select",
+          data: { action: "change->search#submit", item_picker_target: "select" } %>
+  </div>
+<% end %>
+
+<%# target: "_top" so links inside (pet and owner names) open the full page, not the frame %>
+<%= turbo_frame_tag "pets", target: "_top" do %>
+  <p class="customers-search__count">
+    <% if @query.present? %>
+      <%= t(".count_matching", count: @pets.size, query: @query) %>
+    <% else %>
+      <%= t(".count", count: @pets.size) %>
+    <% end %>
+  </p>
+
+  <% if @pets.any? %>
+    <div class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="customers-table__photo"><span class="sr-only"><%= t(".columns.photo") %></span></th>
+            <th><%= t(".columns.pet") %></th>
+            <th><%= t(".columns.species") %></th>
+            <th><%= t(".columns.breed") %></th>
+            <th><%= t(".columns.age") %></th>
+            <th><%= t("pets.owner") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @pets.each do |pet| %>
+            <%# return_to: the pet page's back link comes back to this list (with the search kept) %>
+            <% pet_path = customer_pet_path(pet.customer, pet, return_to: request.fullpath) %>
+            <tr>
+              <td class="customers-table__photo">
+                <%# Same destination as the name link next to it, so it's skipped by keyboard
+                    and screen readers (tabindex -1 + aria-hidden) to avoid announcing it twice %>
+                <%= link_to pet_path, tabindex: -1, aria: { hidden: true } do %>
+                  <% if pet.photo.attached? %>
+                    <%# 80×80 for a 40px avatar, so it stays sharp on retina screens %>
+                    <%= image_tag pet.photo.variant(resize_to_fill: [80, 80]), alt: "",
+                          class: "avatar avatar--photo", loading: "lazy" %>
+                  <% else %>
+                    <span class="avatar pets-table__avatar"><%= render "shared/paw_icon" %></span>
+                  <% end %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to pet.name.presence || t("shared.unnamed_pet"), pet_path, class: "customer-cell__name" %>
+              </td>
+              <td>
+                <% if pet.pet_species %>
+                  <span class="badge badge--primary"><%= pet.pet_species.display_name %></span>
+                <% else %>
+                  <span class="text-subtle">—</span>
+                <% end %>
+              </td>
+              <td><%= pet.breed.presence || "—" %></td>
+              <%# Same wording as the pet cards on customers#show ("3 years") %>
+              <td><%= pet.born_on ? distance_of_time_in_words(pet.born_on, Date.current) : "—" %></td>
+              <td>
+                <%= link_to pet.customer.full_name, customer_path(pet.customer, return_to: request.fullpath) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% elsif @query.present? || @species_id.present? %>
+    <div class="empty-state">
+      <%= render "shared/icons/magnifying_glass" %>
+      <p class="empty-state__title"><%= t(".no_matches") %></p>
+      <p><%= t(".no_matches_hint") %></p>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <%= render "shared/paw_icon" %>
+      <p class="empty-state__title"><%= t(".empty") %></p>
+      <p><%= t(".empty_hint") %></p>
+    </div>
+  <% end %>
+<% end %>

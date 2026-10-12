@@ -6,6 +6,16 @@ class Pet < ApplicationRecord
   has_many :pet_weights, dependent: :destroy
   has_rich_text :notes
 
+  # Every word has to match the pet (name, breed, microchip) or its owner (anything Customer.search looks at):
+  # "luna garcia" finds Luna, owned by Ana García
+  scope :search, ->(query) {
+    query.to_s.split.reduce(all) do |pets, word|
+      pattern = "%#{sanitize_sql_like(word)}%"
+      pets.where("pets.name LIKE :pattern OR pets.breed LIKE :pattern OR pets.transponder_number LIKE :pattern", pattern: pattern)
+          .or(pets.where(customer: Customer.search(word)))
+    end
+  }
+
   validate :usual_employee_belongs_to_enterprise
 
   private

@@ -4,6 +4,7 @@ class Enterprise < ApplicationRecord
   has_many :products, dependent: :destroy
   has_many :product_categories, dependent: :destroy
   has_many :customers, dependent: :destroy
+  has_many :pets, through: :customers
   has_many :appointments, dependent: :destroy
   has_many :stores, dependent: :destroy
   has_many :invoices, dependent: :destroy

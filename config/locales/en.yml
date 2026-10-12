@@ -434,6 +434,7 @@ en:
       clinic: "Clinic"
       calendar: "Calendar"
       customers: "Customers"
+      pets: "Pets"
       products: "Products"
       services: "Services"
       invoices: "Invoices"
@@ -451,6 +452,7 @@ en:
       customers: "Customers"
       customer: "Customer"
       pet: "Pet"
+      pets: "Pets"
       invoices: "Invoices"
       invoice: "Invoice"
       products: "Products"
@@ -838,6 +840,32 @@ en:
   # ---------- Pets ----------
   pets:
     owner: "Owner"
+    index:
+      title: "Pets"
+      heading: "Pets"
+      subtitle: "Every patient of the clinic"
+      search_label: "Search pets"
+      search_placeholder: "Search by name, breed, microchip or owner…"
+      species: "Species"
+      all_species: "All species"
+      search_species: "Search species…"
+      no_species_match: "No species match"
+      count:
+        one: "1 pet"
+        other: "%{count} pets"
+      count_matching:
+        one: "1 pet matching “%{query}”"
+        other: "%{count} pets matching “%{query}”"
+      columns:
+        photo: "Photo"
+        pet: "Pet"
+        species: "Species"
+        age: "Age"
+        breed: "Breed"
+      no_matches: "No pets match these filters"
+      no_matches_hint: "Try another search or pick “All species”."
+      empty: "No pets yet"
+      empty_hint: "Pets are added from their owner's page."
     # Labels for the fixed pet_species rows, keyed by pet_species.name (see db/seeds.rb)
     species:
       dog: "Dog"
