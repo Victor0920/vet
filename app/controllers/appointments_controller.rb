@@ -42,7 +42,7 @@ class AppointmentsController < ApplicationController
 
   def update
     if @appointment.update(appointment_params)
-      redirect_to appointments_path(calendar_return_params), notice: t("flash.appointments.updated")
+      redirect_to url_from(params[:return_to]) || appointments_path(calendar_return_params), notice: t("flash.appointments.updated")
     else
       render :edit, status: :unprocessable_entity
     end
@@ -50,7 +50,7 @@ class AppointmentsController < ApplicationController
 
   def destroy
     @appointment.destroy
-    redirect_to appointments_path(calendar_return_params), notice: t("flash.appointments.deleted"), status: :see_other
+    redirect_to url_from(params[:return_to]) || appointments_path(calendar_return_params), notice: t("flash.appointments.deleted"), status: :see_other
   end
 
     private

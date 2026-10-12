@@ -20,6 +20,11 @@
     <%= hidden_field_tag :store_id, @store.id %>
     <%= hidden_field_tag :view, params[:view] %>
     <%= hidden_field_tag :filter_room_id, params[:filter_room_id] %>
+    <%# Set when opened from another page (e.g. /profile): go back there instead of the calendar.
+        Only rendered when present, so calendar forms don't send an empty return_to %>
+    <% if params[:return_to].present? %>
+      <%= hidden_field_tag :return_to, params[:return_to] %>
+    <% end %>
 
     <div class="form-field">
       <%= f.label :title, class: "label" %>
@@ -127,7 +132,8 @@
 
 <footer class="card__footer modal__footer">
   <% if appointment.persisted? %>
-    <%= button_to appointment_path(appointment, view: params[:view], filter_room_id: params[:filter_room_id].presence),
+    <%= button_to appointment_path(appointment, view: params[:view], filter_room_id: params[:filter_room_id].presence,
+                                   return_to: params[:return_to].presence),
           method: :delete,
           class: "btn btn--danger-ghost",
           form: { data: { turbo_confirm: t(".delete_confirm"), confirm_button: t("shared.delete"), turbo_frame: "_top" } } do %>

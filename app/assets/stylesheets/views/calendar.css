@@ -578,8 +578,10 @@
 
 /* ---------- Modal (new / edit) ---------- */
 
-/* Opened over the calendar */
-.calendar .modal {
+/* Opened over the calendar, or over any page whose modal frame has .modal-host
+   (e.g. the profile's appointment list). Opened as its own page (/appointments/5/edit)
+   it has neither, so it stays a plain card in the page flow */
+:is(.calendar, .modal-host) .modal {
   position: fixed;
   inset: 0;
   z-index: var(--z-modal);
@@ -592,7 +594,7 @@
   display: none;
 }
 
-.calendar .modal__backdrop {
+:is(.calendar, .modal-host) .modal__backdrop {
   display: block;
   position: absolute;
   inset: 0;
@@ -605,7 +607,7 @@
   margin: 0 auto;
 }
 
-.calendar .modal__panel {
+:is(.calendar, .modal-host) .modal__panel {
   max-height: calc(100dvh - var(--space-8));
   overflow-y: auto;
   border-radius: var(--radius-xl);

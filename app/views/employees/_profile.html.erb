@@ -116,7 +116,11 @@
                   <%= l(appointment.starts_at, format: :hour) %>–<%= l(appointment.ends_at, format: :hour) %>
                 </td>
                 <td class="table__truncate">
-                  <%= link_to appointment.title.presence || t("shared.untitled"), edit_appointment_path(appointment) %>
+                  <%# Opens in the modal frame below, like on the calendar, so closing it stays on this page.
+                      return_to: saving or deleting comes back here instead of going to the calendar %>
+                  <%= link_to appointment.title.presence || t("shared.untitled"),
+                        edit_appointment_path(appointment, return_to: request.path),
+                        data: { turbo_frame: "modal" } %>
                 </td>
                 <%# Customer and pet are optional on an appointment %>
                 <td>
@@ -149,3 +153,7 @@
     <% end %>
   </section>
 </div>
+
+<%# The appointment edit form loads into this frame. .modal-host gives it the calendar's
+    overlay styles (calendar.css); Turbo keeps the frame's own attributes when it fills it %>
+<%= turbo_frame_tag "modal", class: "modal-host" %>
