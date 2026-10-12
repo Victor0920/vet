@@ -419,6 +419,9 @@ es:
       home: "Inicio"
       messaging: "Mensajería"
       conversations: "Conversaciones"
+      unread_conversations:
+        one: "1 conversación sin leer"
+        other: "%{count} conversaciones sin leer"
       all_messages: "Todos los mensajes"
       clinic: "Clínica"
       calendar: "Calendario"
@@ -701,6 +704,9 @@ es:
         title: "Conversaciones recientes"
         no_messages: "Todavía no hay mensajes"
         empty: "Todavía no hay conversaciones."
+        unread:
+          one: "1 sin leer"
+          other: "%{count} sin leer"
 
   sessions:
     new:

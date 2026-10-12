@@ -430,6 +430,9 @@ en:
       home: "Home"
       messaging: "Messaging"
       conversations: "Conversations"
+      unread_conversations:
+        one: "1 unread conversation"
+        other: "%{count} unread conversations"
       all_messages: "All messages"
       clinic: "Clinic"
       calendar: "Calendar"
@@ -712,6 +715,9 @@ en:
         title: "Recent conversations"
         no_messages: "No messages yet"
         empty: "No conversations yet."
+        unread:
+          one: "1 unread"
+          other: "%{count} unread"
 
   sessions:
     new:

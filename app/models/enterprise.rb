@@ -42,6 +42,18 @@ class Enterprise < ApplicationRecord
   normalizes :login_code, with: ->(code) { code.strip.downcase }
   validates :login_code, presence: true, uniqueness: true, format: { with: /\A[a-z0-9-]{3,30}\z/ }
 
+  # Live-updates the unread badges (sidebar + home card) on every open page of this company.
+  # Called when a customer message arrives and when a chat is opened (Conversation#mark_read!)
+  def broadcast_unread_conversations
+    count = conversations.with_unread.count
+    stream = [ self, :unread_conversations ]
+
+    Turbo::StreamsChannel.broadcast_replace_to stream, target: "unread_conversations_count",
+      partial: "conversations/unread_count", locals: { count: count }
+    Turbo::StreamsChannel.broadcast_replace_to stream, target: "home_unread_conversations",
+      partial: "pages/unread_conversations", locals: { count: count }
+  end
+
   private
 
   # Each schema needs [n], plus enough of the date that numbers never repeat after the counter resets

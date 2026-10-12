@@ -363,3 +363,27 @@
   font-weight: var(--weight-regular);
   color: var(--color-text-subtle);
 }
+
+/* Conversations card: "5 minutes ago" with the unread bubble under it */
+.home-list__end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+.home-list__item--unread {
+  .home-list__title {
+    font-weight: var(--weight-bold);
+  }
+
+  .home-list__meta {
+    color: var(--color-text);
+  }
+
+  .home-list__time--end {
+    color: var(--color-primary-text);
+    font-weight: var(--weight-semibold);
+  }
+}

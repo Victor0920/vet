@@ -113,6 +113,17 @@
   }
 }
 
+/* Unread chats on Conversaciones (.unread-count, badge.css), pushed to the link's right edge.
+   The slot is only there as a target for the live updates: display: contents makes the
+   bubble inside behave as if it were the link's own child */
+.sidebar__count-slot {
+  display: contents;
+}
+
+.sidebar__count {
+  margin-left: auto;
+}
+
 .sidebar__footer {
   display: flex;
   align-items: center;
@@ -212,6 +223,28 @@
 
   .sidebar__link span {
     display: none;
+  }
+
+  /* Icons only here: the count becomes a small bubble on the icon's corner.
+     .sidebar__link .sidebar__count beats the rule above, which hides every span */
+  .sidebar__link {
+    position: relative;
+  }
+
+  /* the slot is a span too: keep it, or the bubble inside would be hidden with it */
+  .sidebar__link .sidebar__count-slot {
+    display: contents;
+  }
+
+  .sidebar__link .sidebar__count {
+    display: inline-grid;
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 1rem;
+    height: 1rem;
+    padding: 0 var(--space-1);
+    font-size: 0.625rem;
   }
 
   .sidebar__footer {

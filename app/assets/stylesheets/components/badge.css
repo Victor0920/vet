@@ -24,6 +24,24 @@
 .badge--danger  { background: var(--color-danger-subtle);  color: var(--color-danger-text); }
 .badge--info    { background: var(--color-info-subtle);    color: var(--color-info-text); }
 
+/* WhatsApp-style unread count: a solid round bubble that grows into a pill for "12".
+   Used by the sidebar's Conversaciones link, the home page and conversations#index */
+.unread-count {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 var(--space-1-5);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
 .avatar {
   display: inline-grid;
   place-items: center;

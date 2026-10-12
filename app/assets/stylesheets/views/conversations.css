@@ -98,7 +98,7 @@ turbo-frame#conversation-customers {
   color: var(--color-text-subtle);
 }
 
-/* Unread: name and preview in strong text, the time in the brand colour, plus a count bubble */
+/* Unread: name and preview in strong text, the time in the brand colour (+ .unread-count, badge.css) */
 .conversation-row--unread {
   .conversation-row__name {
     font-weight: var(--weight-bold);
@@ -113,21 +113,6 @@ turbo-frame#conversation-customers {
     color: var(--color-primary-text);
     font-weight: var(--weight-semibold);
   }
-}
-
-.conversation-row__unread {
-  display: inline-grid;
-  place-items: center;
-  flex-shrink: 0;
-  min-width: 1.25rem;
-  height: 1.25rem;
-  padding: 0 var(--space-1-5);
-  border-radius: var(--radius-full);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-semibold);
-  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- conversations#new: "New conversation" customer picker (modal) ---------- */

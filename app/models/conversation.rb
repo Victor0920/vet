@@ -11,6 +11,8 @@ class Conversation < ApplicationRecord
     end
   }
 
+  scope :with_unread, -> { where(id: Message.unread.select(:conversation_id)) }
+
   scope :unread_first, -> {
       order(Arel.sql(<<~SQL.squish) => :desc).order(updated_at: :desc)
         EXISTS (SELECT 1 FROM messages
@@ -27,5 +29,13 @@ class Conversation < ApplicationRecord
 
   def last_message
     messages.max_by(&:created_at)
+  end
+
+  # Opening the chat reads it. update_all: one UPDATE that skips touch (reading doesn't move the
+  # chat up the inbox). It returns how many rows changed: no broadcast if nothing was unread
+  def mark_read!
+    return if messages.unread.update_all(read_at: Time.current).zero?
+
+    customer.enterprise.broadcast_unread_conversations
   end
 end

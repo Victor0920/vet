@@ -48,8 +48,12 @@
         <% message = conversation.last_message %>
         <% unread = conversation.unread_count %>
         <li>
+          <%# turbo_prefetch: false: Turbo loads links in the background on hover to make clicks
+              faster, and loading the chat marks it as read (show → mark_read!), so just moving
+              the mouse over this list would clear the unread badges %>
           <%= link_to conversation_path(conversation),
-                class: ["conversation-row", ("conversation-row--unread" if unread.positive?)] do %>
+                class: ["conversation-row", ("conversation-row--unread" if unread.positive?)],
+                data: { turbo_prefetch: false } do %>
             <% if customer.photo.attached? %>
               <%= image_tag customer.photo.variant(:small), alt: "", class: "avatar avatar--photo" %>
             <% else %>
@@ -77,7 +81,7 @@
                 </span>
                 <%# Like WhatsApp: a green count of what the customer sent that nobody has opened yet %>
                 <% if unread.positive? %>
-                  <span class="conversation-row__unread" aria-label="<%= t(".unread", count: unread) %>"><%= unread %></span>
+                  <span class="unread-count" aria-label="<%= t(".unread", count: unread) %>"><%= unread %></span>
                 <% end %>
               </span>
             </span>

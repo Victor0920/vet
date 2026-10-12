@@ -22,7 +22,8 @@ class ConversationsController < ApplicationController
     @conversation = Current.enterprise.conversations.find_by(id: params[:id])
     return redirect_to conversations_url, alert: t("flash.conversations.not_found") if @conversation.nil?
 
-    @conversation.messages.unread.update_all(read_at: Time.current)
+    # Turbo's hover prefetch sends this header: only a real visit reads the chat
+    @conversation.mark_read! unless request.headers["X-Sec-Purpose"] == "prefetch"
     @pets = @conversation.customer.pets.includes(:pet_species).with_attached_photo
     @messages = @conversation.messages
     @message = Message.new(conversation_id: @conversation.id)

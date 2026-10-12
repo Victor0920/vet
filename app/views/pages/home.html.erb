@@ -192,22 +192,31 @@
     <section class="card">
       <header class="card__header">
         <h2 class="card__title"><%= t(".conversations.title") %></h2>
+        <%= render "pages/unread_conversations", count: @unread_conversations %>
       </header>
       <% if @recent_conversations.any? %>
         <ul class="home-list">
           <% @recent_conversations.each do |conversation| %>
             <% message = conversation.last_message %>
-            <li class="home-list__item">
+            <% unread = conversation.unread_count %>
+            <li class="home-list__item <%= "home-list__item--unread" if unread.positive? %>">
               <span class="avatar avatar--sm"><%= conversation.customer.full_name.first %></span>
               <span class="home-list__main">
+                <%# No hover prefetch: loading the chat marks it read (see conversations/index) %>
                 <%= link_to conversation.customer.full_name,
-                      conversation_path(conversation), class: "home-list__title" %>
+                      conversation_path(conversation), class: "home-list__title",
+                      data: { turbo_prefetch: false } %>
                 <span class="home-list__meta home-list__meta--truncate">
                   <%= message ? message.text : t(".conversations.no_messages") %>
                 </span>
               </span>
-              <span class="home-list__time home-list__time--end">
-                <%= t("shared.time_ago", time: time_ago_in_words(conversation.updated_at)) %>
+              <span class="home-list__end">
+                <span class="home-list__time home-list__time--end">
+                  <%= t("shared.time_ago", time: time_ago_in_words(conversation.updated_at)) %>
+                </span>
+                <% if unread.positive? %>
+                  <span class="unread-count" aria-label="<%= t("conversations.index.unread", count: unread) %>"><%= unread %></span>
+                <% end %>
               </span>
             </li>
           <% end %>

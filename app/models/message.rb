@@ -14,4 +14,6 @@ class Message < ApplicationRecord
   def unread?
     user? && read_at.nil?
   end
+
+  after_create_commit -> { conversation.customer.enterprise.broadcast_unread_conversations }, if: :user?
 end

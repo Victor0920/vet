@@ -14,6 +14,7 @@ class PagesController < ApplicationController
     @low_stock_count = low_stock.count
     @low_stock_products = low_stock.order(:stock).limit(5)
 
-    @recent_conversations = Current.enterprise.conversations.includes(:customer, :messages).order(updated_at: :desc).limit(5)
+    @recent_conversations = Current.enterprise.conversations.includes(:customer, :messages).unread_first.limit(5)
+    @unread_conversations = Current.enterprise.conversations.with_unread.count
   end
 end
