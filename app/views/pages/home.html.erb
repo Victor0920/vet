@@ -50,11 +50,24 @@
     </div>
   <% end %>
 
-  <%= link_to "#to-bill", class: ["card card--interactive stat-tile", ("stat-tile--warning" if @unbilled_appointments.any?)] do %>
-    <span class="stat-tile__icon"><%= render "shared/icons/document_text" %></span>
-    <span class="stat-tile__label"><%= t(".stats.to_bill") %></span>
-    <span class="stat-tile__value"><%= @unbilled_appointments.size %></span>
-    <span class="stat-tile__meta"><%= t(".stats.to_bill_hint") %></span>
+  <%# Scrolls to the "To bill" card below and flashes it, on every click
+      (jump_highlight_controller.js; the animation is in home.css).
+      Nothing to bill → a plain tile, since there'd be nothing to jump to %>
+  <% if @unbilled_appointments.any? %>
+    <%= link_to "#to-bill", class: "card card--interactive stat-tile stat-tile--warning",
+          data: { controller: "jump-highlight", action: "jump-highlight#jump" } do %>
+      <span class="stat-tile__icon"><%= render "shared/icons/document_text" %></span>
+      <span class="stat-tile__label"><%= t(".stats.to_bill") %></span>
+      <span class="stat-tile__value"><%= @unbilled_appointments.size %></span>
+      <span class="stat-tile__meta"><%= t(".stats.to_bill_hint") %></span>
+    <% end %>
+  <% else %>
+    <div class="card stat-tile">
+      <span class="stat-tile__icon"><%= render "shared/icons/document_text" %></span>
+      <span class="stat-tile__label"><%= t(".stats.to_bill") %></span>
+      <span class="stat-tile__value">0</span>
+      <span class="stat-tile__meta"><%= t(".stats.to_bill_hint") %></span>
+    </div>
   <% end %>
 
   <%= link_to products_path(low_stock: "1"), class: ["card card--interactive stat-tile", ("stat-tile--warning" if @low_stock_count.positive?)] do %>

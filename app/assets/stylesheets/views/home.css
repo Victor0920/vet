@@ -78,6 +78,45 @@
   color: var(--color-warning-text);
 }
 
+/* ---------- "To bill" tile → #to-bill card ----------
+   .is-highlighted is added on every click of the tile (jump_highlight_controller.js).
+   :target covers opening /#to-bill directly (bookmark, refresh), where no click happens.
+   scroll-margin-top leaves a little room above it instead of sticking to the window edge */
+#to-bill {
+  scroll-margin-top: var(--space-6);
+}
+
+#to-bill:target,
+#to-bill.is-highlighted {
+  animation: home-target-flash 1.8s var(--ease-in-out);
+}
+
+/* Fade in (0–15%), hold (15–40%), fade out (40–100%).
+   The ring keeps the same shape the whole time (0 0 0 4px) and only its colour changes,
+   from transparent to teal and back: animating between two differently shaped shadows
+   (like --focus-ring → --shadow-xs) makes the glow slide and shrink instead of fading.
+   --shadow-xs stays first in the list so the card's own shadow never disappears. */
+@keyframes home-target-flash {
+  0%, 100% {
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-xs), 0 0 0 4px transparent;
+  }
+
+  15%, 40% {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-xs), 0 0 0 4px color-mix(in srgb, var(--color-focus) 30%, transparent);
+  }
+}
+
+/* Respect "reduce motion": a steady outline instead of the fade */
+@media (prefers-reduced-motion: reduce) {
+  #to-bill:target,
+  #to-bill.is-highlighted {
+    animation: none;
+    border-color: var(--color-primary);
+  }
+}
+
 /* ---------- Two columns: agenda + to bill | low stock + conversations ---------- */
 .home-grid {
   display: grid;
