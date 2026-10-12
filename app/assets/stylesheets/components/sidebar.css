@@ -155,26 +155,49 @@
 
 /* Small screens: sidebar becomes a top bar */
 @media (max-width: 768px) {
+  /* Nav on top, content below. The rows must be explicit: with two plain "auto" rows and
+     min-height: 100dvh, a short page leaves spare height that the grid splits between
+     BOTH rows, so the nav bar grows. auto = nav keeps its own height, 1fr = content takes the rest */
   .app-shell {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
   }
 
   .app-main {
     padding: var(--space-4);
   }
 
+  /* All the icons don't fit on a phone (~500px of them vs 390px of screen). Without this the
+     bar would stick out of the page, and phones then zoom the WHOLE page out to fit it, which
+     shrinks all the text. So the bar scrolls sideways on its own instead (scrollbar hidden,
+     swipe to see the rest), and the page stays exactly as wide as the screen. */
   .sidebar {
     flex-direction: row;
     align-items: center;
     gap: var(--space-2);
     height: auto;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2) 0;
     border-right: 0;
     border-bottom: var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  /* Logo on the left and avatar on the right stay put while the icons in between scroll.
+     They carry the bar's side padding and background, so the icons slide underneath them. */
+  .sidebar__brand,
+  .sidebar__footer {
+    position: sticky;
+    flex-shrink: 0;
+    z-index: 1;
+    align-self: stretch;
+    align-items: center;
+    background: var(--color-surface);
   }
 
   .sidebar__brand {
-    padding: 0;
+    left: 0;
+    padding: 0 var(--space-1) 0 var(--space-3);
   }
 
   .sidebar__brand-name,
@@ -192,8 +215,9 @@
   }
 
   .sidebar__footer {
+    right: 0;
     margin: 0 0 0 auto;
-    padding: 0;
+    padding: 0 var(--space-3) 0 var(--space-1);
     border: 0;
   }
 }

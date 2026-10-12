@@ -2,6 +2,7 @@ class Customer < ApplicationRecord
   has_many :pets, dependent: :destroy
   has_many :appointments, dependent: :destroy
   has_many :invoices, dependent: :restrict_with_error
+  has_one :conversation, dependent: :destroy
   belongs_to :enterprise
   has_one_attached :photo do |attachable|
   attachable.variant :small, resize_to_fill: [ 80, 80 ], preprocessed: true

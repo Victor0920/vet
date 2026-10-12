@@ -198,9 +198,9 @@
           <% @recent_conversations.each do |conversation| %>
             <% message = conversation.last_message %>
             <li class="home-list__item">
-              <span class="avatar avatar--sm"><%= conversation.user&.name.to_s.first %></span>
+              <span class="avatar avatar--sm"><%= conversation.customer.full_name.first %></span>
               <span class="home-list__main">
-                <%= link_to conversation.user&.name.presence || t("conversations.unknown_client"),
+                <%= link_to conversation.customer.full_name,
                       conversation_path(conversation), class: "home-list__title" %>
                 <span class="home-list__meta home-list__meta--truncate">
                   <%= message ? message.text : t(".conversations.no_messages") %>

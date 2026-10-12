@@ -88,6 +88,23 @@
   display: none;
 }
 
+/* Below 1024px .customer-profile becomes one column (customers.css), so the sidebar card
+ * is as wide as the screen and a square photo filling it would be screen-wide AND as tall.
+ * Instead it shrinks to a centred, fully rounded square; the card's background shows around it. */
+@media (max-width: 1024px) {
+  .pet-photo {
+    padding: var(--space-5) var(--space-5) 0;
+    border-bottom: 0;
+  }
+
+  .pet-photo__frame,
+  .pet-photo__trigger {
+    width: min(100%, 12rem);
+    margin-inline: auto;
+    border-radius: var(--radius-lg);
+  }
+}
+
 .pet-owner {
   display: inline-flex;
   align-items: center;

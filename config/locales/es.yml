@@ -452,6 +452,8 @@ es:
       service_categories: "Categorías de servicios"
       enterprise: "Empresa"
       settings: "Configuración"
+      conversation: "Conversación"
+      conversations: "Conversaciones"
 
   # ---------- Layouts ----------
   layouts:
@@ -777,6 +779,7 @@ es:
     show:
       all_customers: "Todos los clientes"
       edit_customer: "Editar cliente"
+      open_chat: "Abrir chat de WhatsApp"
       new_appointment: "Nueva cita"
       document: "Documento"
       pets: "Mascotas"
@@ -1053,22 +1056,42 @@ es:
 
   # ---------- Conversaciones y mensajes ----------
   conversations:
-    unknown_client: "Cliente desconocido"
     index:
       title: "Conversaciones"
-      subtitle:
-        one: "1 conversación con propietarios de mascotas"
-        other: "%{count} conversaciones con propietarios de mascotas"
-      new_heading: "Empieza una conversación"
-      new_description: "Elige un cliente para abrir un chat de WhatsApp."
-      client: "Cliente"
-      submit: "Crear conversación"
+      subtitle: "Chats de WhatsApp con tus clientes."
+      new_conversation: "Nueva conversación"
+      search_label: "Buscar conversaciones"
+      search_placeholder: "Buscar por cliente o por texto de los mensajes…"
+      count:
+        one: "1 conversación"
+        other: "%{count} conversaciones"
+      count_matching:
+        one: "1 conversación coincide con «%{query}»"
+        other: "%{count} conversaciones coinciden con «%{query}»"
       all: "Todas las conversaciones"
-      meta:
-        one: "1 mensaje · actualizada hace %{time}"
-        other: "%{count} mensajes · actualizada hace %{time}"
+      ago: "hace %{time}"
+      sender:
+        admin: "Tú:"
+        bot: "Bot:"
+      no_messages: "Todavía no hay mensajes"
+      unread:
+        one: "1 mensaje sin leer"
+        other: "%{count} mensajes sin leer"
+      no_matches: "Ninguna conversación coincide con «%{query}»"
+      no_matches_hint: "Prueba con parte del nombre o del teléfono del cliente, o con una palabra de un mensaje."
       empty: "Todavía no hay conversaciones"
-      empty_hint: "Empieza una arriba para escribir a un cliente."
+      empty_hint: "Pulsa «Nueva conversación» para escribir a un cliente."
+    new:
+      title: "Nueva conversación"
+      description: "Elige un cliente. Si ya tiene un chat, se abrirá ese."
+      search_label: "Buscar cliente"
+      search_placeholder: "Nombre, teléfono, email…"
+      no_phone: "Sin teléfono"
+      has_chat: "Ya tiene chat"
+      open: "Abrir"
+      start: "Empezar"
+      no_matches: "Ningún cliente coincide con «%{query}»"
+      no_customers: "Todavía no hay clientes."
     show:
       number: "Conversación n.º %{id}"
       delete_confirm: "¿Eliminar esta conversación? No se puede deshacer."
@@ -1077,9 +1100,14 @@ es:
       placeholder: "Escribe un mensaje…"
       send: "Enviar"
       client: "Cliente"
-      phone: "Teléfono"
+      view_customer: "Ver ficha del cliente"
+      conversation: "Conversación"
       messages: "Mensajes"
       started: "Iniciada"
+      pets:
+        one: "1 mascota"
+        other: "%{count} mascotas"
+      no_pets: "Este cliente todavía no tiene mascotas."
 
   messages:
     index:

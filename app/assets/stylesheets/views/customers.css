@@ -90,7 +90,7 @@
   }
 }
 
-/* Edit customer / New pet / New appointment, top right of the pets header */
+/* The page actions (Edit customer / WhatsApp / New appointment), top right */
 .customer-profile__actions {
   display: flex;
   flex-wrap: wrap;
@@ -100,6 +100,12 @@
 /* On its own row (pets#show has no section header to share), pushed to the right */
 .customer-profile__actions--end {
   justify-content: flex-end;
+}
+
+/* customers#show: the page actions sit on their own row above the pets section
+   (pets#show doesn't need it, its .stack already spaces the rows) */
+.customer-profile__actions--page {
+  margin-bottom: var(--space-6);
 }
 
 /* Compact pet cards: several per row, each one only as tall as its photo */
@@ -203,8 +209,10 @@
 }
 
 @media (max-width: 1024px) {
+  /* minmax(0, 1fr), not 1fr: a plain 1fr column never gets narrower than its widest content
+     (a long email, a row of buttons), so it can push the page wider than a phone screen */
   .customer-profile {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

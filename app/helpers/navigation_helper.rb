@@ -6,6 +6,8 @@ module NavigationHelper
     %r{\A/customers/\d+/pets/\d+} => "pet",
     %r{\A/customers/\d+}          => "customer",
     %r{\A/customers}              => "customers",
+    %r{\A/conversations/\d+}      => "conversation",
+    %r{\A/conversations}          => "conversations",
     %r{\A/invoices/\d+}           => "invoice",
     %r{\A/invoices}               => "invoices",
     %r{\A/products/categories}    => "product_categories",

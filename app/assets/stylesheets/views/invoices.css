@@ -57,6 +57,7 @@ turbo-frame#invoices {
 .table .invoices-table__total {
   text-align: right;
   color: var(--color-text);
+  text-wrap: nowrap;
 }
 
 .invoices-table__footer {

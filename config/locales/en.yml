@@ -463,6 +463,8 @@ en:
       service_categories: "Service categories"
       enterprise: "Company"
       settings: "Settings"
+      conversation: "Conversation"
+      conversations: "Conversations"
 
   # ---------- Layouts ----------
   layouts:
@@ -788,6 +790,7 @@ en:
     show:
       all_customers: "All customers"
       edit_customer: "Edit customer"
+      open_chat: "Open WhatsApp chat"
       new_appointment: "New appointment"
       document: "Document"
       pets: "Pets"
@@ -1066,22 +1069,42 @@ en:
 
   # ---------- Conversations & messages ----------
   conversations:
-    unknown_client: "Unknown client"
     index:
       title: "Conversations"
-      subtitle:
-        one: "1 conversation with pet owners"
-        other: "%{count} conversations with pet owners"
-      new_heading: "Start a new conversation"
-      new_description: "Pick a client to open a WhatsApp thread with."
-      client: "Client"
-      submit: "Create conversation"
+      subtitle: "WhatsApp chats with your customers."
+      new_conversation: "New conversation"
+      search_label: "Search conversations"
+      search_placeholder: "Search by customer or message text…"
+      count:
+        one: "1 conversation"
+        other: "%{count} conversations"
+      count_matching:
+        one: "1 conversation matches “%{query}”"
+        other: "%{count} conversations match “%{query}”"
       all: "All conversations"
-      meta:
-        one: "1 message · updated %{time} ago"
-        other: "%{count} messages · updated %{time} ago"
+      ago: "%{time} ago"
+      sender:
+        admin: "You:"
+        bot: "Bot:"
+      no_messages: "No messages yet"
+      unread:
+        one: "1 unread message"
+        other: "%{count} unread messages"
+      no_matches: "No conversations match “%{query}”"
+      no_matches_hint: "Try part of the customer's name or phone, or a word from a message."
       empty: "No conversations yet"
-      empty_hint: "Start one above to begin messaging a client."
+      empty_hint: "Click “New conversation” to message a customer."
+    new:
+      title: "New conversation"
+      description: "Pick a customer. If they already have a chat, it opens that one."
+      search_label: "Search customers"
+      search_placeholder: "Name, phone, email…"
+      no_phone: "No phone"
+      has_chat: "Has a chat"
+      open: "Open"
+      start: "Start"
+      no_matches: "No customers match “%{query}”"
+      no_customers: "No customers yet."
     show:
       number: "Conversation #%{id}"
       delete_confirm: "Delete this conversation? This can't be undone."
@@ -1090,9 +1113,14 @@ en:
       placeholder: "Write a message…"
       send: "Send"
       client: "Client"
-      phone: "Phone"
+      view_customer: "View customer"
+      conversation: "Conversation"
       messages: "Messages"
       started: "Started"
+      pets:
+        one: "1 pet"
+        other: "%{count} pets"
+      no_pets: "This customer has no pets yet."
 
   messages:
     index:

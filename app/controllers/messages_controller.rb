@@ -10,11 +10,9 @@ class MessagesController < ApplicationController
     Rails.logger.info(@message.errors)
 
     if @message.save
-
-
       respond_to do |format|
         format.json { render json: { success: true, message: @message } }
-        format.html { redirect_to @conversation, notice: t("flash.messages.created") }
+        format.html { redirect_to conversation_path(@conversation, return_to: params[:return_to].presence), notice: t("flash.messages.created") }
       end
     else
       respond_to do |format|

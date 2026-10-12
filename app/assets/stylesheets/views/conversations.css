@@ -1,81 +1,242 @@
 /* ---------- conversations#index ---------- */
 
-.conversations-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  gap: var(--space-4);
+.conversations-search {
+  max-width: 28rem;
+  margin-bottom: var(--space-3);
 }
 
-.conversation-card {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+.conversations-search__count {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
 }
 
-.conversation-card__header {
+/* Turbo sets aria-busy while the frame loads: dim the old results meanwhile */
+turbo-frame#conversations,
+turbo-frame#conversation-customers {
+  display: block;
+  transition: opacity var(--duration-fast) var(--ease-out);
+
+  &[aria-busy="true"] {
+    opacity: 0.6;
+  }
+}
+
+/* The inbox: one card, a row per conversation split by lines (like the home page lists) */
+.conversation-list {
+  overflow: hidden; /* keeps the rows' hover background inside the rounded corners */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li + li {
+    border-top: var(--border);
+  }
+}
+
+.conversation-row {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4);
-  border-bottom: var(--border);
+  padding: var(--space-3) var(--space-5);
+  color: inherit;
+  transition: background var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--color-surface-hover);
+    color: inherit;
+  }
 }
 
-.conversation-card__name {
+/* min-width: 0 lets the name and the preview shrink and get their "…" */
+.conversation-row__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-row__top,
+.conversation-row__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.conversation-row__name {
+  overflow: hidden;
   font-weight: var(--weight-semibold);
   color: var(--color-text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.conversation-card__meta {
+.conversation-row__time {
+  flex-shrink: 0;
   color: var(--color-text-subtle);
   font-size: var(--text-xs);
 }
 
-/*
- * Message preview. justify-content: flex-end + overflow: hidden means the
- * NEWEST messages (at the bottom) stay visible and older ones are clipped
- * off the top. The ::after gradient fades the clipped edge.
- */
-.conversation-card__preview {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 12rem;
-  padding: var(--space-3) var(--space-4);
+/* The last message, one line; anything longer ends in "…" */
+.conversation-row__preview {
   overflow: hidden;
-  background: var(--color-chat-bg);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    height: var(--space-10);
-    background: linear-gradient(var(--color-chat-bg), transparent);
-    pointer-events: none;
+.conversation-row__sender {
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.conversation-row__empty {
+  font-style: italic;
+  color: var(--color-text-subtle);
+}
+
+/* Unread: name and preview in strong text, the time in the brand colour, plus a count bubble */
+.conversation-row--unread {
+  .conversation-row__name {
+    font-weight: var(--weight-bold);
   }
 
-  .conversation__messages {
-    gap: var(--space-1-5);
+  .conversation-row__preview {
+    color: var(--color-text);
+    font-weight: var(--weight-medium);
   }
 
-  .message__bubble {
-    font-size: var(--text-xs);
-    padding: var(--space-1-5) var(--space-2);
-  }
-
-  .message__meta {
-    display: none;
+  .conversation-row__time {
+    color: var(--color-primary-text);
+    font-weight: var(--weight-semibold);
   }
 }
 
+.conversation-row__unread {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 var(--space-1-5);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- conversations#new: "New conversation" customer picker (modal) ---------- */
+
+.customer-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Scrolls on its own, so the search box stays in view */
+.customer-picker__list {
+  max-height: min(24rem, 55dvh);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--border);
+  border-radius: var(--radius-lg);
+
+  li + li {
+    border-top: var(--border);
+  }
+
+  /* button_to wraps each option in a <form> */
+  form {
+    display: block;
+  }
+}
+
+/* The whole row is the button */
+.customer-picker__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-surface-hover);
+  }
+
+  &:hover .customer-picker__action {
+    text-decoration: underline;
+  }
+}
+
+.customer-picker__text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.customer-picker__name {
+  overflow: hidden;
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.customer-picker__meta {
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+}
+
+.customer-picker__action {
+  flex-shrink: 0;
+  color: var(--color-primary-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.customer-picker__empty {
+  padding: var(--space-6) 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
 /* ---------- conversations#show (chat) ---------- */
+
+/* One screen tall (the viewport minus the .app-main padding): the back link keeps its own
+   height and .chat takes whatever is left, so adding things above it never makes the page scroll */
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 2 * var(--space-8));
+
+  /* a flex column stretches its children full width; keep the link only as wide as its text */
+  .back-link {
+    align-self: flex-start;
+  }
+}
 
 .chat {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 18rem;
   gap: var(--space-6);
-  /* fill the viewport minus the .app-main padding */
-  height: calc(100dvh - 2 * var(--space-8));
+  flex: 1;
+  min-height: 0; /* a flex child won't shrink below its content without this */
 }
 
 .chat__main {
@@ -140,8 +301,11 @@
   padding: var(--space-3) var(--space-3) 0;
 }
 
+/* As tall as its content, but never taller than the chat: a long pets list scrolls inside */
 .chat__sidebar {
   align-self: start;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 .chat__profile {
@@ -154,10 +318,57 @@
   text-align: center;
 }
 
+/* Customer details / conversation / pets: stacked blocks split by a line */
+.chat__section + .chat__section {
+  border-top: var(--border);
+}
+
+.chat__section-title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-subtle);
+}
+
+/* The customer's pets: customers#show's pet cards, one per row and shrunk to fit the sidebar */
+.chat__pets {
+  display: grid;
+  gap: var(--space-2);
+
+  .pet-card {
+    align-items: center;
+    padding: var(--space-2);
+  }
+
+  .pet-card__media {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .pet-card__placeholder svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .pet-card__name {
+    font-size: var(--text-sm);
+  }
+}
+
 @media (max-width: 1024px) {
+  /* Stacked chat + sidebar don't fit one screen: let the page scroll again */
+  .chat-page {
+    height: auto;
+  }
+
   .chat {
     grid-template-columns: 1fr;
-    height: auto;
+  }
+
+  .chat__sidebar {
+    max-height: none;
   }
 
   .chat__main {
