@@ -1,0 +1,74 @@
+<% content_for :title, t(".title") %>
+
+<%# Loaded into the empty <turbo-frame id="modal"> at the bottom of conversations/index, so it
+    appears over the list (same pattern as invoices/emails/new). modal#close (Esc, ✕, backdrop)
+    empties the frame; if this page was opened on its own, those links lead back to the list. %>
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal modal--overlay" data-controller="modal" data-action="keydown.esc@window->modal#close">
+    <%= link_to "", conversations_path, class: "modal__backdrop", tabindex: -1,
+          aria: { hidden: true }, data: { action: "modal#close", turbo_frame: "_top" } %>
+
+    <div class="modal__panel card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title" id="modal-title"><%= t(".title") %></h2>
+          <p class="card__description"><%= t(".description") %></p>
+        </div>
+        <%= link_to conversations_path, class: "btn btn--ghost btn--icon btn--sm", aria: { label: t("shared.close") },
+              data: { action: "modal#close", turbo_frame: "_top" } do %>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+        <% end %>
+      </header>
+
+      <div class="card__body customer-picker">
+        <%# Typing reloads only the list below (the "conversation-customers" frame), so the
+            input keeps focus and the modal stays open %>
+        <%= form_with url: new_conversation_path, method: :get, role: "search",
+              data: { controller: "search", turbo_frame: "conversation-customers" } do %>
+          <div class="search-field">
+            <%= render "shared/icons/magnifying_glass" %>
+            <%= label_tag :q, t(".search_label"), class: "sr-only" %>
+            <%= search_field_tag :q, @query, class: "input", placeholder: t(".search_placeholder"),
+                  autocomplete: "off", autofocus: true, data: { action: "input->search#submit" } %>
+          </div>
+        <% end %>
+
+        <%# target: "_top": picking a customer leaves the modal and opens the chat as a full page %>
+        <%= turbo_frame_tag "conversation-customers", target: "_top" do %>
+          <% if @customers.any? %>
+            <ul class="customer-picker__list">
+              <% @customers.each do |customer| %>
+                <li>
+                  <%# POST to conversations#create, which opens the customer's chat if it already
+                      exists and only creates one otherwise, so there's never a second chat %>
+                  <%= button_to conversations_path, params: { conversation: { customer_id: customer.id } },
+                        class: "customer-picker__option" do %>
+                    <% if customer.photo.attached? %>
+                      <%= image_tag customer.photo.variant(:small), alt: "", class: "avatar avatar--photo" %>
+                    <% else %>
+                      <span class="avatar"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
+                    <% end %>
+                    <span class="customer-picker__text">
+                      <span class="customer-picker__name"><%= customer.full_name %></span>
+                      <span class="customer-picker__meta"><%= customer.first_phone.presence || t(".no_phone") %></span>
+                    </span>
+                    <% if customer.conversation %>
+                      <span class="badge badge--success"><%= t(".has_chat") %></span>
+                      <span class="customer-picker__action"><%= t(".open") %></span>
+                    <% else %>
+                      <span class="customer-picker__action"><%= t(".start") %></span>
+                    <% end %>
+                  <% end %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p class="customer-picker__empty">
+              <%= @query.present? ? t(".no_matches", query: @query) : t(".no_customers") %>
+            </p>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

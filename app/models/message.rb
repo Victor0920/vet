@@ -1,9 +1,17 @@
 class Message < ApplicationRecord
   belongs_to :conversation, touch: true
-  # attribute :sender, :integer
-  def sender=(value)
-    super(value.is_a?(String) ? value.to_i : value)
+  # Who wrote it; only for sender "employee", and optional (older messages have none)
+  belongs_to :employee, optional: true
+
+  enum :sender, { customer: 0, employee: 1 }
+
+  validates :employee, absence: true, if: :customer?
+
+  scope :unread, -> { customer.where(read_at: nil) }
+
+  after_create_commit -> { conversation.customer.enterprise.broadcast_unread_conversations }, if: :customer?
+
+  def unread?
+    customer? && read_at.nil?
   end
-  # Even though the value stored is a number, it automatically changes the "visible value" when querying the ddbb
-  enum :sender, { user: 0, bot: 1, admin: 2 }
 end

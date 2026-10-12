@@ -371,12 +371,28 @@
   gap: var(--space-2);
 }
 
-/* ---------- profiles#show: language picker, then "Sign out" below it ---------- */
+/* ---------- profiles#show: preferences (language, default store), then "Sign out" below ---------- */
 
 .profile-footer {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+}
+
+.profile-preferences {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Small uppercase heading, like the sections of the chat sidebar */
+.profile-preferences__title {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-subtle);
 }
 
 /* ---------- access#show: the company ID, a bit larger so it's easy to read out to the team ---------- */

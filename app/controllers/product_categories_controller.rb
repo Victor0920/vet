@@ -8,7 +8,7 @@ class ProductCategoriesController < ApplicationController
   end
 
   def show
-    @products = @category.products.order(:name)
+    @products = @category.products.with_attached_photo.order(:name)
   end
 
   def new

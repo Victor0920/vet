@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
@@ -12,14 +13,7 @@ Rails.application.routes.draw do
 
   root "pages#home"
 
-
-  resources :messages, only: [ :index, :show, :create ]
-  # get "/messages", to: "messages#index"
-  # post "/messages", to: "messages#create"
-  # get "/messages/:id", to: "messages#show"
-
-  # get "/conversations", to: "conversations#index"
-  # get "/conversations/:id", to: "conversations#show"
+  resources :messages, only: [ :create ]
   resources :conversations
   resources :customers do
     resources :pets, except: :index do

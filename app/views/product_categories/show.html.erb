@@ -42,7 +42,7 @@
     <table class="table">
       <thead>
         <tr>
-          <th><%= t("products.columns.id") %></th>
+          <th class="products-table__photo"><span class="sr-only"><%= t("products.columns.photo") %></span></th>
           <th><%= t("products.columns.product") %></th>
           <th class="products-table__price"><%= t("products.columns.price") %></th>
         </tr>
@@ -50,7 +50,19 @@
       <tbody>
         <% @products.each do |product| %>
           <tr>
-            <td class="table__numeric">#<%= product.id %></td>
+            <%# Same thumbnail as products#index (classes in products.css) %>
+            <td class="products-table__photo">
+              <%# Same destination as the name link, so it's skipped by keyboard and screen readers %>
+              <%= link_to product_path(product), tabindex: -1, aria: { hidden: true } do %>
+                <% if product.photo.attached? %>
+                  <%# 80×80 for a 40px thumbnail, so it stays sharp on retina screens %>
+                  <%= image_tag product.photo.variant(resize_to_fill: [80, 80]), alt: "",
+                        class: "product-thumb", loading: "lazy" %>
+                <% else %>
+                  <span class="product-thumb"><%= render "shared/icons/shopping_bag" %></span>
+                <% end %>
+              <% end %>
+            </td>
             <td>
               <div class="product-cell">
                 <%= link_to product.name.presence || t("products.unnamed"), product_path(product),

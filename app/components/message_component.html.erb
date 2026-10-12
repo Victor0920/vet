@@ -1,8 +1,14 @@
-<% bubble = capture do %>
-  <div class="message message--<%= @message.sender %>">
-    <div class="message__bubble"><%= @message.text %></div>
+<%# message--continued: not the last of its group (no meta below it), so the next bubble sits closer %>
+<div class="message message--<%= @message.sender %> <%= "message--continued" unless @show_meta %>">
+  <div class="message__bubble"><%= @message.text %></div>
+  <% if @show_meta %>
     <div class="message__meta">
-      <span><%= @message.sender && t(@message.sender, scope: "shared.message_senders", default: @message.sender.humanize) %></span>
+      <%# Who wrote it: the employee's name, or just "Empleado" for older messages without one %>
+      <% if @message.employee? %>
+        <span><%= @message.employee&.display_name || t("shared.message_senders.employee") %></span>
+      <% elsif @message.sender %>
+        <span><%= t(@message.sender, scope: "shared.message_senders") %></span>
+      <% end %>
       <% if @message.created_at %>
         <span aria-hidden="true">·</span>
         <time datetime="<%= @message.created_at.iso8601 %>"><%= @message.created_at.strftime("%H:%M") %></time>
@@ -12,11 +18,5 @@
         <span><%= t(@message.delivery_status, scope: "shared.delivery_statuses", default: @message.delivery_status.humanize) %></span>
       <% end %>
     </div>
-  </div>
-<% end %>
-
-<% if @linked %>
-  <%= link_to bubble, message_path(@message), class: "message-link" %>
-<% else %>
-  <%= bubble %>
-<% end %>
+  <% end %>
+</div>

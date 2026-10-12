@@ -149,6 +149,7 @@ es:
         password: "Contraseña"
         password_confirmation: "Confirmación de contraseña"
         photo: "Foto"
+        default_store: "Centro por defecto"
       pet:
         name: "Nombre"
         pet_species: "Especie"
@@ -290,7 +291,6 @@ es:
       deleted: "Conversación eliminada"
       failed: "No se ha podido guardar la conversación"
       not_found: "No se ha encontrado la conversación"
-      message_created: "Mensaje creado"
     customers:
       created: "Cliente creado"
       updated: "Cliente actualizado"
@@ -303,7 +303,6 @@ es:
       deactivated: "Empleado desactivado"
       reactivated: "Empleado reactivado"
     messages:
-      created: "Mensaje creado"
       failed: "No se ha podido enviar el mensaje"
     pets:
       created: "Mascota creada"
@@ -401,9 +400,8 @@ es:
     unnamed_pet: "Mascota sin nombre"
     untitled: "Sin título"
     message_senders:
-      user: "Usuario"
-      bot: "Bot"
-      admin: "Admin"
+      customer: "Cliente"
+      employee: "Empleado"
     delivery_statuses:
       sent: "Enviado"
       delivered: "Entregado"
@@ -419,7 +417,9 @@ es:
       home: "Inicio"
       messaging: "Mensajería"
       conversations: "Conversaciones"
-      all_messages: "Todos los mensajes"
+      unread_conversations:
+        one: "1 conversación sin leer"
+        other: "%{count} conversaciones sin leer"
       clinic: "Clínica"
       calendar: "Calendario"
       customers: "Clientes"
@@ -452,6 +452,8 @@ es:
       service_categories: "Categorías de servicios"
       enterprise: "Empresa"
       settings: "Configuración"
+      conversation: "Conversación"
+      conversations: "Conversaciones"
 
   # ---------- Layouts ----------
   layouts:
@@ -699,6 +701,9 @@ es:
         title: "Conversaciones recientes"
         no_messages: "Todavía no hay mensajes"
         empty: "Todavía no hay conversaciones."
+        unread:
+          one: "1 sin leer"
+          other: "%{count} sin leer"
 
   sessions:
     new:
@@ -777,6 +782,7 @@ es:
     show:
       all_customers: "Todos los clientes"
       edit_customer: "Editar cliente"
+      open_chat: "Abrir chat de WhatsApp"
       new_appointment: "Nueva cita"
       document: "Documento"
       pets: "Mascotas"
@@ -984,6 +990,10 @@ es:
       employee_since: "Empleado desde"
       language: "Idioma"
       language_hint: "Cambia el idioma de toda la aplicación para ti."
+      preferences: "Preferencias"
+      default_store: "Centro por defecto"
+      default_store_hint: "Se selecciona automáticamente en la agenda, en las citas nuevas y en las facturas nuevas."
+      no_default_store: "Ninguno (el primero)"
       sign_out: "Cerrar sesión"
       columns:
         when: "Cuándo"
@@ -1053,56 +1063,57 @@ es:
 
   # ---------- Conversaciones y mensajes ----------
   conversations:
-    unknown_client: "Cliente desconocido"
     index:
       title: "Conversaciones"
-      subtitle:
-        one: "1 conversación con propietarios de mascotas"
-        other: "%{count} conversaciones con propietarios de mascotas"
-      new_heading: "Empieza una conversación"
-      new_description: "Elige un cliente para abrir un chat de WhatsApp."
-      client: "Cliente"
-      submit: "Crear conversación"
+      subtitle: "Chats de WhatsApp con tus clientes."
+      new_conversation: "Nueva conversación"
+      search_label: "Buscar conversaciones"
+      search_placeholder: "Buscar por cliente o por texto de los mensajes…"
+      count:
+        one: "1 conversación"
+        other: "%{count} conversaciones"
+      count_matching:
+        one: "1 conversación coincide con «%{query}»"
+        other: "%{count} conversaciones coinciden con «%{query}»"
       all: "Todas las conversaciones"
-      meta:
-        one: "1 mensaje · actualizada hace %{time}"
-        other: "%{count} mensajes · actualizada hace %{time}"
+      ago: "hace %{time}"
+      sender:
+        employee: "Tú:"
+      no_messages: "Todavía no hay mensajes"
+      unread:
+        one: "1 mensaje sin leer"
+        other: "%{count} mensajes sin leer"
+      no_matches: "Ninguna conversación coincide con «%{query}»"
+      no_matches_hint: "Prueba con parte del nombre o del teléfono del cliente, o con una palabra de un mensaje."
       empty: "Todavía no hay conversaciones"
-      empty_hint: "Empieza una arriba para escribir a un cliente."
+      empty_hint: "Pulsa «Nueva conversación» para escribir a un cliente."
+    new:
+      title: "Nueva conversación"
+      description: "Elige un cliente. Si ya tiene un chat, se abrirá ese."
+      search_label: "Buscar cliente"
+      search_placeholder: "Nombre, teléfono, email…"
+      no_phone: "Sin teléfono"
+      has_chat: "Ya tiene chat"
+      open: "Abrir"
+      start: "Empezar"
+      no_matches: "Ningún cliente coincide con «%{query}»"
+      no_customers: "Todavía no hay clientes."
     show:
       number: "Conversación n.º %{id}"
       delete_confirm: "¿Eliminar esta conversación? No se puede deshacer."
-      send_as: "Enviar como"
       message: "Mensaje"
       placeholder: "Escribe un mensaje…"
       send: "Enviar"
       client: "Cliente"
-      phone: "Teléfono"
+      view_customer: "Ver ficha del cliente"
+      conversation: "Conversación"
       messages: "Mensajes"
       started: "Iniciada"
+      pets:
+        one: "1 mascota"
+        other: "%{count} mascotas"
+      no_pets: "Este cliente todavía no tiene mascotas."
 
-  messages:
-    index:
-      title: "Todos los mensajes"
-      subtitle:
-        one: "1 mensaje en todas las conversaciones"
-        other: "%{count} mensajes en todas las conversaciones"
-      columns:
-        id: "ID"
-        message: "Mensaje"
-        sender: "Remitente"
-        status: "Estado"
-        sent: "Enviado"
-      empty: "Todavía no hay mensajes"
-      empty_hint: "Los mensajes aparecerán aquí cuando empiece una conversación."
-    show:
-      number: "Mensaje n.º %{id}"
-      back: "Volver a la conversación"
-      sent: "Enviado el %{time}"
-      text: "Texto"
-      sender: "Remitente"
-      delivery_status: "Estado de entrega"
-      whatsapp_id: "ID de WhatsApp"
 
   # ---------- Productos y categorías ----------
   products:
@@ -1111,7 +1122,6 @@ es:
     number: "Producto n.º %{id}"
     columns:
       photo: "Foto"
-      id: "ID"
       product: "Producto"
       category: "Categoría"
       price: "Precio"

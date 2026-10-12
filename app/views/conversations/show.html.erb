@@ -1,69 +1,156 @@
-<% content_for :title, @user&.name.presence || t(".number", id: @conversation.id) %>
+<% content_for :title, @conversation.customer.full_name %>
 
-<div class="chat">
-  <section class="card chat__main">
-    <header class="chat__header">
-      <div class="chat__contact">
-        <span class="avatar"><%= @user&.name.to_s.first %></span>
-        <div>
-          <h1 class="chat__title"><%= @user&.name.presence || t("conversations.unknown_client") %></h1>
-          <p class="chat__subtitle"><%= t(".number", id: @conversation.id) %></p>
+<%# .chat-page is exactly one screen tall: the back link takes what it needs and the chat
+    fills the rest, so the page itself never scrolls (only the messages and the sidebar do) %>
+<div class="chat-page">
+  <%= render "shared/back_link", path: conversations_path, label: t("conversations.index.all") %>
+
+  <div class="chat">
+    <section class="card chat__main">
+      <header class="chat__header">
+        <div class="chat__contact">
+          <span class="avatar"><%= @conversation.customer.full_name.first %></span>
+          <div>
+            <h1 class="chat__title"><%= @conversation.customer.full_name %></h1>
+            <p class="chat__subtitle"><%= t(".number", id: @conversation.id) %></p>
+          </div>
         </div>
+
+        <%= button_to t("shared.delete"),
+          @conversation,
+          method: :delete,
+          class: "btn btn--danger-ghost btn--sm",
+          form: { data: { turbo_confirm: t(".delete_confirm"), confirm_button: t("shared.delete") } } %>
+      </header>
+
+      <div class="chat__messages">
+        <%= render ConversationComponent.new(conversation: @conversation) %>
       </div>
 
-      <%= button_to t("shared.delete"),
-        @conversation,
-        method: :delete,
-        class: "btn btn--danger-ghost btn--sm",
-        form: { data: { turbo_confirm: t(".delete_confirm"), confirm_button: t("shared.delete") } } %>
-    </header>
+      <% if @message.errors.any? %>
+        <div class="chat__errors">
+          <p class="alert alert--danger"><%= @message.errors.full_message.first %></p>
+        </div>
+      <% end %>
 
-    <div class="chat__messages">
-      <%= render ConversationComponent.new(conversation: @conversation) %>
-    </div>
+      <%= form_with model: @message, local: true, class: "chat__composer" do |form| %>
+        <%= form.hidden_field :conversation_id, value: @conversation.id %>
+        <%# Keeps the back link's destination after sending a message (only if the chat was opened with one) %>
+        <% if return_to_path %>
+          <%= hidden_field_tag :return_to, return_to_path %>
+        <% end %>
 
-    <% if @message.errors.any? %>
-      <div class="chat__errors">
-        <p class="alert alert--danger"><%= @message.errors.full_message.first %></p>
+        <%# No "send as": the controller always saves it as sender "employee", with the signed-in employee %>
+        <%= form.label :text, t(".message"), class: "sr-only" %>
+        <%= form.text_field :text, class: "input", placeholder: t(".placeholder"), autocomplete: "off" %>
+
+        <%= form.submit t(".send"), class: "btn btn--primary" %>
+      <% end %>
+    </section>
+
+    <%# Who you're talking to: the customer's photo and contact details, then the conversation's own facts %>
+    <% customer = @conversation.customer %>
+    <aside class="card chat__sidebar">
+      <div class="chat__profile">
+        <% if customer.photo.attached? %>
+          <%= image_tag customer.photo.variant(:medium), alt: customer.full_name, class: "avatar avatar--xl avatar--photo" %>
+        <% else %>
+          <span class="avatar avatar--xl"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
+        <% end %>
+        <div>
+          <h2 class="card__title"><%= customer.full_name %></h2>
+          <p class="text-subtle text-xs"><%= t(".client") %></p>
+        </div>
+        <%= link_to t(".view_customer"), customer_path(customer, return_to: request.fullpath), class: "btn btn--secondary btn--sm" %>
       </div>
-    <% end %>
 
-    <%= form_with model: @message, local: true, class: "chat__composer" do |form| %>
-      <%= form.hidden_field :conversation_id, value: @conversation.id %>
-
-      <%= form.label :sender, t(".send_as"), class: "sr-only" %>
-      <%= form.select :sender, [[t("shared.message_senders.bot"), 1], [t("shared.message_senders.admin"), 2]], {}, class: "select select--sm" %>
-
-      <%= form.label :text, t(".message"), class: "sr-only" %>
-      <%= form.text_field :text, class: "input", placeholder: t(".placeholder"), autocomplete: "off" %>
-
-      <%= form.submit t(".send"), class: "btn btn--primary" %>
-    <% end %>
-  </section>
-
-  <aside class="card chat__sidebar">
-    <div class="chat__profile">
-      <span class="avatar avatar--lg"><%= @user&.name.to_s.first %></span>
-      <div>
-        <h2 class="card__title"><%= @user&.name.presence || t("conversations.unknown_client") %></h2>
-        <p class="text-subtle text-xs"><%= t(".client") %></p>
+      <div class="card__body chat__section">
+        <dl class="details">
+          <div>
+            <dt><%= Customer.human_attribute_name(:first_phone) %></dt>
+            <dd>
+              <%= customer.first_phone.presence || "—" %>
+              <% if customer.second_phone.present? %>
+                <br><span class="text-muted"><%= customer.second_phone %></span>
+              <% end %>
+            </dd>
+          </div>
+          <div>
+            <dt><%= Customer.human_attribute_name(:email) %></dt>
+            <dd><%= customer.email.present? ? mail_to(customer.email) : "—" %></dd>
+          </div>
+          <div>
+            <dt><%= Customer.human_attribute_name(:address) %></dt>
+            <dd>
+              <%= customer.address.presence || "—" %>
+              <% location = [customer.post_code, customer.province].compact_blank.join(", ") %>
+              <% if location.present? %>
+                <br><span class="text-muted"><%= location %></span>
+              <% end %>
+            </dd>
+          </div>
+          <div>
+            <dt><%= t("customers.customer_since") %></dt>
+            <dd><%= l(customer.created_at, format: :display) %></dd>
+          </div>
+        </dl>
       </div>
-    </div>
-    <div class="card__body">
-      <dl class="details">
-        <div>
-          <dt><%= t(".phone") %></dt>
-          <dd><%= @user&.phone.presence || "—" %></dd>
-        </div>
-        <div>
-          <dt><%= t(".messages") %></dt>
-          <dd><%= @conversation.messages.size %></dd>
-        </div>
-        <div>
-          <dt><%= t(".started") %></dt>
-          <dd><%= l(@conversation.created_at, format: :display) %></dd>
-        </div>
-      </dl>
-    </div>
-  </aside>
+
+      <div class="card__body chat__section">
+        <h3 class="chat__section-title"><%= t(".conversation") %></h3>
+        <dl class="details">
+          <div>
+            <dt><%= t(".messages") %></dt>
+            <dd><%= @conversation.messages.size %></dd>
+          </div>
+          <div>
+            <dt><%= t(".started") %></dt>
+            <dd><%= l(@conversation.created_at, format: :display) %></dd>
+          </div>
+        </dl>
+      </div>
+
+      <%# The customer's pets as small cards (same pet-card as customers#show, shrunk by .chat__pets).
+          return_to brings the pet page's back link here, to this chat %>
+      <div class="card__body chat__section">
+        <h3 class="chat__section-title"><%= t(".pets", count: @pets.size) %></h3>
+        <% if @pets.any? %>
+          <div class="chat__pets">
+            <% @pets.each do |pet| %>
+              <%= link_to customer_pet_path(customer, pet, return_to: request.fullpath), class: "pet-link" do %>
+                <article class="card card--interactive pet-card">
+                  <div class="pet-card__media">
+                    <% if pet.photo.attached? %>
+                      <%# 96×96 for a 48px thumbnail, sharp on retina screens %>
+                      <%= image_tag pet.photo.variant(resize_to_fill: [96, 96]), alt: pet.name.to_s,
+                            class: "pet-card__photo", loading: "lazy" %>
+                    <% else %>
+                      <span class="pet-card__placeholder"><%= render "shared/paw_icon" %></span>
+                    <% end %>
+                  </div>
+                  <div class="pet-card__body">
+                    <div class="pet-card__header">
+                      <h4 class="pet-card__name"><%= pet.name.presence || t("shared.unnamed_pet") %></h4>
+                      <% if pet.pet_species %>
+                        <span class="badge badge--primary"><%= pet.pet_species.display_name %></span>
+                      <% end %>
+                    </div>
+                    <% about = [
+                      pet.breed,
+                      (distance_of_time_in_words(pet.born_on, Date.current) if pet.born_on),
+                    ].compact_blank %>
+                    <% if about.any? %>
+                      <p class="pet-card__meta pet-card__meta--subtle"><%= about.join(" · ") %></p>
+                    <% end %>
+                  </div>
+                </article>
+              <% end %>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-subtle text-xs"><%= t(".no_pets") %></p>
+        <% end %>
+      </div>
+    </aside>
+  </div>
 </div>

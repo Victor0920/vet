@@ -3,62 +3,106 @@
 <div class="page-header">
   <div>
     <h1 class="page-header__title"><%= t(".title") %></h1>
-    <p class="page-header__subtitle">
-      <%= t(".subtitle", count: @conversations.size) %>
-    </p>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+  <div class="page-header__actions">
+    <%# Loads conversations/new (the customer picker) into the "modal" frame at the bottom of this page %>
+    <%= link_to new_conversation_path, class: "btn btn--primary", data: { turbo_frame: "modal" } do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+          d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+        /></svg>
+      <%= t(".new_conversation") %>
+    <% end %>
   </div>
 </div>
 
-<section class="card">
-  <header class="card__header">
-    <div>
-      <h2 class="card__title"><%= t(".new_heading") %></h2>
-      <p class="card__description"><%= t(".new_description") %></p>
-    </div>
-  </header>
-  <div class="card__body">
-    <%= form_with model: @conversation, local: true, class: "form-inline" do |form| %>
-      <div class="form-field">
-        <%= form.label :user_id, t(".client"), class: "label" %>
-        <%= form.collection_select :user_id, @users, :id, :name, {}, class: "select" %>
-      </div>
-
-      <%= form.submit t(".submit"), class: "btn btn--primary" %>
-    <% end %>
+<%# Same search as customers#index: typing submits (debounced, search_controller.js) into the
+    "conversations" frame below, so only the list is replaced and the input keeps focus.
+    It matches the customer (name, phone, email…) or the text of any message %>
+<%= form_with url: conversations_path, method: :get, role: "search", class: "conversations-search",
+    data: { controller: "search", turbo_frame: "conversations", turbo_action: "replace" } do %>
+  <div class="search-field">
+    <%= render "shared/icons/magnifying_glass" %>
+    <%= label_tag :q, t(".search_label"), class: "sr-only" %>
+    <%= search_field_tag :q, @query, class: "input", placeholder: t(".search_placeholder"),
+          autocomplete: "off", data: { action: "input->search#submit" } %>
   </div>
-</section>
+<% end %>
 
-<section class="section">
-  <h2 class="section__title"><%= t(".all") %></h2>
+<%# target: "_top" so the rows open the chat as a full page, not inside the frame %>
+<%= turbo_frame_tag "conversations", target: "_top" do %>
+  <p class="conversations-search__count">
+    <% if @query.present? %>
+      <%= t(".count_matching", count: @conversations.size, query: @query) %>
+    <% else %>
+      <%= t(".count", count: @conversations.size) %>
+    <% end %>
+  </p>
 
   <% if @conversations.any? %>
-    <div class="conversations-grid">
+    <%# An inbox: chats with unread messages first, then the newest activity (Conversation.unread_first).
+        Each row: photo, name, the last message on one line, how long ago, and the unread count %>
+    <ul class="card conversation-list">
       <% @conversations.each do |conversation| %>
-        <%= link_to conversation_path(conversation), class: "card card--interactive conversation-card" do %>
-          <div class="conversation-card__header">
-            <span class="avatar"><%= conversation.user&.name.to_s.first %></span>
-            <div>
-              <div class="conversation-card__name"><%= conversation.user&.name.presence || t("conversations.unknown_client") %></div>
-              <div class="conversation-card__meta">
-                <%= t(".meta", count: conversation.messages.size, time: time_ago_in_words(conversation.updated_at)) %>
-              </div>
-            </div>
-          </div>
+        <% customer = conversation.customer %>
+        <% message = conversation.last_message %>
+        <% unread = conversation.unread_count %>
+        <li>
+          <%# turbo_prefetch: false: Turbo loads links in the background on hover to make clicks
+              faster, and loading the chat marks it as read (show → mark_read!), so just moving
+              the mouse over this list would clear the unread badges %>
+          <%= link_to conversation_path(conversation),
+                class: ["conversation-row", ("conversation-row--unread" if unread.positive?)],
+                data: { turbo_prefetch: false } do %>
+            <% if customer.photo.attached? %>
+              <%= image_tag customer.photo.variant(:small), alt: "", class: "avatar avatar--photo" %>
+            <% else %>
+              <span class="avatar"><%= customer.first_name.to_s.first %><%= customer.first_surname.to_s.first %></span>
+            <% end %>
 
-          <div class="conversation-card__preview">
-            <%= render ConversationComponent.new(
-              conversation: conversation,
-              link_messages: false,
-            ) %>
-          </div>
-        <% end %>
+            <span class="conversation-row__main">
+              <span class="conversation-row__top">
+                <span class="conversation-row__name"><%= customer.full_name %></span>
+                <span class="conversation-row__time">
+                  <%= t(".ago", time: time_ago_in_words(message&.created_at || conversation.updated_at)) %>
+                </span>
+              </span>
+              <span class="conversation-row__bottom">
+                <span class="conversation-row__preview">
+                  <% if message %>
+                    <%# "Tú:" when the clinic wrote it, like WhatsApp; nothing when it was the customer %>
+                    <% if message.employee? %>
+                      <span class="conversation-row__sender"><%= t(".sender.employee") %></span>
+                    <% end %>
+                    <%= message.text %>
+                  <% else %>
+                    <span class="conversation-row__empty"><%= t(".no_messages") %></span>
+                  <% end %>
+                </span>
+                <%# Like WhatsApp: a green count of what the customer sent that nobody has opened yet %>
+                <% if unread.positive? %>
+                  <span class="unread-count" aria-label="<%= t(".unread", count: unread) %>"><%= unread %></span>
+                <% end %>
+              </span>
+            </span>
+          <% end %>
+        </li>
       <% end %>
+    </ul>
+  <% elsif @query.present? %>
+    <div class="empty-state">
+      <%= render "shared/icons/magnifying_glass" %>
+      <p class="empty-state__title"><%= t(".no_matches", query: @query) %></p>
+      <p><%= t(".no_matches_hint") %></p>
     </div>
   <% else %>
     <div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"/></svg>
+      <%= render "shared/icons/messages" %>
       <p class="empty-state__title"><%= t(".empty") %></p>
       <p><%= t(".empty_hint") %></p>
     </div>
   <% end %>
-</section>
+<% end %>
+
+<%# Empty until "New conversation" loads conversations/new into it %>
+<%= turbo_frame_tag "modal" %>

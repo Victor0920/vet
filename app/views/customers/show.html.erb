@@ -71,34 +71,42 @@
   </aside>
 
   <section class="customer-profile__main">
+    <%# The customer's actions, top right of the page. One primary button (the most
+        common thing to do here: book them in), the rest secondary %>
+    <div class="customer-profile__actions customer-profile__actions--end customer-profile__actions--page">
+      <%= link_to edit_customer_path(@customer), class: "btn btn--secondary" do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+            d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
+          /><path
+            d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
+          /></svg>
+        <%= t(".edit_customer") %>
+      <% end %>
+      <%# POST to conversations#create: it opens this customer's chat, creating it the first time.
+          return_to: the chat's back link comes back here ("← Cliente") instead of to the list %>
+      <%= button_to conversations_path, params: { conversation: { customer_id: @customer.id }, return_to: request.fullpath },
+            class: "btn btn--secondary" do %>
+        <%= render "shared/icons/messages" %>
+        <%= t(".open_chat") %>
+      <% end %>
+      <%# Opens the calendar in "booking for this customer" mode (see appointments/index) %>
+      <%= link_to appointments_path(customer_id: @customer.id), class: "btn btn--primary" do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/></svg>
+        <%= t(".new_appointment") %>
+      <% end %>
+    </div>
     <header class="customer-profile__section-header">
       <div>
         <h2 class="section__title"><%= t(".pets") %></h2>
         <p class="text-muted"><%= t(".pets_count", count: @pets.size) %></p>
       </div>
-      <%# The customer's actions, top right of the page. One primary button (the most
-          common thing to do here: book them in), the rest secondary %>
-      <div class="customer-profile__actions">
-        <%= link_to edit_customer_path(@customer), class: "btn btn--secondary" do %>
-          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
-              d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
-            /><path
-              d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
-            /></svg>
-          <%= t(".edit_customer") %>
-        <% end %>
-        <%= link_to new_customer_pet_path(@customer), class: "btn btn--secondary" do %>
-          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
-              d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
-            /></svg>
-          <%= t(".new_pet") %>
-        <% end %>
-        <%# Opens the calendar in "booking for this customer" mode (see appointments/index) %>
-        <%= link_to appointments_path(customer_id: @customer.id), class: "btn btn--primary" do %>
-          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/></svg>
-          <%= t(".new_appointment") %>
-        <% end %>
-      </div>
+      <%# Small: it only adds to the pets list below, unlike the page actions above %>
+      <%= link_to new_customer_pet_path(@customer), class: "btn btn--secondary btn--sm" do %>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+            d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+          /></svg>
+        <%= t(".new_pet") %>
+      <% end %>
     </header>
 
     <% if @pets.any? %>

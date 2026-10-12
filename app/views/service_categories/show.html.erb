@@ -42,7 +42,6 @@
     <table class="table">
       <thead>
         <tr>
-          <th><%= t("services.columns.id") %></th>
           <th><%= t("services.columns.service") %></th>
           <th class="products-table__price"><%= t("services.columns.price") %></th>
         </tr>
@@ -50,7 +49,6 @@
       <tbody>
         <% @services.each do |service| %>
           <tr>
-            <td class="table__numeric">#<%= service.id %></td>
             <td>
               <div class="product-cell">
                 <%= link_to service.name.presence || t("services.unnamed"), service_path(service),

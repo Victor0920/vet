@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_180210) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -79,12 +79,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
   end
 
   create_table "conversations", force: :cascade do |t|
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "customer_id", null: false
-    t.index ["customer_id"], name: "index_conversations_on_customer_id"
-    t.index ["user_id"], name: "index_conversations_on_user_id"
+    t.index ["customer_id"], name: "index_conversations_on_customer_id", unique: true
   end
 
   create_table "customers", force: :cascade do |t|
@@ -120,6 +118,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
     t.boolean "active", default: true, null: false
     t.string "locale", default: "es", null: false
     t.string "username", null: false
+    t.integer "default_store_id"
+    t.index ["default_store_id"], name: "index_employees_on_default_store_id"
     t.index ["enterprise_id", "username"], name: "index_employees_on_enterprise_id_and_username", unique: true
     t.index ["enterprise_id"], name: "index_employees_on_enterprise_id"
   end
@@ -186,7 +186,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
     t.integer "sender"
     t.string "whatsapp_message_id"
     t.string "delivery_status"
+    t.datetime "read_at"
+    t.integer "employee_id"
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["employee_id"], name: "index_messages_on_employee_id"
+    t.index ["read_at"], name: "index_messages_on_read_at"
     t.index ["whatsapp_message_id"], name: "index_messages_on_whatsapp_message_id"
   end
 
@@ -312,13 +316,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
     t.index ["enterprise_id"], name: "index_stores_on_enterprise_id"
   end
 
-  create_table "users", force: :cascade do |t|
-    t.string "name"
-    t.string "phone"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "appointments", "customers"
@@ -328,9 +325,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
   add_foreign_key "appointments", "rooms"
   add_foreign_key "appointments", "stores"
   add_foreign_key "conversations", "customers"
-  add_foreign_key "conversations", "users"
   add_foreign_key "customers", "enterprises"
   add_foreign_key "employees", "enterprises"
+  add_foreign_key "employees", "stores", column: "default_store_id"
   add_foreign_key "invoice_products", "invoices"
   add_foreign_key "invoice_products", "products"
   add_foreign_key "invoice_products", "services"
@@ -341,6 +338,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
   add_foreign_key "invoices", "invoices", column: "original_invoice_id"
   add_foreign_key "invoices", "stores"
   add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "employees"
   add_foreign_key "pet_weights", "pets"
   add_foreign_key "pets", "customers"
   add_foreign_key "pets", "employees", column: "usual_employee_id"

@@ -6,6 +6,8 @@ class Store < ApplicationRecord
   has_one_attached :logo do |attachable|
     attachable.variant :thumb, resize_to_limit: [ 320, 320 ], preprocessed: true
   end
+  has_many :default_for_employees, class_name: "Employee", foreign_key: :default_store_id,
+    inverse_of: :default_store, dependent: :nullify
 
   normalizes :invoice_code, with: ->(code) { code.strip.upcase.presence }
   validates :invoice_code, uniqueness: { scope: :enterprise_id }, format: { with: /\A[A-Z0-9]{1,10}\z/ }, allow_nil: true

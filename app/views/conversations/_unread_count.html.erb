@@ -1,0 +1,9 @@
+<%# locals: (count:) -%>
+<%# The sidebar's unread-chats bubble on "Conversaciones". The wrapper is always there (even at 0)
+    because its id is what Enterprise#broadcast_unread_conversations replaces live, via Turbo Streams.
+    Absolute i18n keys: when broadcast, this renders outside any page, so ".key" has nothing to be relative to %>
+<span id="unread_conversations_count" class="sidebar__count-slot">
+  <% if count.to_i.positive? %>
+    <span class="unread-count sidebar__count" aria-label="<%= t("components.top_nav.unread_conversations", count: count) %>"><%= count %></span>
+  <% end %>
+</span>

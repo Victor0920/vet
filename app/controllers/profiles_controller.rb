@@ -3,6 +3,7 @@ class ProfilesController < ApplicationController
 
   def show
     @appointments = @employee.appointments.on_day(Date.current).includes(:customer, { pet: :customer }, :room)
+    @stores = Current.enterprise.stores.order(:name)
   end
 
   def update
@@ -26,6 +27,6 @@ class ProfilesController < ApplicationController
   # Only what you may change about yourself: no :role or :active, or anyone
   # could submit employee[role]=admin and promote themselves
   def profile_params
-    params.expect(employee: [ :first_name, :last_name, :phone, :photo, :locale ])
+    params.expect(employee: [ :first_name, :last_name, :phone, :photo, :locale, :default_store_id ])
   end
 end

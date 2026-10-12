@@ -63,7 +63,7 @@ class AppointmentsController < ApplicationController
   # Editing uses the appointment's store; otherwise the one picked in the selector
   def set_store
     @stores = Current.enterprise.stores.order(:name)
-    @store = @appointment&.store || @stores.find_by(id: params[:store_id]) || @stores.first
+    @store = @appointment&.store || @stores.find_by(id: params[:store_id]) || Current.employee.default_store || @stores.first
     redirect_to root_path, alert: t("flash.appointments.store_required") if @store.nil?
   end
 

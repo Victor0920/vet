@@ -1,0 +1,8 @@
+<%# locals: (count:) -%>
+<%# The "3 sin leer" badge on the home page's conversations card. Like conversations/_unread_count,
+    the wrapper always renders so Enterprise#broadcast_unread_conversations can replace it live %>
+<span id="home_unread_conversations">
+  <% if count.to_i.positive? %>
+    <span class="badge badge--primary"><%= t("pages.home.conversations.unread", count: count) %></span>
+  <% end %>
+</span>

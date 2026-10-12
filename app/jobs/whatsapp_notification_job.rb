@@ -8,7 +8,7 @@ class WhatsappNotificationJob < ApplicationJob
     message = Message.find(message_id)
 
     Whatsapp::Client.new.send_text(
-      to: message.conversation.user.phone,
+      to: message.conversation.customer.first_phone,
       body: message.text
     )
   end

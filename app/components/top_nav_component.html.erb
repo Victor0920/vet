@@ -1,4 +1,10 @@
 <aside class="sidebar">
+  <%# Subscribes this page to the company's unread-count updates (Enterprise#broadcast_unread_conversations).
+      The sidebar is on every signed-in page, so every page gets them. The stream name is signed,
+      so nobody can subscribe to another company's stream %>
+  <% if @enterprise %>
+    <%= helpers.turbo_stream_from @enterprise, :unread_conversations %>
+  <% end %>
   <%= link_to helpers.root_path, class: "sidebar__brand" do %>
     <span class="brand-mark"><%= render partial: "shared/paw_icon" %></span>
     <span class="sidebar__brand-name"><%= @enterprise&.name %></span>
@@ -16,10 +22,8 @@
     <%= link_to helpers.conversations_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/conversations")) } do %>
       <%= render "shared/icons/messages" %>
       <span><%= t("components.top_nav.conversations") %></span>
-    <% end %>
-    <%= link_to helpers.messages_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/messages")) } do %>
-      <%= render "shared/icons/tray_box" %>
-      <span><%= t("components.top_nav.all_messages") %></span>
+      <%# How many chats have something unread (set in TopNavComponent), kept live by the stream below %>
+      <%= render "conversations/unread_count", count: @unread_conversations %>
     <% end %>
   </nav>
 
