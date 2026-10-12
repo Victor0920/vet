@@ -4,7 +4,7 @@
       profiles/show  - the signed-in employee looking at themselves (/profile)
     Locals:
       employee     - the Employee
-      appointments - their upcoming appointments (the controller loads them)
+      appointments - today's appointments on /profile, upcoming ones otherwise (the controller loads them)
       own_profile  - true on /profile: shows the language picker and "Sign out" %>
 <div class="customer-profile">
   <aside class="card customer-profile__sidebar">
@@ -91,8 +91,14 @@
   <section class="customer-profile__main">
     <header class="customer-profile__section-header">
       <div>
-        <h2 class="section__title"><%= t("employees.show.appointments") %></h2>
-        <p class="text-muted"><%= t("employees.show.appointments_count", count: appointments.size) %></p>
+        <%# /profile lists only today's appointments (finished ones too), so it gets its own wording %>
+        <% if own_profile %>
+          <h2 class="section__title"><%= t("employees.show.today_appointments") %></h2>
+          <p class="text-muted"><%= t("employees.show.today_appointments_count", count: appointments.size) %></p>
+        <% else %>
+          <h2 class="section__title"><%= t("employees.show.appointments") %></h2>
+          <p class="text-muted"><%= t("employees.show.appointments_count", count: appointments.size) %></p>
+        <% end %>
       </div>
     </header>
 
@@ -112,7 +118,10 @@
             <% appointments.each do |appointment| %>
               <tr>
                 <td class="table__numeric">
-                  <%= l(appointment.starts_at, format: :display) %><br>
+                  <%# All of today on /profile, so the date would repeat on every row: just the times %>
+                  <% unless own_profile %>
+                    <%= l(appointment.starts_at, format: :display) %><br>
+                  <% end %>
                   <%= l(appointment.starts_at, format: :hour) %>–<%= l(appointment.ends_at, format: :hour) %>
                 </td>
                 <td class="table__truncate">
@@ -147,8 +156,13 @@
     <% else %>
       <div class="empty-state">
         <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd"/></svg>
-        <p class="empty-state__title"><%= t("employees.show.empty") %></p>
-        <p><%= t("employees.show.empty_hint") %></p>
+        <% if own_profile %>
+          <p class="empty-state__title"><%= t("employees.show.today_empty") %></p>
+          <p><%= t("employees.show.today_empty_hint") %></p>
+        <% else %>
+          <p class="empty-state__title"><%= t("employees.show.empty") %></p>
+          <p><%= t("employees.show.empty_hint") %></p>
+        <% end %>
       </div>
     <% end %>
   </section>

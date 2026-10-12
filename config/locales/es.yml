@@ -936,6 +936,12 @@ es:
         room: "Sala"
       empty: "Todavía no hay citas"
       empty_hint: "Las citas asignadas a este empleado aparecerán aquí."
+      today_appointments: "Citas de hoy"
+      today_appointments_count:
+        one: "1 cita hoy"
+        other: "%{count} citas hoy"
+      today_empty: "No tienes citas hoy"
+      today_empty_hint: "Aquí aparecerán las citas que tengas asignadas para hoy."
 
   # ---------- Citas / calendario ----------
   appointments:

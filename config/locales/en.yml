@@ -949,6 +949,12 @@ en:
         room: "Room"
       empty: "No appointments yet"
       empty_hint: "Appointments assigned to this employee will show up here."
+      today_appointments: "Today's appointments"
+      today_appointments_count:
+        one: "1 appointment today"
+        other: "%{count} appointments today"
+      today_empty: "No appointments today"
+      today_empty_hint: "Appointments assigned to you for today will show up here."
 
   # ---------- Appointments / calendar ----------
   appointments:
