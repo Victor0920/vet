@@ -8,6 +8,11 @@ import { Controller } from "@hotwired/stimulus"
 //   page at the redirect URL so the calendar shows the change.
 export default class extends Controller {
   close(event) {
+    // Chrome fires a plain "keydown" Event (no key, not a KeyboardEvent) when an autofill
+    // suggestion is picked. Stimulus only applies the .esc filter to real KeyboardEvents,
+    // so that event would get here and close the modal: only Esc may close it by keyboard.
+    if (event?.type === "keydown" && event.key !== "Escape") return
+
     const frame = this.element.closest("turbo-frame")
     // Turbo sets src on the frame when a link loads the modal into it (calendar,
     // invoice page…). No src means this is the modal's own page: follow the link.
