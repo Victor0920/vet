@@ -1,8 +1,18 @@
 class PetsController < ApplicationController
-  before_action :set_customer
-  before_action :set_species_options, only: %i[ new create edit update ]
+  before_action :set_customer, except: :index
+  before_action :set_species_options, only: %i[ index new create edit update ]
   before_action :set_pet, only: %i[ show edit update ]
   before_action :set_employees, only: %i[ new create edit update ]
+
+  def index
+    @query = params[:q].to_s.strip
+    @species_id = params[:species_id].presence
+    @pets = Current.enterprise.pets
+      .search(@query)
+      .includes(:pet_species, :customer, photo_attachment: :blob) # avoids a query per row
+      .order(:name)
+    @pets = @pets.where(pet_species_id: @species_id) if @species_id
+  end
 
   def show
     @weights = @pet.pet_weights.order(:measured_on)

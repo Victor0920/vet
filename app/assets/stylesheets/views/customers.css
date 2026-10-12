@@ -39,6 +39,14 @@
   white-space: nowrap;
 }
 
+/* ---------- pets#index (reuses the customers table styles above) ---------- */
+
+/* Pets without a photo: a paw in the avatar circle instead of initials */
+.pets-table__avatar svg {
+  width: var(--icon-md);
+  height: var(--icon-md);
+}
+
 .pet-chips {
   display: flex;
   flex-wrap: wrap;
@@ -271,6 +279,7 @@
 
 /* Turbo sets aria-busy while the frame loads: dim the old results meanwhile */
 turbo-frame#customers,
+turbo-frame#pets,
 turbo-frame#history {
   display: block;
   transition: opacity var(--duration-fast) var(--ease-out);

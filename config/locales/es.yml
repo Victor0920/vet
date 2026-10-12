@@ -423,6 +423,7 @@ es:
       clinic: "Clínica"
       calendar: "Calendario"
       customers: "Clientes"
+      pets: "Mascotas"
       products: "Productos"
       services: "Servicios"
       invoices: "Facturación"
@@ -440,6 +441,7 @@ es:
       customers: "Clientes"
       customer: "Cliente"
       pet: "Mascota"
+      pets: "Mascotas"
       invoices: "Facturas"
       invoice: "Factura"
       products: "Productos"
@@ -827,6 +829,32 @@ es:
   # ---------- Mascotas ----------
   pets:
     owner: "Propietario"
+    index:
+      title: "Mascotas"
+      heading: "Mascotas"
+      subtitle: "Todos los pacientes de la clínica"
+      search_label: "Buscar mascotas"
+      search_placeholder: "Busca por nombre, raza, microchip o propietario…"
+      species: "Especie"
+      all_species: "Todas las especies"
+      search_species: "Busca especies…"
+      no_species_match: "Ninguna especie coincide"
+      count:
+        one: "1 mascota"
+        other: "%{count} mascotas"
+      count_matching:
+        one: "1 mascota coincide con «%{query}»"
+        other: "%{count} mascotas coinciden con «%{query}»"
+      columns:
+        photo: "Foto"
+        pet: "Mascota"
+        species: "Especie"
+        age: "Edad"
+        breed: "Raza"
+      no_matches: "Ninguna mascota coincide con estos filtros"
+      no_matches_hint: "Prueba otra búsqueda o elige «Todas las especies»."
+      empty: "Todavía no hay mascotas"
+      empty_hint: "Las mascotas se añaden desde la ficha de su propietario."
     # Labels for the fixed pet_species rows, keyed by pet_species.name (see db/seeds.rb)
     species:
       dog: "Perro"

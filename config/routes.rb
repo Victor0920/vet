@@ -22,10 +22,11 @@ Rails.application.routes.draw do
   # get "/conversations/:id", to: "conversations#show"
   resources :conversations
   resources :customers do
-    resources :pets do
+    resources :pets, except: :index do
       resources :weights, only: %i[ new create destroy ], module: :pets
     end
   end
+  resources :pets, only: :index
 
   resource :profile, only: %i[ show update ]
   resources :appointments
