@@ -24,7 +24,8 @@ class AppointmentsController < ApplicationController
   def new
     starts_at = requested_start
     customer = Current.enterprise.customers.find_by(id: params[:customer_id])
-    @appointment = Appointment.new(starts_at: starts_at, ends_at: starts_at + 30.minutes, room_id: params[:room_id], customer: customer)
+    @appointment = Appointment.new(starts_at: starts_at, ends_at: starts_at + Current.enterprise.default_appointment_minutes.minutes,
+      room_id: params[:room_id], customer: customer)
   end
 
   def create

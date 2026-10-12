@@ -400,3 +400,133 @@
 .access-code {
   font-size: var(--text-md);
 }
+
+/* ---------- calendar_settings#edit + opening_hours form: time and minutes inputs ---------- */
+
+/* A time needs about 8 characters, not the whole row */
+.calendar-settings__time {
+  width: 9rem;
+}
+
+/* The number box with "minutes" next to it */
+.calendar-settings__minutes {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  .input {
+    width: 6rem;
+  }
+}
+
+/* ---------- stores#show: weekly opening hours ---------- */
+
+.opening-hours {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One row per day: name on the left, its periods on the right */
+.opening-hours__day {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-5);
+
+  & + & {
+    border-top: var(--border);
+  }
+}
+
+.opening-hours__name {
+  font-weight: var(--weight-medium);
+}
+
+.opening-hours__periods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Each period is a pill that opens its edit page */
+.opening-hours__period {
+  padding: var(--space-0-5) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  transition: background var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--color-primary-subtle-hover);
+    color: var(--color-primary-text);
+    text-decoration: none;
+  }
+}
+
+.opening-hours__closed {
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+}
+
+/* ---------- opening_hours#new: day picker ---------- */
+
+/* Real checkboxes, hidden; the pill <label> after each one shows whether it's ticked */
+.weekday-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+}
+
+.weekday-picker__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.weekday-picker__day {
+  min-width: 3rem;
+  padding: var(--space-1-5) var(--space-3);
+  border: var(--border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+.weekday-picker__input:checked + .weekday-picker__day {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--white);
+}
+
+.weekday-picker__input:focus-visible + .weekday-picker__day {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* ---------- opening_hours#edit: delete, below the form ---------- */
+
+.opening-hour-delete {
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 40rem) {
+  .opening-hours__day {
+    grid-template-columns: 6rem minmax(0, 1fr);
+    padding-inline: var(--space-4);
+  }
+}

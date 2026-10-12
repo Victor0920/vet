@@ -62,6 +62,9 @@ en:
       enterprise:
         one: "Company"
         other: "Companies"
+      opening_hour:
+        one: "Opening hours"
+        other: "Opening hours"
       appointment:
         one: "Appointment"
         other: "Appointments"
@@ -117,6 +120,13 @@ en:
         invoice_layout: "Layout"
         invoice_color: "Highlight colour"
         invoice_footer: "Footer note"
+        calendar_opens_at: "Calendar starts at"
+        calendar_closes_at: "Calendar ends at"
+        default_appointment_minutes: "Appointment length"
+      opening_hour:
+        weekday: "Day"
+        opens_at: "Opens"
+        closes_at: "Closes"
       appointment:
         title: "Title"
         starts_at: "Starts"
@@ -235,6 +245,9 @@ en:
     errors:
       messages:
         must_be_after_start: "must be after the start time"
+        after_opening: "must be after the opening time"
+        overlaps: "Overlaps another period on %{day}"
+        no_weekdays: "Tick at least one day"
         already_booked: "is already booked at that time"
         not_this_customers_pet: "doesn't belong to this customer"
         must_match_customer_enterprise: "must match the customer's enterprise"
@@ -289,6 +302,15 @@ en:
       updated: "Company details updated"
     invoice_settings:
       updated: "Invoice settings updated"
+    calendar_settings:
+      updated: "Appointment and calendar settings updated"
+    opening_hours:
+      created:
+        one: "Period added"
+        other: "%{count} periods added"
+      updated: "Period updated"
+      deleted: "Period deleted"
+      not_found: "Period not found"
     access:
       updated: "Company ID updated"
     appointments:
@@ -501,6 +523,11 @@ en:
       no_rooms_hint: "Rooms added to this store will show up here."
       new_room: "New room"
       add_first_room: "Add the first room"
+      opening_hours: "Opening hours"
+      opening_hours_hint: "When this store is open. Used for automatic bookings; it doesn't change the calendar."
+      new_opening_hour: "Add hours"
+      closed: "Closed"
+      edit_period: "Edit %{day} from %{from} to %{to}"
     new:
       title: "New store"
     edit:
@@ -522,6 +549,41 @@ en:
   profiles:
     show:
       title: "My profile"
+
+  opening_hours:
+    new:
+      title: "Add opening hours to %{store}"
+    edit:
+      title: "Edit opening hours of %{store}"
+      delete: "Delete this period"
+      delete_confirm: "Delete this period from the opening hours?"
+    form:
+      create: "Add hours"
+      details: "Period"
+      details_hint: "A stretch of time when the store is open. If it closes at lunchtime, add the morning and the afternoon separately."
+      weekdays: "Days"
+      weekdays_hint: "The same hours are added to every ticked day."
+
+  # ---------- Appointments and calendar (/settings/calendar) ----------
+  calendar_settings:
+    show:
+      title: "Appointments and calendar"
+      subtitle: "How the calendar looks and how long new appointments last."
+      edit: "Edit settings"
+      calendar: "Calendar"
+      calendar_hint: "Applies to every store."
+      visible_hours: "Hours shown in the calendar"
+      minutes:
+        one: "1 minute"
+        other: "%{count} minutes"
+      opening_hours: "Opening hours"
+      opening_hours_hint: "Each store has its own weekly opening hours, on the store's page."
+      manage_stores: "Go to stores"
+    edit:
+      title: "Edit appointments and calendar"
+      hours_hint: "The hours the calendar shows, in 15-minute steps. It doesn't change the stores' opening hours."
+      minutes_unit: "minutes"
+      duration_hint: "When you create an appointment, its end time is filled in as the start time plus this length."
 
   rooms:
     new:
@@ -631,6 +693,9 @@ en:
         catalogue:
           title: "Catalogue"
           description: "How products and services are organised."
+        appointments:
+          title: "Appointments and calendar"
+          description: "How the calendar looks and how long appointments last."
         billing:
           title: "Invoicing"
           description: "Numbering and the look of your invoices."
@@ -645,7 +710,7 @@ en:
         stores:
           title: "Stores & rooms"
           description: "Your clinics and the rooms you book appointments in."
-          items: ["Clinics", "Rooms", "Store invoice codes"]
+          items: ["Clinics", "Rooms", "Opening hours", "Store invoice codes"]
         employees:
           title: "Employees"
           description: "Invite staff, set roles and deactivate accounts."
@@ -658,6 +723,10 @@ en:
         service_categories:
           title: "Service categories"
           description: "Group services and pick their colours."
+        calendar:
+          title: "Appointments and calendar"
+          description: "The hours shown in the calendar and the default appointment length."
+          items: ["Visible hours", "Appointment length"]
         invoicing:
           title: "Invoices"
           description: "How invoices are numbered and how the PDF looks."

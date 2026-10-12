@@ -8,6 +8,7 @@ class StoresController < ApplicationController
   end
 
   def show
+    @opening_hours = @store.opening_hours.order(:opens_at).group_by(&:weekday)
   end
 
   def edit

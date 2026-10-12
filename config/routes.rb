@@ -51,11 +51,13 @@ Rails.application.routes.draw do
     resources :employees, path: "employees", except: :destroy
     resources :stores, path: "stores" do
       resources :rooms, only: %i[ new create edit update ]
+      resources :opening_hours, path: "opening-hours", only: %i[ new create edit update destroy ]
     end
     resource :invoice_settings, path: "invoicing", only: %i[ show edit update ] do
       get :preview
     end
     resource :access, only: %i[ show edit update ], controller: :access
+    resource :calendar_settings, path: "calendar", only: %i[ show edit update ]
   end
   resource :settings, only: :show
 

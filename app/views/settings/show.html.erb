@@ -55,6 +55,20 @@
     </div>
   </section>
 
+  <%# The calendar's visible hours and the default appointment length (CalendarSettingsController).
+      Each store's weekly opening hours live on the store's page %>
+  <section class="settings-group" aria-labelledby="settings-appointments">
+    <header class="settings-group__header">
+      <h2 class="settings-group__title" id="settings-appointments"><%= t(".groups.appointments.title") %></h2>
+      <p class="settings-group__description"><%= t(".groups.appointments.description") %></p>
+    </header>
+    <div class="settings-group__tiles">
+      <%= render "settings/tile", icon: "calendar", path: calendar_settings_path,
+            title: t(".tiles.calendar.title"), description: t(".tiles.calendar.description"),
+            items: t(".tiles.calendar.items") %>
+    </div>
+  </section>
+
   <%# Everything about invoices: numbering and how the PDF looks (InvoiceSettingsController) %>
   <section class="settings-group" aria-labelledby="settings-billing">
     <header class="settings-group__header">
