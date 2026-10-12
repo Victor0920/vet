@@ -252,6 +252,7 @@ en:
         png_or_jpg_only: "must be a PNG or JPG image"
         jpg_png_or_webp_only: "must be a JPG, PNG or WebP image"
         inactive_employee: "has been deactivated: choose someone who is still active"
+        archived: "has been archived and can't be added to new invoices"
       # Per-model wording, used instead of the generic message above
       models:
         invoice:
@@ -326,6 +327,7 @@ en:
       created: "Category created"
       updated: "Category updated"
       not_found: "Category not found"
+      deleted: "Category deleted"
     invoices:
       created: "Invoice created"
       updated: "Invoice updated"
@@ -340,14 +342,19 @@ en:
       created: "Product created"
       updated: "Product updated"
       not_found: "Product not found"
+      archived: "Product archived"
+      unarchived: "Product restored"
     services:
       created: "Service created"
       updated: "Service updated"
       not_found: "Service not found"
+      archived: "Service archived"
+      unarchived: "Service restored"
     service_categories:
       created: "Category created"
       updated: "Category updated"
       not_found: "Category not found"
+      deleted: "Category deleted"
     sessions:
       rate_limited: "Try again later."
       invalid: "Check your company ID, employee ID and password."
@@ -372,6 +379,9 @@ en:
     dismiss: "Click to dismiss"
     add_photo: "Add photo"
     cancel: "Cancel"
+    uncategorized: "Uncategorized"
+    archived: "Archived"
+    show_archived: "Show archived"
     # shared/_confirm_dialog.html.erb: the app's own confirm() popup
     confirm_dialog:
       title: "Are you sure?"
@@ -1077,13 +1087,16 @@ en:
         one: "1 product matching “%{query}”"
         other: "%{count} products matching “%{query}”"
       no_matches: "No products match these filters"
-      no_matches_hint: "Try another search, pick “All categories” or turn off “Low stock only”."
+      no_matches_hint: "Try another search, pick “All categories” or turn off the switches."
       empty: "No products yet"
       empty_hint: "Products will show up here once the first is created."
     show:
       edit_product: "Edit product"
       created: "Created"
       view_photo: "Open the full-size photo"
+      archive: "Archive"
+      unarchive: "Unarchive"
+      archived_notice: "Archived on %{date}. It's hidden from the products list and can't be added to new invoices; existing invoices are unchanged."
     new:
       title: "New product"
     edit:
@@ -1092,7 +1105,7 @@ en:
       back_to_product: "Back to product"
       create: "Create product"
       details: "Details"
-      choose_category: "Choose a category…"
+      no_category: "No category"
       search_categories: "Search categories…"
       no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
@@ -1131,6 +1144,10 @@ en:
       updated_by: "Updated %{time} ago by %{name}"
       view_in_products: "View in products"
       edit_category: "Edit category"
+      delete_confirm: "This category will be deleted."
+      delete_confirm_with_products:
+        one: "There is 1 product assigned to this category. If you delete the category, the product will be uncategorized."
+        other: "There are %{count} products assigned to this category. If you delete the category, the products will be uncategorized."
       empty: "No products in this category"
       empty_hint: "Pick this category when creating or editing a product."
     new:
@@ -1170,12 +1187,15 @@ en:
         one: "1 service matching “%{query}”"
         other: "%{count} services matching “%{query}”"
       no_matches: "No services match these filters"
-      no_matches_hint: "Try another search or pick “All categories”."
+      no_matches_hint: "Try another search, pick “All categories” or turn off “Show archived”."
       empty: "No services yet"
       empty_hint: "Services will show up here once the first is created."
     show:
       edit_service: "Edit service"
       created: "Created"
+      archive: "Archive"
+      unarchive: "Unarchive"
+      archived_notice: "Archived on %{date}. It's hidden from the services list and can't be added to new invoices; existing invoices are unchanged."
     new:
       title: "New service"
     edit:
@@ -1184,7 +1204,7 @@ en:
       back_to_service: "Back to service"
       create: "Create service"
       details: "Details"
-      choose_category: "Choose a category…"
+      no_category: "No category"
       search_categories: "Search categories…"
       no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
@@ -1217,6 +1237,10 @@ en:
       updated_by: "Updated %{time} ago by %{name}"
       view_in_services: "View in services"
       edit_category: "Edit category"
+      delete_confirm: "This category will be deleted."
+      delete_confirm_with_services:
+        one: "There is 1 service assigned to this category. If you delete the category, the service will be uncategorized."
+        other: "There are %{count} services assigned to this category. If you delete the category, the services will be uncategorized."
       empty: "No services in this category"
       empty_hint: "Pick this category when creating or editing a service."
     new:

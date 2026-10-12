@@ -14,7 +14,6 @@ one:
 two:
   customer: two
   name: MyString
-  species: MyString
   pet_species: dog
   breed: MyString
   sex: MyString

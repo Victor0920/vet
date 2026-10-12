@@ -33,12 +33,16 @@ Rails.application.routes.draw do
   scope "products" do
     resources :product_categories, path: "categories"
   end
-  resources :products
+  resources :products do
+    resource :archive, only: %i[ create destroy ], module: :products
+  end
 
   scope "services" do
     resources :service_categories, path: "categories"
   end
-  resources :services
+  resources :services do
+    resource :archive, only: %i[ create destroy ], module: :services
+  end
 
   resources :invoices do
     resource :email, only: %i[ new create ], module: :invoices

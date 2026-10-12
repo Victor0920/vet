@@ -25,6 +25,15 @@
         /></svg>
       <%= t(".edit_category") %>
     <% end %>
+    <%# Admins only. The warning counts this category's products, which dependent: :nullify
+        leaves uncategorized instead of deleting them %>
+    <% if admin? %>
+      <%= button_to product_category_path(@category), method: :delete, class: "btn btn--danger",
+            form: { data: { turbo_confirm: (@products.any? ? t(".delete_confirm_with_products", count: @products.size) : t(".delete_confirm")), confirm_button: t("shared.delete") } } do %>
+        <%= render "shared/icons/trash" %>
+        <%= t("shared.delete") %>
+      <% end %>
+    <% end %>
   </div>
 </div>
 
@@ -46,6 +55,9 @@
               <div class="product-cell">
                 <%= link_to product.name.presence || t("products.unnamed"), product_path(product),
                       class: "product-cell__name" %>
+                <% if product.archived? %>
+                  <span class="badge product-cell__archived"><%= t("shared.archived") %></span>
+                <% end %>
                 <% if product.description.present? %>
                   <span class="product-cell__meta"><%= product.description %></span>
                 <% end %>

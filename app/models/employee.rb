@@ -23,4 +23,8 @@ class Employee < ApplicationRecord
   def display_name
     [ first_name, last_name ].compact_blank.join(" ").presence || username
   end
+
+  def admin?
+    role == "admin"
+  end
 end

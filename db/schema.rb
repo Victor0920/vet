@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_071543) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_074516) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -244,11 +244,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_071543) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "product_category_id", null: false
+    t.integer "product_category_id"
     t.integer "stock", default: 0, null: false
     t.integer "show_warning_when_stock_under_x_items", default: 5, null: false
     t.integer "updated_by_id"
     t.string "barcode"
+    t.datetime "archived_at"
     t.index ["enterprise_id"], name: "index_products_on_enterprise_id"
     t.index ["product_category_id"], name: "index_products_on_product_category_id"
     t.index ["updated_by_id"], name: "index_products_on_updated_by_id"
@@ -281,8 +282,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_071543) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "service_category_id", null: false
+    t.integer "service_category_id"
     t.integer "updated_by_id"
+    t.datetime "archived_at"
     t.index ["enterprise_id"], name: "index_services_on_enterprise_id"
     t.index ["service_category_id"], name: "index_services_on_service_category_id"
     t.index ["updated_by_id"], name: "index_services_on_updated_by_id"

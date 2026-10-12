@@ -17,16 +17,16 @@
   flex: 0 1 14rem;
 }
 
-/* products#index has a third filter (the low-stock switch): widen the row so it
-   fits next to the other two, and centre it vertically against the inputs.
-   services#index doesn't use this modifier, so it keeps the 40rem row */
+/* Rows with switches after the selects (products: low stock + show archived;
+   services: show archived): widen the row so they fit next to the inputs,
+   and centre them vertically against the inputs */
 .products-filters--with-toggle {
-  max-width: 50rem;
+  max-width: 64rem;
   align-items: center;
 }
 
 /* Sits at the end of the row, never shrinks so its label stays on one line */
-.products-filters__low-stock {
+.products-filters__toggle {
   flex: 0 0 auto;
   white-space: nowrap;
 }
@@ -59,6 +59,12 @@ turbo-frame#services {
 .product-cell__name {
   font-weight: var(--weight-medium);
   color: var(--color-text);
+}
+
+/* "Archived" pill under the name: .product-cell is a column, so stop it stretching full width */
+.product-cell__archived {
+  align-self: flex-start;
+  margin-block: 2px;
 }
 
 .product-cell__meta {
@@ -299,4 +305,9 @@ turbo-frame#services {
 /* Full content width, for forms with tables or side-by-side cards (invoices) */
 .resource-form--wide {
   max-width: none;
+}
+
+/* products#show & services#show: the "archived since…" warning between the header and the card */
+.archived-notice {
+  margin-bottom: var(--space-4);
 }

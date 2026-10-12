@@ -46,12 +46,21 @@
 
   <%# A plain checkbox styled as a switch (components/switch.css). When it's off the browser
       sends nothing, so params[:low_stock] is missing and the controller treats it as false %>
-  <label class="switch products-filters__low-stock">
+  <label class="switch products-filters__toggle">
     <%= check_box_tag :low_stock, "1", @low_stock,
           class: "switch__input", role: "switch",
           data: { action: "change->search#submit" } %>
     <span class="switch__track" aria-hidden="true"></span>
     <span class="switch__label"><%= t(".low_stock_only") %></span>
+  </label>
+
+  <%# Same kind of switch: on, the list shows only archived products (they're hidden otherwise) %>
+  <label class="switch products-filters__toggle">
+    <%= check_box_tag :archived, "1", @archived,
+          class: "switch__input", role: "switch",
+          data: { action: "change->search#submit" } %>
+    <span class="switch__track" aria-hidden="true"></span>
+    <span class="switch__label"><%= t("shared.show_archived") %></span>
   </label>
 <% end %>
 
@@ -97,6 +106,9 @@
                 <div class="product-cell">
                   <%= link_to product.name.presence || t("products.unnamed"), product_path(product),
                         class: "product-cell__name" %>
+                  <% if product.archived? %>
+                    <span class="badge product-cell__archived"><%= t("shared.archived") %></span>
+                  <% end %>
                   <% if product.description.present? %>
                     <span class="product-cell__meta"><%= product.description %></span>
                   <% end %>
@@ -123,7 +135,7 @@
         </tbody>
       </table>
     </div>
-  <% elsif @query.present? || @category_id.present? || @low_stock %>
+  <% elsif @query.present? || @category_id.present? || @low_stock || @archived %>
     <div class="empty-state">
       <%= render "shared/icons/magnifying_glass" %>
       <p class="empty-state__title"><%= t(".no_matches") %></p>

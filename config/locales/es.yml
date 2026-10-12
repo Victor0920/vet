@@ -241,6 +241,7 @@ es:
         png_or_jpg_only: "debe ser una imagen PNG o JPG"
         jpg_png_or_webp_only: "debe ser una imagen JPG, PNG o WebP"
         inactive_employee: "está desactivado: elige a alguien que siga activo"
+        archived: "está archivado y no se puede añadir a facturas nuevas"
       # Mensajes por modelo, usados en lugar del genérico de arriba
       models:
         invoice:
@@ -325,18 +326,24 @@ es:
       created: "Producto creado"
       updated: "Producto actualizado"
       not_found: "No se ha encontrado el producto"
+      archived: "Producto archivado"
+      unarchived: "Producto restaurado"
     product_categories:
       created: "Categoría creada"
       updated: "Categoría actualizada"
       not_found: "No se ha encontrado la categoría"
+      deleted: "Categoría eliminada"
     services:
       created: "Servicio creado"
       updated: "Servicio actualizado"
       not_found: "No se ha encontrado el servicio"
+      archived: "Servicio archivado"
+      unarchived: "Servicio restaurado"
     service_categories:
       created: "Categoría creada"
       updated: "Categoría actualizada"
       not_found: "No se ha encontrado la categoría"
+      deleted: "Categoría eliminada"
     sessions:
       rate_limited: "Inténtalo de nuevo más tarde."
       invalid: "Revisa el ID de empresa, el ID de empleado y la contraseña."
@@ -361,6 +368,9 @@ es:
     dismiss: "Haz clic para cerrar"
     add_photo: "Añadir foto"
     cancel: "Cancelar"
+    uncategorized: "Sin categoría"
+    archived: "Archivado"
+    show_archived: "Mostrar archivados"
     # shared/_confirm_dialog.html.erb: the app's own confirm() popup
     confirm_dialog:
       title: "¿Seguro?"
@@ -1064,13 +1074,16 @@ es:
         one: "1 producto coincide con «%{query}»"
         other: "%{count} productos coinciden con «%{query}»"
       no_matches: "Ningún producto coincide con estos filtros"
-      no_matches_hint: "Prueba otra búsqueda, elige «Todas las categorías» o desactiva «Solo stock bajo»."
+      no_matches_hint: "Prueba otra búsqueda, elige «Todas las categorías» o desactiva los interruptores."
       empty: "Todavía no hay productos"
       empty_hint: "Los productos aparecerán aquí cuando crees el primero."
     show:
       edit_product: "Editar producto"
       created: "Creado"
       view_photo: "Abrir la foto a tamaño completo"
+      archive: "Archivar"
+      unarchive: "Desarchivar"
+      archived_notice: "Archivado el %{date}. No aparece en la lista de productos ni se puede añadir a facturas nuevas; las facturas existentes no cambian."
     new:
       title: "Nuevo producto"
     edit:
@@ -1079,7 +1092,7 @@ es:
       back_to_product: "Volver al producto"
       create: "Crear producto"
       details: "Detalles"
-      choose_category: "Elige una categoría…"
+      no_category: "Sin categoría"
       search_categories: "Busca categorías…"
       no_categories_match: "Ninguna categoría coincide"
       no_categories_html: "Todavía no hay categorías: %{link}."
@@ -1118,6 +1131,10 @@ es:
       updated_by: "Actualizada hace %{time} por %{name}"
       view_in_products: "Ver en productos"
       edit_category: "Editar categoría"
+      delete_confirm: "Se eliminará esta categoría."
+      delete_confirm_with_products:
+        one: "Hay 1 producto asignado a esta categoría. Si eliminas la categoría, el producto quedará sin categoría."
+        other: "Hay %{count} productos asignados a esta categoría. Si eliminas la categoría, los productos quedarán sin categoría."
       empty: "No hay productos en esta categoría"
       empty_hint: "Elige esta categoría al crear o editar un producto."
     new:
@@ -1157,12 +1174,15 @@ es:
         one: "1 servicio coincide con «%{query}»"
         other: "%{count} servicios coinciden con «%{query}»"
       no_matches: "Ningún servicio coincide con estos filtros"
-      no_matches_hint: "Prueba otra búsqueda o elige «Todas las categorías»."
+      no_matches_hint: "Prueba otra búsqueda, elige «Todas las categorías» o desactiva «Mostrar archivados»."
       empty: "Todavía no hay servicios"
       empty_hint: "Los servicios aparecerán aquí cuando crees el primero."
     show:
       edit_service: "Editar servicio"
       created: "Creado"
+      archive: "Archivar"
+      unarchive: "Desarchivar"
+      archived_notice: "Archivado el %{date}. No aparece en la lista de servicios ni se puede añadir a facturas nuevas; las facturas existentes no cambian."
     new:
       title: "Nuevo servicio"
     edit:
@@ -1171,7 +1191,7 @@ es:
       back_to_service: "Volver al servicio"
       create: "Crear servicio"
       details: "Detalles"
-      choose_category: "Elige una categoría…"
+      no_category: "Sin categoría"
       search_categories: "Busca categorías…"
       no_categories_match: "Ninguna categoría coincide"
       no_categories_html: "Todavía no hay categorías: %{link}."
@@ -1204,6 +1224,10 @@ es:
       updated_by: "Actualizada hace %{time} por %{name}"
       view_in_services: "Ver en servicios"
       edit_category: "Editar categoría"
+      delete_confirm: "Se eliminará esta categoría."
+      delete_confirm_with_services:
+        one: "Hay 1 servicio asignado a esta categoría. Si eliminas la categoría, el servicio quedará sin categoría."
+        other: "Hay %{count} servicios asignados a esta categoría. Si eliminas la categoría, los servicios quedarán sin categoría."
       empty: "No hay servicios en esta categoría"
       empty_hint: "Elige esta categoría al crear o editar un servicio."
     new:
