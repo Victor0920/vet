@@ -2,7 +2,9 @@ class Pet < ApplicationRecord
   belongs_to :customer
   has_one_attached :photo
   belongs_to :usual_employee, class_name: "Employee", optional: true
+  belongs_to :pet_species, optional: true
   has_many :pet_weights, dependent: :destroy
+  has_rich_text :notes
 
   validate :usual_employee_belongs_to_enterprise
 

@@ -161,7 +161,8 @@ en:
         photo: "Photo"
       pet:
         name: "Name"
-        species: "Species"
+        pet_species: "Species"
+        pet_species_id: "Species"
         breed: "Breed"
         sex: "Sex"
         born_on: "Born"
@@ -794,6 +795,34 @@ en:
   # ---------- Pets ----------
   pets:
     owner: "Owner"
+    # Labels for the fixed pet_species rows, keyed by pet_species.name (see db/seeds.rb)
+    species:
+      dog: "Dog"
+      cat: "Cat"
+      rabbit: "Rabbit"
+      ferret: "Ferret"
+      guinea_pig: "Guinea pig"
+      hamster: "Hamster"
+      gerbil: "Gerbil"
+      rat: "Rat"
+      mouse: "Mouse"
+      chinchilla: "Chinchilla"
+      degu: "Degu"
+      hedgehog: "Hedgehog"
+      squirrel: "Squirrel"
+      bird: "Bird"
+      turtle: "Turtle"
+      lizard: "Lizard"
+      snake: "Snake"
+      fish: "Fish"
+      horse: "Horse"
+      donkey: "Donkey"
+      goat: "Goat"
+      sheep: "Sheep"
+      pig: "Pig"
+      cow: "Cow"
+      chicken: "Chicken"
+      other: "Other"
     sex:
       male: "Male"
       female: "Female"
@@ -801,7 +830,6 @@ en:
     born_value: "%{date} · %{age} old"
     sections:
       general: "General"
-      identification: "Identification"
       notes: "Notes"
     show:
       edit_pet: "Edit pet"
@@ -814,6 +842,8 @@ en:
       back_to: "Back to %{name}"
       submit: "Create pet"
       photo_hint: "Click the image to add a photo"
+      search_species: "Search species…"
+      no_species_match: "No species match"
     weights:
       title: "Weight"
       add: "Add weight"

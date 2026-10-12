@@ -151,7 +151,8 @@ es:
         photo: "Foto"
       pet:
         name: "Nombre"
-        species: "Especie"
+        pet_species: "Especie"
+        pet_species_id: "Especie"
         breed: "Raza"
         sex: "Sexo"
         born_on: "Fecha de nacimiento"
@@ -783,6 +784,34 @@ es:
   # ---------- Mascotas ----------
   pets:
     owner: "Propietario"
+    # Labels for the fixed pet_species rows, keyed by pet_species.name (see db/seeds.rb)
+    species:
+      dog: "Perro"
+      cat: "Gato"
+      rabbit: "Conejo"
+      ferret: "Hurón"
+      guinea_pig: "Cobaya"
+      hamster: "Hámster"
+      gerbil: "Jerbo"
+      rat: "Rata"
+      mouse: "Ratón"
+      chinchilla: "Chinchilla"
+      degu: "Degú"
+      hedgehog: "Erizo"
+      squirrel: "Ardilla"
+      bird: "Ave"
+      turtle: "Tortuga"
+      lizard: "Lagarto"
+      snake: "Serpiente"
+      fish: "Pez"
+      horse: "Caballo"
+      donkey: "Burro"
+      goat: "Cabra"
+      sheep: "Oveja"
+      pig: "Cerdo"
+      cow: "Vaca"
+      chicken: "Gallina"
+      other: "Otra"
     sex:
       male: "Macho"
       female: "Hembra"
@@ -790,7 +819,6 @@ es:
     born_value: "%{date} · %{age}"
     sections:
       general: "General"
-      identification: "Identificación"
       notes: "Notas"
     show:
       edit_pet: "Editar mascota"
@@ -803,6 +831,8 @@ es:
       back_to: "Volver a %{name}"
       submit: "Crear mascota"
       photo_hint: "Pulsa la imagen para añadir una foto"
+      search_species: "Buscar especie…"
+      no_species_match: "Ninguna especie coincide"
     weights:
       title: "Peso"
       add: "Añadir peso"

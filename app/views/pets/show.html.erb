@@ -19,7 +19,7 @@
       <div>
         <h1 class="customer-profile__name"><%= @pet.name.presence || t("shared.unnamed_pet") %></h1>
         <p class="text-subtle text-xs">
-          <%= [@pet.species, @pet.breed].compact_blank.join(" · ").presence || t("shared.pet_number", id: @pet.id) %>
+          <%= [@pet.pet_species&.display_name, @pet.breed].compact_blank.join(" · ").presence || t("shared.pet_number", id: @pet.id) %>
         </p>
       </div>
     </div>
@@ -63,15 +63,13 @@
   <%# Each card is a title plus a list of [label, value] pairs, rendered read-only by _details_card %>
   <% general = [
     [Pet.human_attribute_name(:name), @pet.name],
-    [Pet.human_attribute_name(:species), @pet.species],
+    [Pet.human_attribute_name(:pet_species), @pet.pet_species&.display_name],
     [Pet.human_attribute_name(:breed), @pet.breed],
     [Pet.human_attribute_name(:sterilized), @pet.sterilized.nil? ? nil : (@pet.sterilized ? tag.span(t("shared.yes"), class: "badge badge--success") : tag.span(t("shared.no"), class: "badge"))],
     [Pet.human_attribute_name(:sex), @pet.sex.presence && t(@pet.sex.downcase, scope: "pets.sex", default: @pet.sex)],
     [Pet.human_attribute_name(:born_on), @pet.born_on && t("pets.born_value", date: l(@pet.born_on, format: :display), age: distance_of_time_in_words(@pet.born_on, Date.current))],
     [Pet.human_attribute_name(:color), @pet.color],
-    [Pet.human_attribute_name(:usual_employee), @pet.usual_employee&.display_name]
-  ] %>
-  <% identification = [
+    [Pet.human_attribute_name(:usual_employee), @pet.usual_employee&.display_name],
     [Pet.human_attribute_name(:transponder_number), @pet.transponder_number],
     [Pet.human_attribute_name(:transponder_location), @pet.transponder_location]
   ] %>
@@ -88,8 +86,7 @@
 
     <%# columns: true lays the card's fields out in two columns %>
     <%= render "details_card", title: t("pets.sections.general"), fields: general, columns: true %>
-    <%= render "details_card", title: t("pets.sections.identification"), fields: identification, columns: true %>
-    <%= render "details_card", title: t("pets.sections.notes"), fields: notes %>
+    <%= render "details_card", title: t("pets.sections.notes"), fields: notes, narrow_label: true, rich_text: true %>
 
     <section class="card">
       <header class="card__header">

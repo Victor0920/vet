@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_061904) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_071543) do
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -52,7 +62,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_061904) do
     t.integer "pet_id"
     t.integer "employee_id", null: false
     t.string "title"
-    t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "enterprise_id", null: false
@@ -184,7 +193,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_061904) do
   create_table "pet_species", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "name"
+    t.string "name", null: false
+    t.index ["name"], name: "index_pet_species_on_name", unique: true
   end
 
   create_table "pet_weights", force: :cascade do |t|
@@ -199,11 +209,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_061904) do
 
   create_table "pets", force: :cascade do |t|
     t.string "name"
-    t.string "species"
     t.string "breed"
     t.string "sex"
     t.date "born_on"
-    t.string "notes"
     t.string "color"
     t.string "transponder_number"
     t.string "transponder_location"
@@ -212,7 +220,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_061904) do
     t.integer "customer_id", null: false
     t.boolean "sterilized"
     t.integer "usual_employee_id"
+    t.integer "pet_species_id"
     t.index ["customer_id"], name: "index_pets_on_customer_id"
+    t.index ["pet_species_id"], name: "index_pets_on_pet_species_id"
     t.index ["usual_employee_id"], name: "index_pets_on_usual_employee_id"
   end
 
@@ -332,6 +342,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_061904) do
   add_foreign_key "pet_weights", "pets"
   add_foreign_key "pets", "customers"
   add_foreign_key "pets", "employees", column: "usual_employee_id"
+  add_foreign_key "pets", "pet_species"
   add_foreign_key "product_categories", "employees", column: "updated_by_id", on_delete: :nullify
   add_foreign_key "product_categories", "enterprises"
   add_foreign_key "products", "employees", column: "updated_by_id", on_delete: :nullify

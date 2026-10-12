@@ -55,6 +55,17 @@
 }
 
 /*
+ * Narrower label column, for a one-column card under a field-list--columns card
+ * (pets notes): 9rem lines its labels up with the two-column card's above it.
+ * The phone layout (label above value) still applies below 640px.
+ */
+@media (min-width: 641px) {
+  .field-list--narrow-label .field-row {
+    grid-template-columns: 9rem minmax(0, 1fr);
+  }
+}
+
+/*
  * Two columns of rows: <dl class="field-list field-list--columns"> (pets#show, pets#edit).
  * Fills row by row: 1 2 / 3 4 / … The card is the size container, so the list
  * drops back to one column whenever the card itself gets narrow.

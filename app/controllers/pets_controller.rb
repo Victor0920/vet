@@ -1,5 +1,6 @@
 class PetsController < ApplicationController
   before_action :set_customer
+  before_action :set_species_options, only: %i[ new create edit update ]
   before_action :set_pet, only: %i[ show edit update ]
   before_action :set_employees, only: %i[ new create edit update ]
 
@@ -50,9 +51,13 @@ class PetsController < ApplicationController
     @employees = employees.active.or(employees.where(id: @pet&.usual_employee_id)).order(:first_name, :last_name)
   end
 
+  def set_species_options
+    @species_options = PetSpecies.all.sort_by(&:display_name)
+  end
+
   # Strong parameters: only these fields can be changed from a form
   def pet_params
-    params.expect(pet: [ :name, :species, :breed, :sex, :born_on, :color, :usual_employee_id,
+    params.expect(pet: [ :name, :pet_species_id, :breed, :sex, :born_on, :color, :usual_employee_id,
       :transponder_number, :transponder_location, :notes, :photo, :sterilized ])
   end
 end

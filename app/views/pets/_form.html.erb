@@ -46,7 +46,8 @@
           <h1 class="customer-profile__name"><%= pet.persisted? ? pet_name : t(".heading") %></h1>
           <p class="text-subtle text-xs">
             <% if pet.persisted? %>
-              <%= [pet.species_was, pet.breed_was].compact_blank.join(" · ").presence || t("shared.pet_number", id: pet.id) %>
+              <%# pet_species_id_was: the saved species, same reason as name_was above %>
+              <%= [species.find { |s| s.id == pet.pet_species_id_was }&.display_name, pet.breed_was].compact_blank.join(" · ").presence || t("shared.pet_number", id: pet.id) %>
             <% else %>
               <%= t(".photo_hint") %>
             <% end %>
@@ -95,7 +96,7 @@
         </div>
       <% end %>
 
-      <%# field-list--columns: General and Identification show their fields in two columns %>
+      <%# field-list--columns: General shows its fields in two columns %>
       <section class="card">
         <header class="card__header">
           <h2 class="card__title"><%= t("pets.sections.general") %></h2>
@@ -109,8 +110,17 @@
             </dd>
           </div>
           <div class="field-row">
-            <dt class="field-row__label"><%= f.label :species %></dt>
-            <dd class="field-row__value"><%= f.text_field :species, class: "input" %></dd>
+            <dt class="field-row__label"><%= f.label :pet_species_id %></dt>
+            <dd class="field-row__value">
+              <%# item_picker_controller.js adds a search box to the species list
+                  (same dropdown as the product categories and invoice lines) %>
+              <div class="item-picker" data-controller="item-picker"
+                   data-item-picker-placeholder-value="<%= t(".search_species") %>"
+                   data-item-picker-empty-value="<%= t(".no_species_match") %>">
+                <%= f.collection_select :pet_species_id, species, :id, :display_name, { include_blank: "—" },
+                      class: "select", data: { item_picker_target: "select" } %>
+              </div>
+            </dd>
           </div>
           <div class="field-row">
             <dt class="field-row__label"><%= f.label :breed %></dt>
@@ -145,14 +155,6 @@
                     { include_blank: "—" }, class: "select" %>
             </dd>
           </div>
-        </dl>
-      </section>
-
-      <section class="card">
-        <header class="card__header">
-          <h2 class="card__title"><%= t("pets.sections.identification") %></h2>
-        </header>
-        <dl class="field-list field-list--columns">
           <div class="field-row">
             <dt class="field-row__label"><%= f.label :transponder_number %></dt>
             <dd class="field-row__value"><%= f.text_field :transponder_number, class: "input" %></dd>
@@ -168,10 +170,14 @@
         <header class="card__header">
           <h2 class="card__title"><%= t("pets.sections.notes") %></h2>
         </header>
-        <dl class="field-list">
+        <dl class="field-list field-list--narrow-label">
           <div class="field-row">
             <dt class="field-row__label"><%= f.label :notes %></dt>
-            <dd class="field-row__value"><%= f.text_area :notes, class: "textarea", rows: 4 %></dd>
+            <dd class="field-row__value">
+              <%# Lexxy editor (Action Text). attachments: false hides the upload button and
+                  ignores pasted/dropped files: notes are text only %>
+              <%= f.rich_textarea :notes, attachments: false %>
+            </dd>
           </div>
         </dl>
       </section>

@@ -1,0 +1,62 @@
+/*
+ * Rich text — the Lexxy editor (f.rich_textarea, pets/_form) and rendered
+ * Action Text content (<div class="lexxy-content">, layouts/action_text/contents).
+ * Lexxy's own stylesheet loads first (layout); here we point its variables at
+ * our tokens, so it follows the app's colours, font and [data-theme="dark"].
+ */
+
+:root {
+  --lexxy-color-ink: var(--color-text);
+  --lexxy-color-ink-medium: var(--color-text-muted);
+  --lexxy-color-ink-light: var(--color-text-subtle);
+  --lexxy-color-ink-lighter: var(--color-border-strong);
+  --lexxy-color-ink-lightest: var(--color-surface-sunken);
+  --lexxy-color-ink-inverted: var(--color-surface);
+  --lexxy-color-canvas: var(--color-surface);
+  --lexxy-color-accent-dark: var(--color-primary);
+  --lexxy-color-selected: var(--color-primary-subtle);
+  --lexxy-color-selected-hover: var(--color-primary-subtle-hover);
+  --lexxy-focus-ring-color: var(--color-focus);
+  --lexxy-font-base: var(--font-sans);
+  --lexxy-radius: var(--radius-sm);
+  --lexxy-content-margin: var(--space-2);
+}
+
+/* The editor box: same border, radius, shadow and focus ring as .input / .textarea */
+lexxy-editor {
+  --lexxy-editor-rows: 5lh;
+
+  border: var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  font-size: var(--text-sm);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    border-color: var(--color-text-disabled);
+  }
+
+  &:focus-within {
+    border-color: var(--color-focus);
+    box-shadow: var(--focus-ring);
+  }
+
+  &[aria-invalid="true"] {
+    border-color: var(--color-danger);
+  }
+}
+
+/* Rendered content: no gap under the last paragraph/list */
+.lexxy-content > :last-child {
+  margin-block-end: 0;
+}
+
+/* Read-only rich text in a field row (pets/_details_card): lines up with
+   the plain-text values, which have the same top padding */
+.field-row__rich-text {
+  min-width: 0;
+  padding-top: var(--space-1-5);
+  overflow-wrap: anywhere;
+}

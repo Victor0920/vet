@@ -26,6 +26,9 @@
       rel="stylesheet"
     >
 
+    <%# Lexxy's own editor and content styles (they live in the gem), loaded before ours
+        so components/rich_text.css can override them %>
+    <%= stylesheet_link_tag "lexxy", "data-turbo-track": "reload" %>
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>

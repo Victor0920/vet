@@ -94,7 +94,8 @@
 
     <div class="form-field">
       <%= f.label :description, class: "label" %>
-      <%= f.text_area :description, class: "textarea", rows: 3 %>
+      <%# Lexxy editor (Action Text), text only like the pet notes: see pets/_form %>
+      <%= f.rich_textarea :description, attachments: false %>
     </div>
 
     <% if appointment.persisted? %>

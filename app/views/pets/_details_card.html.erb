@@ -1,18 +1,25 @@
 <%# One read-only card on pets#show: a title plus a list of [label, value] pairs.
-    Pass columns: true to show the fields in two columns. %>
+    Pass columns: true to show the fields in two columns,
+    narrow_label: true for a narrower label column (lines up with a columns card above),
+    rich_text: true when the values are Action Text (e.g. notes), which render as block HTML. %>
 <section class="card">
   <header class="card__header">
     <h2 class="card__title"><%= title %></h2>
   </header>
-  <dl class="field-list <%= "field-list--columns" if local_assigns[:columns] %>">
+  <dl class="field-list <%= "field-list--columns" if local_assigns[:columns] %> <%= "field-list--narrow-label" if local_assigns[:narrow_label] %>">
     <% fields.each do |label, value| %>
       <div class="field-row">
         <dt class="field-row__label"><%= label %></dt>
         <dd class="field-row__value">
           <div class="field-row__display">
-            <span class="<%= "text-subtle" if value.blank? %> <%= "field-row__text--multiline" if label == Pet.human_attribute_name(:notes) %>">
-              <%= value.presence || t("shared.not_set") %>
-            </span>
+            <% if local_assigns[:rich_text] && value.present? %>
+              <%# A <div>, not a <span>: rich text brings its own <p>, lists… %>
+              <div class="field-row__rich-text"><%= value %></div>
+            <% else %>
+              <span class="<%= "text-subtle" if value.blank? %>">
+                <%= value.presence || t("shared.not_set") %>
+              </span>
+            <% end %>
           </div>
         </dd>
       </div>

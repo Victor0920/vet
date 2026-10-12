@@ -3,11 +3,10 @@
 one:
   customer: one
   name: MyString
-  species: MyString
+  pet_species: dog
   breed: MyString
   sex: MyString
   born_on: 2026-10-04
-  notes: MyString
   color: MyString
   transponder_number: MyString
   transponder_location: MyString
@@ -16,10 +15,10 @@ two:
   customer: two
   name: MyString
   species: MyString
+  pet_species: dog
   breed: MyString
   sex: MyString
   born_on: 2026-10-04
-  notes: MyString
   color: MyString
   transponder_number: MyString
   transponder_location: MyString
