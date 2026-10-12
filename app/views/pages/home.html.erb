@@ -1,44 +1,213 @@
 <% content_for :title, t(".title") %>
 
+<%# Greeting by time of day; first name if the employee has one %>
+<% greeting = if Time.current.hour < 12 then "morning" elsif Time.current.hour < 20 then "afternoon" else "evening" end %>
 <div class="page-header">
   <div>
-    <h1 class="page-header__title"><%= t(".heading") %></h1>
-    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+    <h1 class="page-header__title">
+      <%= t(".greeting_#{greeting}", name: Current.employee.first_name.presence || Current.employee.display_name) %>
+    </h1>
+    <p class="page-header__subtitle"><%= l(Date.current, format: :calendar_day).upcase_first %></p>
+  </div>
+  <div class="page-header__actions">
+    <%# Opens in the modal frame at the bottom of this page, like on the calendar %>
+    <%= link_to new_appointment_path, class: "btn btn--primary", data: { turbo_frame: "modal" } do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+      <%= t(".new_appointment") %>
+    <% end %>
+    <%= link_to new_invoice_path, class: "btn btn--secondary" do %>
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+      <%= t(".new_invoice") %>
+    <% end %>
   </div>
 </div>
 
-<div class="quick-links">
-  <%= link_to conversations_path, class: "card card--interactive quick-link" do %>
-    <span class="quick-link__icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"/></svg>
-    </span>
-    <span>
-      <span class="quick-link__title"><%= t(".conversations") %></span>
-      <p class="quick-link__description"><%= t(".conversations_description") %></p>
-    </span>
+<%# ---------- Today at a glance: four tiles, each a link to where you'd act on it ---------- %>
+<div class="stat-tiles">
+  <%= link_to appointments_path(view: "day", date: Date.current), class: "card card--interactive stat-tile" do %>
+    <span class="stat-tile__icon"><%= render "shared/icons/calendar" %></span>
+    <span class="stat-tile__label"><%= t(".stats.appointments_today") %></span>
+    <span class="stat-tile__value"><%= @clinic_appointments.size %></span>
+    <span class="stat-tile__meta"><%= t(".stats.yours", count: @my_appointments.size) %></span>
   <% end %>
 
-  <%= link_to messages_path, class: "card card--interactive quick-link" do %>
-    <span class="quick-link__icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z"/></svg>
-    </span>
-    <span>
-      <span class="quick-link__title"><%= t(".all_messages") %></span>
-      <p class="quick-link__description"><%= t(".all_messages_description") %></p>
-    </span>
+  <% if @next_appointment %>
+    <%= link_to edit_appointment_path(@next_appointment, return_to: root_path),
+          class: "card card--interactive stat-tile", data: { turbo_frame: "modal" } do %>
+      <span class="stat-tile__icon"><%= render "shared/icons/clipboard_document_check" %></span>
+      <span class="stat-tile__label"><%= t(".stats.next") %></span>
+      <span class="stat-tile__value"><%= l(@next_appointment.starts_at, format: :hour) %></span>
+      <span class="stat-tile__meta stat-tile__meta--truncate">
+        <%= @next_appointment.title.presence || t("shared.untitled") %>
+      </span>
+    <% end %>
+  <% else %>
+    <div class="card stat-tile">
+      <span class="stat-tile__icon"><%= render "shared/icons/clipboard_document_check" %></span>
+      <span class="stat-tile__label"><%= t(".stats.next") %></span>
+      <span class="stat-tile__value stat-tile__value--muted">—</span>
+      <span class="stat-tile__meta"><%= t(".stats.no_next") %></span>
+    </div>
+  <% end %>
+
+  <%= link_to "#to-bill", class: ["card card--interactive stat-tile", ("stat-tile--warning" if @unbilled_appointments.any?)] do %>
+    <span class="stat-tile__icon"><%= render "shared/icons/document_text" %></span>
+    <span class="stat-tile__label"><%= t(".stats.to_bill") %></span>
+    <span class="stat-tile__value"><%= @unbilled_appointments.size %></span>
+    <span class="stat-tile__meta"><%= t(".stats.to_bill_hint") %></span>
+  <% end %>
+
+  <%= link_to products_path(low_stock: "1"), class: ["card card--interactive stat-tile", ("stat-tile--warning" if @low_stock_count.positive?)] do %>
+    <span class="stat-tile__icon"><%= render "shared/icons/shopping_bag" %></span>
+    <span class="stat-tile__label"><%= t(".stats.low_stock") %></span>
+    <span class="stat-tile__value"><%= @low_stock_count %></span>
+    <span class="stat-tile__meta"><%= t(".stats.low_stock_hint", count: @low_stock_count) %></span>
   <% end %>
 </div>
 
-<section class="section">
-  <section class="card">
-    <header class="card__header">
-      <div>
-        <h2 class="card__title"><%= t(".developer_tools") %></h2>
-        <p class="card__description"><%= t(".developer_tools_description_html") %></p>
+<div class="home-grid">
+  <div class="home-grid__main">
+    <%# ---------- Today's agenda, "Mine" / "Clinic" ----------
+        CSS-only tabs: two radio buttons, and home.css hides the panel whose radio isn't checked
+        (.today-card:has(#agenda-clinic:checked) …). Starts on "Mine" unless you have nothing today. %>
+    <section class="card today-card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".today.title") %></h2>
+        <div class="segmented" role="radiogroup" aria-label="<%= t(".today.tabs_label") %>">
+          <input type="radio" name="agenda" id="agenda-mine" class="segmented__input"
+                 <%= "checked" if @my_appointments.any? %>>
+          <label for="agenda-mine" class="segmented__option">
+            <%= t(".today.mine") %> <span class="segmented__count"><%= @my_appointments.size %></span>
+          </label>
+          <input type="radio" name="agenda" id="agenda-clinic" class="segmented__input"
+                 <%= "checked" if @my_appointments.empty? %>>
+          <label for="agenda-clinic" class="segmented__option">
+            <%= t(".today.clinic") %> <span class="segmented__count"><%= @clinic_appointments.size %></span>
+          </label>
+        </div>
+      </header>
+
+      <div class="today-card__panel today-card__panel--mine">
+        <% if @my_appointments.any? %>
+          <ol class="agenda">
+            <%= render partial: "agenda_item", collection: @my_appointments, as: :appointment,
+                  locals: { show_employee: false, show_store: @show_store } %>
+          </ol>
+        <% else %>
+          <p class="home-empty"><%= t(".today.empty_mine") %></p>
+        <% end %>
       </div>
-      <%= form_with url: "/messages", method: :post do |form| %>
-        <%= form.button t(".send_test_message"), class: "btn btn--secondary btn--sm" %>
+
+      <div class="today-card__panel today-card__panel--clinic">
+        <% if @clinic_appointments.any? %>
+          <ol class="agenda">
+            <%= render partial: "agenda_item", collection: @clinic_appointments, as: :appointment,
+                  locals: { show_employee: true, show_store: @show_store } %>
+          </ol>
+        <% else %>
+          <p class="home-empty"><%= t(".today.empty_clinic") %></p>
+        <% end %>
+      </div>
+
+      <footer class="card__footer home-card__footer">
+        <%= link_to t(".today.open_calendar"), appointments_path(view: "day", date: Date.current) %>
+      </footer>
+    </section>
+
+    <%# ---------- Finished today, not billed yet ---------- %>
+    <section class="card" id="to-bill">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t(".to_bill.title") %></h2>
+          <p class="card__description"><%= t(".to_bill.description") %></p>
+        </div>
+      </header>
+      <% if @unbilled_appointments.any? %>
+        <ul class="home-list">
+          <% @unbilled_appointments.each do |appointment| %>
+            <li class="home-list__item">
+              <span class="home-list__time"><%= l(appointment.starts_at, format: :hour) %></span>
+              <span class="home-list__main">
+                <span class="home-list__title"><%= appointment.title.presence || t("shared.untitled") %></span>
+                <% if appointment.customer %>
+                  <span class="home-list__meta"><%= appointment.customer.full_name %></span>
+                <% end %>
+              </span>
+              <%# The invoice form fills in the customer and links the invoice to this appointment %>
+              <%= link_to t(".to_bill.create_invoice"), new_invoice_path(appointment_id: appointment.id),
+                    class: "btn btn--primary btn--sm" %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="home-empty"><%= t(".to_bill.empty") %></p>
       <% end %>
-    </header>
-  </section>
-</section>
+    </section>
+  </div>
+
+  <aside class="home-grid__side">
+    <%# ---------- Products under their warning level, lowest stock first ---------- %>
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".low_stock.title") %></h2>
+        <% if @low_stock_count.positive? %>
+          <span class="badge badge--warning"><%= @low_stock_count %></span>
+        <% end %>
+      </header>
+      <% if @low_stock_products.any? %>
+        <ul class="home-list">
+          <% @low_stock_products.each do |product| %>
+            <li class="home-list__item">
+              <span class="home-list__main">
+                <%= link_to product.name.presence || t("products.unnamed"), product_path(product, return_to: root_path),
+                      class: "home-list__title" %>
+              </span>
+              <%# Same colours as products#index: out of stock → red, low → orange %>
+              <span class="badge <%= product.stock.zero? ? "badge--danger" : "badge--warning" %>"><%= product.stock %></span>
+            </li>
+          <% end %>
+        </ul>
+        <footer class="card__footer home-card__footer">
+          <%= link_to t(".see_all"), products_path(low_stock: "1") %>
+        </footer>
+      <% else %>
+        <p class="home-empty"><%= t(".low_stock.empty") %></p>
+      <% end %>
+    </section>
+
+    <%# ---------- Latest WhatsApp activity ---------- %>
+    <section class="card">
+      <header class="card__header">
+        <h2 class="card__title"><%= t(".conversations.title") %></h2>
+      </header>
+      <% if @recent_conversations.any? %>
+        <ul class="home-list">
+          <% @recent_conversations.each do |conversation| %>
+            <% message = conversation.last_message %>
+            <li class="home-list__item">
+              <span class="avatar avatar--sm"><%= conversation.user&.name.to_s.first %></span>
+              <span class="home-list__main">
+                <%= link_to conversation.user&.name.presence || t("conversations.unknown_client"),
+                      conversation_path(conversation), class: "home-list__title" %>
+                <span class="home-list__meta home-list__meta--truncate">
+                  <%= message ? message.text : t(".conversations.no_messages") %>
+                </span>
+              </span>
+              <span class="home-list__time home-list__time--end">
+                <%= t("shared.time_ago", time: time_ago_in_words(conversation.updated_at)) %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+        <footer class="card__footer home-card__footer">
+          <%= link_to t(".see_all"), conversations_path %>
+        </footer>
+      <% else %>
+        <p class="home-empty"><%= t(".conversations.empty") %></p>
+      <% end %>
+    </section>
+  </aside>
+</div>
+
+<%# new/edit appointment forms load into this frame; .modal-host gives it the overlay styles (calendar.css) %>
+<%= turbo_frame_tag "modal", class: "modal-host" %>

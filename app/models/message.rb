@@ -1,5 +1,5 @@
 class Message < ApplicationRecord
-  belongs_to :conversation
+  belongs_to :conversation, touch: true
   # attribute :sender, :integer
   def sender=(value)
     super(value.is_a?(String) ? value.to_i : value)

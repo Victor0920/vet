@@ -1,6 +1,5 @@
  class ProductsController < ApplicationController
-   before_action :set_product, only: %i[ show edit update destroy ]
-   before_action :require_admin, only: :destroy
+   before_action :set_product, only: %i[ show edit update ]
    before_action :set_categories, only: %i[ index new create edit update ]
 
    def index
@@ -42,15 +41,6 @@
        redirect_to product_path(@product), notice: t("flash.products.updated")
      else
        render :edit, status: :unprocessable_entity
-     end
-   end
-
-   # destroy returns false when the product is on an invoice (restrict_with_error)
-   def destroy
-     if @product.archive
-       redirect_to product_path(@product), notice: t("flash.products.archived"), status: :see_other
-     else
-       redirect_to product_path(@product), alert: @product.errors.full_messages.to_sentence, status: :see_other
      end
    end
 
