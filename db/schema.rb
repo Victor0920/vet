@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_150714) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_173546) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -185,7 +185,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_150714) do
     t.string "whatsapp_message_id"
     t.string "delivery_status"
     t.datetime "read_at"
+    t.integer "employee_id"
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["employee_id"], name: "index_messages_on_employee_id"
     t.index ["read_at"], name: "index_messages_on_read_at"
     t.index ["whatsapp_message_id"], name: "index_messages_on_whatsapp_message_id"
   end
@@ -333,6 +335,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_150714) do
   add_foreign_key "invoices", "invoices", column: "original_invoice_id"
   add_foreign_key "invoices", "stores"
   add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "employees"
   add_foreign_key "pet_weights", "pets"
   add_foreign_key "pets", "customers"
   add_foreign_key "pets", "employees", column: "usual_employee_id"

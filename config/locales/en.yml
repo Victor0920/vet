@@ -301,7 +301,6 @@ en:
       deleted: "Conversation deleted"
       failed: "Conversation failed"
       not_found: "Conversation not found"
-      message_created: "Message created"
     customers:
       created: "Customer created"
       updated: "Customer updated"
@@ -314,7 +313,6 @@ en:
       deactivated: "Employee deactivated"
       reactivated: "Employee reactivated"
     messages:
-      created: "Message created"
       failed: "Message failed"
     pets:
       created: "Pet created"
@@ -412,9 +410,8 @@ en:
     unnamed_pet: "Unnamed pet"
     untitled: "Untitled"
     message_senders:
-      user: "User"
-      bot: "Bot"
-      admin: "Admin"
+      customer: "Customer"
+      employee: "Employee"
     delivery_statuses:
       sent: "Sent"
       delivered: "Delivered"
@@ -433,7 +430,6 @@ en:
       unread_conversations:
         one: "1 unread conversation"
         other: "%{count} unread conversations"
-      all_messages: "All messages"
       clinic: "Clinic"
       calendar: "Calendar"
       customers: "Customers"
@@ -1090,8 +1086,7 @@ en:
       all: "All conversations"
       ago: "%{time} ago"
       sender:
-        admin: "You:"
-        bot: "Bot:"
+        employee: "You:"
       no_messages: "No messages yet"
       unread:
         one: "1 unread message"
@@ -1114,7 +1109,6 @@ en:
     show:
       number: "Conversation #%{id}"
       delete_confirm: "Delete this conversation? This can't be undone."
-      send_as: "Send as"
       message: "Message"
       placeholder: "Write a message…"
       send: "Send"
@@ -1128,28 +1122,6 @@ en:
         other: "%{count} pets"
       no_pets: "This customer has no pets yet."
 
-  messages:
-    index:
-      title: "All messages"
-      subtitle:
-        one: "1 message across every conversation"
-        other: "%{count} messages across every conversation"
-      columns:
-        id: "ID"
-        message: "Message"
-        sender: "Sender"
-        status: "Status"
-        sent: "Sent"
-      empty: "No messages yet"
-      empty_hint: "Messages will show up here once a conversation starts."
-    show:
-      number: "Message #%{id}"
-      back: "Back to conversation"
-      sent: "Sent %{time}"
-      text: "Text"
-      sender: "Sender"
-      delivery_status: "Delivery status"
-      whatsapp_id: "WhatsApp ID"
 
   # ---------- Products & categories ----------
   products:

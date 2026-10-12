@@ -4,6 +4,7 @@ class Employee < ApplicationRecord
   has_secure_password
   has_many :sessions, dependent: :destroy
   has_many :appointments
+  has_many :messages, dependent: :nullify
 
   belongs_to :enterprise
   has_one_attached :photo

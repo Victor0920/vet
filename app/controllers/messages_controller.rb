@@ -1,10 +1,8 @@
 class MessagesController < ApplicationController
-  def index
-    @messages = Message.all
-  end
-
   def create
     @message = Message.new(message_params)
+    @message.sender = :employee
+    @message.employee = Current.employee
     @conversation = @message.conversation
 
     Rails.logger.info(@message.errors)
@@ -12,7 +10,7 @@ class MessagesController < ApplicationController
     if @message.save
       respond_to do |format|
         format.json { render json: { success: true, message: @message } }
-        format.html { redirect_to conversation_path(@conversation, return_to: params[:return_to].presence), notice: t("flash.messages.created") }
+        format.html { redirect_to conversation_path(@conversation, return_to: params[:return_to].presence) }
       end
     else
       respond_to do |format|
@@ -22,13 +20,9 @@ class MessagesController < ApplicationController
     end
   end
 
-  def show
-    @message = Message.find_by(id: params[:id])
-  end
-
   private
 
   def message_params
-    params.require(:message).permit(:text, :conversation_id, :sender)
+    params.require(:message).permit(:text, :conversation_id)
   end
 end

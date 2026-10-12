@@ -25,10 +25,6 @@
       <%# How many chats have something unread (set in TopNavComponent), kept live by the stream below %>
       <%= render "conversations/unread_count", count: @unread_conversations %>
     <% end %>
-    <%= link_to helpers.messages_path, class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/messages")) } do %>
-      <%= render "shared/icons/tray_box" %>
-      <span><%= t("components.top_nav.all_messages") %></span>
-    <% end %>
   </nav>
 
   <div class="sidebar__section-label"><%= t("components.top_nav.clinic") %></div>

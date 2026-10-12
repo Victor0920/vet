@@ -13,13 +13,7 @@ Rails.application.routes.draw do
 
   root "pages#home"
 
-  resources :messages, only: [ :index, :show, :create ]
-  # get "/messages", to: "messages#index"
-  # post "/messages", to: "messages#create"
-  # get "/messages/:id", to: "messages#show"
-
-  # get "/conversations", to: "conversations#index"
-  # get "/conversations/:id", to: "conversations#show"
+  resources :messages, only: [ :create ]
   resources :conversations
   resources :customers do
     resources :pets, except: :index do

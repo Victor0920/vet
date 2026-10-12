@@ -1,10 +1,12 @@
 <div class="conversation">
   <div class="conversation__messages">
-    <% @conversation.messages.each do |message| %>
-      <%= render MessageComponent.new(message: message, linked: @linkMessages) %>
+    <%# messages[i + 1] is nil for the last one: show_meta? (conversation_component.rb) compares each
+        message with the next to decide whether it closes a group and shows its sender and time %>
+    <% messages.each_with_index do |message, i| %>
+      <%= render MessageComponent.new(message: message, show_meta: show_meta?(message, messages[i + 1])) %>
     <% end %>
   </div>
-  <% if @conversation.messages.empty? %>
+  <% if messages.empty? %>
     <p class="conversation__empty"><%= t("components.conversation.empty") %></p>
   <% end %>
 </div>

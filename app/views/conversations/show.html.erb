@@ -40,9 +40,7 @@
           <%= hidden_field_tag :return_to, return_to_path %>
         <% end %>
 
-        <%= form.label :sender, t(".send_as"), class: "sr-only" %>
-        <%= form.select :sender, [[t("shared.message_senders.bot"), 1], [t("shared.message_senders.admin"), 2]], {}, class: "select select--sm" %>
-
+        <%# No "send as": the controller always saves it as sender "employee", with the signed-in employee %>
         <%= form.label :text, t(".message"), class: "sr-only" %>
         <%= form.text_field :text, class: "input", placeholder: t(".placeholder"), autocomplete: "off" %>
 

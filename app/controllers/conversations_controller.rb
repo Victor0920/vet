@@ -31,10 +31,10 @@ class ConversationsController < ApplicationController
 
   def create_message
     @conversation = Current.enterprise.conversations.find(params[:id])
-    @message = @conversation.messages.build(message_params)
+    @message = @conversation.messages.build(message_params.merge(sender: :employee, employee: Current.employee))
 
     if @message.save
-      redirect_to @conversation, notice: t("flash.conversations.message_created")
+      redirect_to @conversation
     else
       @messages = @conversation.messages
       render :show

@@ -70,9 +70,9 @@
               <span class="conversation-row__bottom">
                 <span class="conversation-row__preview">
                   <% if message %>
-                    <%# Who wrote it, unless it was the customer (like WhatsApp's "Tú:") %>
-                    <% if message.admin? || message.bot? %>
-                      <span class="conversation-row__sender"><%= t(".sender.#{message.sender}") %></span>
+                    <%# "Tú:" when the clinic wrote it, like WhatsApp; nothing when it was the customer %>
+                    <% if message.employee? %>
+                      <span class="conversation-row__sender"><%= t(".sender.employee") %></span>
                     <% end %>
                     <%= message.text %>
                   <% else %>

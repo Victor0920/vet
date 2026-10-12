@@ -1,23 +1,9 @@
 /*
  * Chat message bubble (MessageComponent)
- *   .message--user   incoming from the pet owner  → left, neutral
- *   .message--admin  sent by clinic staff         → right, solid teal
- *   .message--bot    sent automatically           → right, light teal
+ *   .message--customer  incoming from the pet owner → left, neutral
+ *   .message--employee  sent by clinic staff        → right, solid teal
+ *   .message--continued not the last of its group   → no meta, the next bubble sits closer
  */
-.message-link {
-  display: contents;
-  color: inherit;
-
-  &:hover {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  &:hover .message__bubble {
-    filter: brightness(0.97);
-  }
-}
-
 .message {
   display: flex;
   flex-direction: column;
@@ -34,7 +20,6 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   box-shadow: var(--shadow-xs);
-  transition: filter var(--duration-fast) var(--ease-out);
 }
 
 .message__meta {
@@ -46,7 +31,7 @@
 }
 
 /* Incoming */
-.message--user {
+.message--customer {
   .message__bubble {
     background: var(--color-bubble-incoming);
     color: var(--color-bubble-incoming-text);
@@ -56,21 +41,24 @@
 }
 
 /* Outgoing */
-.message--admin,
-.message--bot {
+.message--employee {
   align-self: flex-end;
   align-items: flex-end;
+
+  .message__bubble {
+    background: var(--color-bubble-admin);
+    color: var(--color-bubble-admin-text);
+    border-bottom-right-radius: var(--radius-sm);
+  }
 }
 
-.message--admin .message__bubble {
-  background: var(--color-bubble-admin);
-  color: var(--color-bubble-admin-text);
-  border-bottom-right-radius: var(--radius-sm);
-}
+/* Grouped messages: .conversation__messages spaces them by --space-3, pull the next bubble
+   up to --space-1 (the meta line under the last one keeps the groups apart). The small
+   "tail" corner only goes on the group's last bubble */
+.message--continued {
+  margin-bottom: calc(var(--space-1) - var(--space-3));
 
-.message--bot .message__bubble {
-  background: var(--color-bubble-bot);
-  color: var(--color-bubble-bot-text);
-  border: var(--border-width) solid var(--color-primary-border);
-  border-bottom-right-radius: var(--radius-sm);
+  .message__bubble {
+    border-radius: var(--radius-2xl);
+  }
 }

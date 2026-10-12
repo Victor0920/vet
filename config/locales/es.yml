@@ -290,7 +290,6 @@ es:
       deleted: "Conversación eliminada"
       failed: "No se ha podido guardar la conversación"
       not_found: "No se ha encontrado la conversación"
-      message_created: "Mensaje creado"
     customers:
       created: "Cliente creado"
       updated: "Cliente actualizado"
@@ -303,7 +302,6 @@ es:
       deactivated: "Empleado desactivado"
       reactivated: "Empleado reactivado"
     messages:
-      created: "Mensaje creado"
       failed: "No se ha podido enviar el mensaje"
     pets:
       created: "Mascota creada"
@@ -401,9 +399,8 @@ es:
     unnamed_pet: "Mascota sin nombre"
     untitled: "Sin título"
     message_senders:
-      user: "Usuario"
-      bot: "Bot"
-      admin: "Admin"
+      customer: "Cliente"
+      employee: "Empleado"
     delivery_statuses:
       sent: "Enviado"
       delivered: "Entregado"
@@ -422,7 +419,6 @@ es:
       unread_conversations:
         one: "1 conversación sin leer"
         other: "%{count} conversaciones sin leer"
-      all_messages: "Todos los mensajes"
       clinic: "Clínica"
       calendar: "Calendario"
       customers: "Clientes"
@@ -1077,8 +1073,7 @@ es:
       all: "Todas las conversaciones"
       ago: "hace %{time}"
       sender:
-        admin: "Tú:"
-        bot: "Bot:"
+        employee: "Tú:"
       no_messages: "Todavía no hay mensajes"
       unread:
         one: "1 mensaje sin leer"
@@ -1101,7 +1096,6 @@ es:
     show:
       number: "Conversación n.º %{id}"
       delete_confirm: "¿Eliminar esta conversación? No se puede deshacer."
-      send_as: "Enviar como"
       message: "Mensaje"
       placeholder: "Escribe un mensaje…"
       send: "Enviar"
@@ -1115,28 +1109,6 @@ es:
         other: "%{count} mascotas"
       no_pets: "Este cliente todavía no tiene mascotas."
 
-  messages:
-    index:
-      title: "Todos los mensajes"
-      subtitle:
-        one: "1 mensaje en todas las conversaciones"
-        other: "%{count} mensajes en todas las conversaciones"
-      columns:
-        id: "ID"
-        message: "Mensaje"
-        sender: "Remitente"
-        status: "Estado"
-        sent: "Enviado"
-      empty: "Todavía no hay mensajes"
-      empty_hint: "Los mensajes aparecerán aquí cuando empiece una conversación."
-    show:
-      number: "Mensaje n.º %{id}"
-      back: "Volver a la conversación"
-      sent: "Enviado el %{time}"
-      text: "Texto"
-      sender: "Remitente"
-      delivery_status: "Estado de entrega"
-      whatsapp_id: "ID de WhatsApp"
 
   # ---------- Productos y categorías ----------
   products:

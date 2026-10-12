@@ -17,7 +17,7 @@ class Conversation < ApplicationRecord
       order(Arel.sql(<<~SQL.squish) => :desc).order(updated_at: :desc)
         EXISTS (SELECT 1 FROM messages
                 WHERE messages.conversation_id = conversations.id
-                  AND messages.sender = #{Message.senders[:user]}
+                  AND messages.sender = #{Message.senders[:customer]}
                   AND messages.read_at IS NULL)
       SQL
     }
