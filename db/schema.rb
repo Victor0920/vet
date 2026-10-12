@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_173546) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_180210) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -118,6 +118,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_173546) do
     t.boolean "active", default: true, null: false
     t.string "locale", default: "es", null: false
     t.string "username", null: false
+    t.integer "default_store_id"
+    t.index ["default_store_id"], name: "index_employees_on_default_store_id"
     t.index ["enterprise_id", "username"], name: "index_employees_on_enterprise_id_and_username", unique: true
     t.index ["enterprise_id"], name: "index_employees_on_enterprise_id"
   end
@@ -325,6 +327,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_173546) do
   add_foreign_key "conversations", "customers"
   add_foreign_key "customers", "enterprises"
   add_foreign_key "employees", "enterprises"
+  add_foreign_key "employees", "stores", column: "default_store_id"
   add_foreign_key "invoice_products", "invoices"
   add_foreign_key "invoice_products", "products"
   add_foreign_key "invoice_products", "services"

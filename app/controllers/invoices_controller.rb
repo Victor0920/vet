@@ -34,7 +34,7 @@ class InvoicesController < ApplicationController
       appointment: appointment,
       customer: customer,
       employee: appointment&.employee || Current.employee,
-      store: appointment&.store || @stores.first,
+      store: appointment&.store || Current.employee.default_store || @stores.first,
       date: Time.current
     )
     @invoice.invoice_products.build(quantity: 1)

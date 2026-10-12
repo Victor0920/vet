@@ -5,7 +5,8 @@
     Locals:
       employee     - the Employee
       appointments - their appointments for today, finished ones included (the controller loads them)
-      own_profile  - true on /profile: shows the language picker and "Sign out" %>
+      own_profile  - true on /profile: shows the preferences (language, default store) and "Sign out"
+      stores       - only with own_profile: the enterprise's stores, for the default store select %>
 <div class="customer-profile">
   <aside class="card customer-profile__sidebar">
     <div class="customer-profile__header">
@@ -64,19 +65,35 @@
       </dl>
     </div>
 
-    <%# Language picker, only on your own profile (/profile). Changing it submits the form right away
-        (auto_submit_controller.js) and ProfilesController#update saves employee.locale.
-        url + method because /profile is a singular resource: there's no id in the URL to build it from.
-        Language names are written in their own language, so everyone can find theirs. %>
+    <%# Preferences, only on your own profile (/profile). Changing either select submits the form right
+        away (auto_submit_controller.js) and ProfilesController#update saves it.
+        url + method because /profile is a singular resource: there's no id in the URL to build it from. %>
     <% if own_profile %>
       <footer class="card__footer profile-footer">
-        <%= form_with model: employee, url: profile_path, method: :patch, class: "form-field",
+        <%= form_with model: employee, url: profile_path, method: :patch, class: "profile-preferences",
               data: { controller: "auto-submit" } do |f| %>
-          <%= f.label :locale, t("employees.show.language"), class: "label" %>
-          <%= f.select :locale, [["Español", "es"], ["English", "en"]], {},
-                class: "select select--sm",
-                data: { action: "change->auto-submit#submit" } %>
-          <p class="form-hint"><%= t("employees.show.language_hint") %></p>
+          <h2 class="profile-preferences__title"><%= t("employees.show.preferences") %></h2>
+
+          <%# Language names are written in their own language, so everyone can find theirs %>
+          <div class="form-field">
+            <%= f.label :locale, t("employees.show.language"), class: "label" %>
+            <%= f.select :locale, [["Español", "es"], ["English", "en"]], {},
+                  class: "select select--sm",
+                  data: { action: "change->auto-submit#submit" } %>
+            <p class="form-hint"><%= t("employees.show.language_hint") %></p>
+          </div>
+
+          <%# Only worth choosing with more than one store. Blank = no default (the first store is used) %>
+          <% if stores.size > 1 %>
+            <div class="form-field">
+              <%= f.label :default_store_id, t("employees.show.default_store"), class: "label" %>
+              <%= f.collection_select :default_store_id, stores, :id, :name,
+                    { include_blank: t("employees.show.no_default_store") },
+                    class: "select select--sm",
+                    data: { action: "change->auto-submit#submit" } %>
+              <p class="form-hint"><%= t("employees.show.default_store_hint") %></p>
+            </div>
+          <% end %>
         <% end %>
 
         <%# Signing out lives here rather than in the sidebar: DELETE /session, so button_to (a small form), not a link %>

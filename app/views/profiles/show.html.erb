@@ -1,4 +1,5 @@
 <% content_for :title, t(".title") %>
 
-<%# Your own page: the same profile as /settings/employees/:id, plus the language picker %>
-<%= render "employees/profile", employee: @employee, appointments: @appointments, own_profile: true %>
+<%# Your own page: the same profile as /settings/employees/:id, plus your preferences %>
+<%= render "employees/profile", employee: @employee, appointments: @appointments, own_profile: true,
+      stores: @stores %>

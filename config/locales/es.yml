@@ -149,6 +149,7 @@ es:
         password: "Contraseña"
         password_confirmation: "Confirmación de contraseña"
         photo: "Foto"
+        default_store: "Centro por defecto"
       pet:
         name: "Nombre"
         pet_species: "Especie"
@@ -989,6 +990,10 @@ es:
       employee_since: "Empleado desde"
       language: "Idioma"
       language_hint: "Cambia el idioma de toda la aplicación para ti."
+      preferences: "Preferencias"
+      default_store: "Centro por defecto"
+      default_store_hint: "Se selecciona automáticamente en la agenda, en las citas nuevas y en las facturas nuevas."
+      no_default_store: "Ninguno (el primero)"
       sign_out: "Cerrar sesión"
       columns:
         when: "Cuándo"
@@ -1117,7 +1122,6 @@ es:
     number: "Producto n.º %{id}"
     columns:
       photo: "Foto"
-      id: "ID"
       product: "Producto"
       category: "Categoría"
       price: "Precio"

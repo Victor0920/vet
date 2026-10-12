@@ -159,6 +159,7 @@ en:
         password: "Password"
         password_confirmation: "Password confirmation"
         photo: "Photo"
+        default_store: "Default store"
       pet:
         name: "Name"
         pet_species: "Species"
@@ -1002,6 +1003,10 @@ en:
       employee_since: "Employee since"
       language: "Language"
       language_hint: "Changes the language of the whole app for you."
+      preferences: "Preferences"
+      default_store: "Default store"
+      default_store_hint: "Preselected in the calendar, new appointments and new invoices."
+      no_default_store: "None (the first one)"
       sign_out: "Sign out"
       columns:
         when: "When"
@@ -1130,7 +1135,6 @@ en:
     number: "Product #%{id}"
     columns:
       photo: "Photo"
-      id: "ID"
       product: "Product"
       category: "Category"
       price: "Price"
