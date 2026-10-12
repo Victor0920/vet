@@ -666,15 +666,48 @@ en:
   pages:
     home:
       title: "Home"
-      heading: "Welcome back"
-      subtitle: "Here's where to pick up today."
-      conversations: "Conversations"
-      conversations_description: "Reply to clients on WhatsApp."
-      all_messages: "All messages"
-      all_messages_description: "Browse every message and its delivery status."
-      developer_tools: "Developer tools"
-      developer_tools_description_html: "Sends a test request to <code>POST /messages</code>."
-      send_test_message: "Send test message"
+      greeting_morning: "Good morning, %{name}"
+      greeting_afternoon: "Good afternoon, %{name}"
+      greeting_evening: "Good evening, %{name}"
+      new_appointment: "New appointment"
+      new_invoice: "New invoice"
+      see_all: "See all"
+      stats:
+        appointments_today: "Appointments today"
+        yours:
+          one: "1 with you"
+          other: "%{count} with you"
+        next: "Your next appointment"
+        no_next: "Nothing else today"
+        to_bill: "To bill"
+        to_bill_hint: "Finished, no invoice yet"
+        low_stock: "Low stock"
+        low_stock_hint:
+          one: "product under its warning level"
+          other: "products under their warning level"
+      today:
+        title: "Today"
+        tabs_label: "Whose appointments to show"
+        mine: "Mine"
+        clinic: "Clinic"
+        you: "You"
+        now: "Now"
+        done: "Done"
+        empty_mine: "You have no appointments today."
+        empty_clinic: "No appointments today."
+        open_calendar: "Open calendar →"
+      to_bill:
+        title: "To bill"
+        description: "Today's finished appointments without an invoice"
+        create_invoice: "Create invoice"
+        empty: "Everything that finished today has been billed."
+      low_stock:
+        title: "Low stock"
+        empty: "All products are above their warning level."
+      conversations:
+        title: "Recent conversations"
+        no_messages: "No messages yet"
+        empty: "No conversations yet."
 
   sessions:
     new:
@@ -937,24 +970,19 @@ en:
       language: "Language"
       language_hint: "Changes the language of the whole app for you."
       sign_out: "Sign out"
-      appointments: "Appointments"
-      appointments_count:
-        one: "1 appointment assigned"
-        other: "%{count} appointments assigned"
       columns:
         when: "When"
         appointment: "Appointment"
         customer: "Customer"
         pet: "Pet"
         room: "Room"
-      empty: "No appointments yet"
-      empty_hint: "Appointments assigned to this employee will show up here."
       today_appointments: "Today's appointments"
       today_appointments_count:
         one: "1 appointment today"
         other: "%{count} appointments today"
       today_empty: "No appointments today"
       today_empty_hint: "Appointments assigned to you for today will show up here."
+      today_empty_hint_other: "Appointments assigned to this employee for today will show up here."
 
   # ---------- Appointments / calendar ----------
   appointments:

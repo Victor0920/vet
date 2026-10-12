@@ -1,6 +1,5 @@
 class ServicesController < ApplicationController
-  before_action :set_service, only: %i[ show edit update destroy ]
-  before_action :require_admin, only: :destroy
+  before_action :set_service, only: %i[ show edit update ]
   before_action :set_categories, only: %i[ index new create edit update ]
 
   def index
@@ -43,16 +42,7 @@ class ServicesController < ApplicationController
     end
   end
 
-  # destroy returns false when the service is on an invoice (restrict_with_error)
-  def destroy
-    if @service.archive
-      redirect_to service_path(@service), notice: t("flash.services.archived"), status: :see_other
-    else
-      redirect_to service_path(@service), alert: @service.errors.full_messages.to_sentence, status: :see_other
-    end
-  end
-
-   private
+  private
 
   def set_service
     @service = Current.enterprise.services.find_by(id: params[:id])

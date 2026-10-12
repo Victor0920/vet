@@ -33,14 +33,14 @@ Rails.application.routes.draw do
   scope "products" do
     resources :product_categories, path: "categories"
   end
-  resources :products do
+  resources :products, except: :destroy do
     resource :archive, only: %i[ create destroy ], module: :products
   end
 
   scope "services" do
     resources :service_categories, path: "categories"
   end
-  resources :services do
+  resources :services, except: :destroy do
     resource :archive, only: %i[ create destroy ], module: :services
   end
 

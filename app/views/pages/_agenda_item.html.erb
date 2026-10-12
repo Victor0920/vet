@@ -1,0 +1,46 @@
+<%# One appointment in the homepage's "Today" card.
+    Locals:
+      appointment   - the Appointment
+      show_employee - true on the "Clinic" tab: says who it's with ("You" for your own)
+      show_store    - true when the clinic has more than one store
+    Finished ones are dimmed; the one happening right now gets a "Now" badge. %>
+<% finished = appointment.ends_at <= Time.current %>
+<% happening = !finished && appointment.starts_at <= Time.current %>
+<li class="agenda-item<%= " agenda-item--done" if finished %><%= " agenda-item--now" if happening %>">
+  <div class="agenda-item__time">
+    <span class="agenda-item__start"><%= l(appointment.starts_at, format: :hour) %></span>
+    <span class="agenda-item__end"><%= l(appointment.ends_at, format: :hour) %></span>
+  </div>
+
+  <div class="agenda-item__main">
+    <%# Opens in the page's modal frame; return_to brings Save/Delete back to the homepage %>
+    <%= link_to appointment.title.presence || t("shared.untitled"),
+          edit_appointment_path(appointment, return_to: root_path),
+          class: "agenda-item__title", data: { turbo_frame: "modal" } %>
+    <% if appointment.pet || appointment.customer %>
+      <span class="agenda-item__meta">
+        <%= [appointment.pet&.name, appointment.customer&.full_name].compact_blank.join(" · ") %>
+      </span>
+    <% end %>
+  </div>
+
+  <div class="agenda-item__side">
+    <span class="agenda-item__place">
+      <%= appointment.room.name %><%= " · #{appointment.store.name}" if show_store %>
+    </span>
+    <span class="agenda-item__badges">
+      <% if show_employee %>
+        <% if appointment.employee_id == Current.employee.id %>
+          <span class="badge badge--primary"><%= t("pages.home.today.you") %></span>
+        <% else %>
+          <span class="badge"><%= appointment.employee.display_name %></span>
+        <% end %>
+      <% end %>
+      <% if happening %>
+        <span class="badge badge--success"><%= t("pages.home.today.now") %></span>
+      <% elsif finished %>
+        <span class="badge"><%= t("pages.home.today.done") %></span>
+      <% end %>
+    </span>
+  </div>
+</li>

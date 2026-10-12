@@ -655,15 +655,48 @@ es:
   pages:
     home:
       title: "Inicio"
-      heading: "Hola de nuevo"
-      subtitle: "Aquí tienes por dónde empezar hoy."
-      conversations: "Conversaciones"
-      conversations_description: "Responde a los clientes por WhatsApp."
-      all_messages: "Todos los mensajes"
-      all_messages_description: "Consulta todos los mensajes y su estado de entrega."
-      developer_tools: "Herramientas de desarrollo"
-      developer_tools_description_html: "Envía una petición de prueba a <code>POST /messages</code>."
-      send_test_message: "Enviar mensaje de prueba"
+      greeting_morning: "Buenos días, %{name}"
+      greeting_afternoon: "Buenas tardes, %{name}"
+      greeting_evening: "Buenas noches, %{name}"
+      new_appointment: "Nueva cita"
+      new_invoice: "Nueva factura"
+      see_all: "Ver todo"
+      stats:
+        appointments_today: "Citas de hoy"
+        yours:
+          one: "1 contigo"
+          other: "%{count} contigo"
+        next: "Tu próxima cita"
+        no_next: "Nada más por hoy"
+        to_bill: "Por facturar"
+        to_bill_hint: "Terminadas, sin factura"
+        low_stock: "Stock bajo"
+        low_stock_hint:
+          one: "producto por debajo de su aviso"
+          other: "productos por debajo de su aviso"
+      today:
+        title: "Hoy"
+        tabs_label: "Qué citas mostrar"
+        mine: "Mías"
+        clinic: "Clínica"
+        you: "Tú"
+        now: "Ahora"
+        done: "Hecha"
+        empty_mine: "No tienes citas hoy."
+        empty_clinic: "No hay citas hoy."
+        open_calendar: "Abrir calendario →"
+      to_bill:
+        title: "Por facturar"
+        description: "Citas de hoy ya terminadas y sin factura"
+        create_invoice: "Crear factura"
+        empty: "Todo lo que ha terminado hoy ya está facturado."
+      low_stock:
+        title: "Stock bajo"
+        empty: "Todos los productos están por encima de su aviso."
+      conversations:
+        title: "Conversaciones recientes"
+        no_messages: "Todavía no hay mensajes"
+        empty: "Todavía no hay conversaciones."
 
   sessions:
     new:
@@ -924,24 +957,19 @@ es:
       language: "Idioma"
       language_hint: "Cambia el idioma de toda la aplicación para ti."
       sign_out: "Cerrar sesión"
-      appointments: "Citas"
-      appointments_count:
-        one: "1 cita asignada"
-        other: "%{count} citas asignadas"
       columns:
         when: "Cuándo"
         appointment: "Cita"
         customer: "Cliente"
         pet: "Mascota"
         room: "Sala"
-      empty: "Todavía no hay citas"
-      empty_hint: "Las citas asignadas a este empleado aparecerán aquí."
       today_appointments: "Citas de hoy"
       today_appointments_count:
         one: "1 cita hoy"
         other: "%{count} citas hoy"
-      today_empty: "No tienes citas hoy"
+      today_empty: "No hay citas hoy"
       today_empty_hint: "Aquí aparecerán las citas que tengas asignadas para hoy."
+      today_empty_hint_other: "Aquí aparecerán las citas asignadas a este empleado para hoy."
 
   # ---------- Citas / calendario ----------
   appointments:
