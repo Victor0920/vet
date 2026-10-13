@@ -1,0 +1,70 @@
+<% content_for :title, t(".title") %>
+
+<%# Singular resource: model + url, since there's no :id in /settings/calendar %>
+<%= form_with model: @enterprise, url: calendar_settings_path, method: :patch,
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: @enterprise.errors.any? } do |f| %>
+  <div class="resource-form__toolbar">
+    <%= render "shared/back_link", path: calendar_settings_path, label: t("calendar_settings.show.title") %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), calendar_settings_path, class: "btn btn--ghost" %>
+      <%= f.submit t("shared.save_changes"), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+
+    <% if @enterprise.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% @enterprise.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("calendar_settings.show.calendar") %></h2>
+          <p class="card__description"><%= t("calendar_settings.show.calendar_hint") %></p>
+        </div>
+      </header>
+      <%# step: 900 seconds = 15 minutes, the calendar's slot size, so the pickers go in quarter hours %>
+      <dl class="field-list">
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :calendar_opens_at %></dt>
+          <dd class="field-row__value">
+            <%= f.time_field :calendar_opens_at, class: "input calendar-settings__time", step: 900, required: true,
+                  aria: { invalid: @enterprise.errors[:calendar_opens_at].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :calendar_closes_at %></dt>
+          <dd class="field-row__value">
+            <%= f.time_field :calendar_closes_at, class: "input calendar-settings__time", step: 900, required: true,
+                  aria: { invalid: @enterprise.errors[:calendar_closes_at].any? } %>
+            <p class="form-hint"><%= t(".hours_hint") %></p>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :default_appointment_minutes %></dt>
+          <dd class="field-row__value">
+            <div class="calendar-settings__minutes">
+              <%= f.number_field :default_appointment_minutes, class: "input", min: 5, max: 480, step: 5, required: true,
+                    aria: { invalid: @enterprise.errors[:default_appointment_minutes].any? } %>
+              <span class="text-subtle"><%= t(".minutes_unit") %></span>
+            </div>
+            <p class="form-hint"><%= t(".duration_hint") %></p>
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+<% end %>

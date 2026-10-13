@@ -1,0 +1,13 @@
+<% title = t(".title", store: @store.name.presence || t("stores.unnamed")) %>
+<% content_for :title, title %>
+
+<%= render "form", store: @store, opening_hour: @opening_hour, title: title %>
+
+<%# Outside the form above: a <form> can't contain another one, and button_to is a small form %>
+<div class="resource-form opening-hour-delete">
+  <%= button_to store_opening_hour_path(@store, @opening_hour), method: :delete, class: "btn btn--danger-ghost btn--sm",
+        form: { data: { turbo_confirm: t(".delete_confirm"), confirm_button: t("shared.delete") } } do %>
+    <%= render "shared/icons/trash" %>
+    <%= t(".delete") %>
+  <% end %>
+</div>

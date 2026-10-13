@@ -33,16 +33,20 @@
             aria: { invalid: appointment.errors[:title].any? } %>
     </div>
 
-    <div class="form-grid">
+    <%# appointment_duration_controller.js: moving the start moves the end too, keeping the length
+        (the default one from Settings → Appointments and calendar for a new appointment) %>
+    <div class="form-grid" data-controller="appointment-duration">
       <div class="form-field">
         <%= f.label :starts_at, class: "label" %>
         <%= f.datetime_field :starts_at, class: "input", step: 900, required: true,
-              aria: { invalid: appointment.errors[:starts_at].any? } %>
+              aria: { invalid: appointment.errors[:starts_at].any? },
+              data: { appointment_duration_target: "start", action: "change->appointment-duration#startChanged" } %>
       </div>
       <div class="form-field">
         <%= f.label :ends_at, class: "label" %>
         <%= f.datetime_field :ends_at, class: "input", step: 900, required: true,
-              aria: { invalid: appointment.errors[:ends_at].any? } %>
+              aria: { invalid: appointment.errors[:ends_at].any? },
+              data: { appointment_duration_target: "end", action: "change->appointment-duration#endChanged" } %>
       </div>
     </div>
 

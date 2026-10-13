@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  store: one
+  weekday: 1
+  opens_at: "09:00"
+  closes_at: "14:00"
+
+two:
+  store: one
+  weekday: 1
+  opens_at: "17:00"
+  closes_at: "20:00"

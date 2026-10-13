@@ -1,6 +1,4 @@
 module CalendarHelper
-  DAY_START_HOUR = 8
-  DAY_END_HOUR = 20
   SLOT_MINUTES = 15 # if you change this, also change --slots-per-hour in calendar.css
 
   # "Tuesday, 6 October 2026" / "5 Oct – 11 Oct 2026" / "October 2026"
@@ -26,8 +24,15 @@ module CalendarHelper
     end
   end
 
-  def calendar_day_start(day) = day.in_time_zone.change(hour: DAY_START_HOUR)
-  def calendar_day_end(day) = day.in_time_zone.change(hour: DAY_END_HOUR)
+  # Opening hours from Settings → Appointments and calendar (Enterprise#calendar_opens_at/closes_at)
+  def calendar_day_start(day) = calendar_time_on(day, Current.enterprise.calendar_opens_at)
+  def calendar_day_end(day) = calendar_time_on(day, Current.enterprise.calendar_closes_at)
+
+  # "08:30" on that day, in the app's time zone
+  def calendar_time_on(day, hh_mm)
+    hour, min = hh_mm.split(":").map(&:to_i)
+    day.in_time_zone.change(hour: hour, min: min)
+  end
 
   # Start time of every slot between opening and closing
   def calendar_slots(day)

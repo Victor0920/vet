@@ -2,6 +2,7 @@ class Store < ApplicationRecord
   belongs_to :enterprise
   has_many :appointments, dependent: :destroy
   has_many :rooms, dependent: :destroy
+  has_many :opening_hours, dependent: :delete_all
   has_one_attached :photo
   has_one_attached :logo do |attachable|
     attachable.variant :thumb, resize_to_limit: [ 320, 320 ], preprocessed: true
@@ -18,6 +19,15 @@ class Store < ApplicationRecord
 
   before_save { self.photo = nil if remove_photo && photo.persisted? }
   before_save { self.logo = nil if remove_logo && logo.persisted? }
+
+  # For automatic bookings: is one opening period covering the whole appointment?
+  def open_between?(starts_at, ends_at)
+    return false unless starts_at.to_date == ends_at.to_date
+
+    opening_hours.where(weekday: starts_at.wday)
+                 .where("opens_at <= ? AND closes_at >= ?", starts_at.strftime("%H:%M"), ends_at.strftime("%H:%M"))
+                 .exists?
+  end
 
   private
 

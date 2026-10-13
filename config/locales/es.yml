@@ -52,6 +52,9 @@ es:
       enterprise:
         one: "Empresa"
         other: "Empresas"
+      opening_hour:
+        one: "Horario de apertura"
+        other: "Horarios de apertura"
       appointment:
         one: "Cita"
         other: "Citas"
@@ -107,6 +110,13 @@ es:
         invoice_layout: "Diseño"
         invoice_color: "Color de realce"
         invoice_footer: "Nota al pie"
+        calendar_opens_at: "Apertura de la agenda"
+        calendar_closes_at: "Cierre de la agenda"
+        default_appointment_minutes: "Duración de las citas"
+      opening_hour:
+        weekday: "Día"
+        opens_at: "Abre"
+        closes_at: "Cierra"
       appointment:
         title: "Título"
         starts_at: "Inicio"
@@ -224,6 +234,9 @@ es:
     errors:
       messages:
         must_be_after_start: "debe ser posterior a la hora de inicio"
+        after_opening: "debe ser posterior a la hora de apertura"
+        overlaps: "Se solapa con otro periodo del %{day}"
+        no_weekdays: "Marca al menos un día"
         already_booked: "ya está reservada a esa hora"
         not_this_customers_pet: "no pertenece a este cliente"
         must_match_customer_enterprise: "debe coincidir con la empresa del cliente"
@@ -278,6 +291,15 @@ es:
       updated: "Datos de la empresa actualizados"
     invoice_settings:
       updated: "Ajustes de facturación actualizados"
+    calendar_settings:
+      updated: "Ajustes de citas y agenda actualizados"
+    opening_hours:
+      created:
+        one: "Periodo añadido"
+        other: "%{count} periodos añadidos"
+      updated: "Periodo actualizado"
+      deleted: "Periodo eliminado"
+      not_found: "Periodo no encontrado"
     access:
       updated: "ID de empresa actualizado"
     appointments:
@@ -490,6 +512,11 @@ es:
       no_rooms_hint: "Las salas de este centro aparecerán aquí."
       new_room: "Nueva sala"
       add_first_room: "Añade la primera sala"
+      opening_hours: "Horario de apertura"
+      opening_hours_hint: "Cuándo está abierto este centro. Se usará para reservar citas automáticamente; no cambia la agenda."
+      new_opening_hour: "Añadir horario"
+      closed: "Cerrado"
+      edit_period: "Editar %{day} de %{from} a %{to}"
     new:
       title: "Nuevo centro"
     edit:
@@ -511,6 +538,41 @@ es:
   profiles:
     show:
       title: "Mi perfil"
+
+  opening_hours:
+    new:
+      title: "Añadir horario en %{store}"
+    edit:
+      title: "Editar horario de %{store}"
+      delete: "Eliminar este periodo"
+      delete_confirm: "¿Eliminar este periodo del horario?"
+    form:
+      create: "Añadir horario"
+      details: "Periodo"
+      details_hint: "Un tramo en el que el centro está abierto. Si cierra a mediodía, añade la mañana y la tarde por separado."
+      weekdays: "Días"
+      weekdays_hint: "Se añadirá el mismo horario a cada día marcado."
+
+  # ---------- Citas y agenda (/settings/calendar) ----------
+  calendar_settings:
+    show:
+      title: "Citas y agenda"
+      subtitle: "Cómo se ve la agenda y cuánto duran las citas nuevas."
+      edit: "Editar ajustes"
+      calendar: "Agenda"
+      calendar_hint: "Afecta a todos los centros."
+      visible_hours: "Horas visibles en la agenda"
+      minutes:
+        one: "1 minuto"
+        other: "%{count} minutos"
+      opening_hours: "Horario de apertura"
+      opening_hours_hint: "Cada centro tiene su propio horario semanal, en la página del centro."
+      manage_stores: "Ir a centros"
+    edit:
+      title: "Editar citas y agenda"
+      hours_hint: "Las horas que muestra la agenda, en tramos de 15 minutos. No cambia el horario de apertura de los centros."
+      minutes_unit: "minutos"
+      duration_hint: "Al crear una cita, la hora de fin se rellena con la de inicio más esta duración."
 
   rooms:
     new:
@@ -620,6 +682,9 @@ es:
         catalogue:
           title: "Catálogo"
           description: "Cómo se organizan los productos y servicios."
+        appointments:
+          title: "Citas y agenda"
+          description: "Cómo se ve la agenda y cuánto duran las citas."
         billing:
           title: "Facturación"
           description: "La numeración y el aspecto de tus facturas."
@@ -634,7 +699,7 @@ es:
         stores:
           title: "Centros y salas"
           description: "Tus clínicas y las salas donde se reservan citas."
-          items: ["Centros", "Salas", "Códigos de facturación"]
+          items: ["Centros", "Salas", "Horario de apertura", "Códigos de facturación"]
         employees:
           title: "Empleados"
           description: "Da de alta al equipo, asigna roles y desactiva cuentas."
@@ -647,6 +712,10 @@ es:
         service_categories:
           title: "Categorías de servicios"
           description: "Agrupa los servicios y elige sus colores."
+        calendar:
+          title: "Citas y agenda"
+          description: "Las horas visibles en la agenda y la duración por defecto de las citas."
+          items: ["Horas visibles", "Duración de las citas"]
         invoicing:
           title: "Facturas"
           description: "Cómo se numeran las facturas y cómo es el PDF."

@@ -42,6 +42,12 @@ class Enterprise < ApplicationRecord
   normalizes :login_code, with: ->(code) { code.strip.downcase }
   validates :login_code, presence: true, uniqueness: true, format: { with: /\A[a-z0-9-]{3,30}\z/ }
 
+  # Calendar opening hours, "HH:MM" on the quarter hour (the calendar's slots are 15 minutes)
+  CALENDAR_TIME = /\A([01]\d|2[0-3]):(00|15|30|45)\z/
+  validates :calendar_opens_at, :calendar_closes_at, format: { with: CALENDAR_TIME }
+  validate :calendar_closes_after_opening
+  validates :default_appointment_minutes, numericality: { only_integer: true, in: 5..480 }
+
   # Live-updates the unread badges (sidebar + home card) on every open page of this company.
   # Called when a customer message arrives and when a chat is opened (Conversation#mark_read!)
   def broadcast_unread_conversations
@@ -78,5 +84,12 @@ class Enterprise < ApplicationRecord
     if logo.attached? && !logo.content_type.in?(%w[image/png image/jpeg])
       errors.add(:logo, :png_or_jpg_only)
     end
+  end
+
+  # Zero-padded "HH:MM" strings compare like times: "09:00" < "20:00"
+  def calendar_closes_after_opening
+    return unless calendar_opens_at.to_s.match?(CALENDAR_TIME) && calendar_closes_at.to_s.match?(CALENDAR_TIME)
+
+    errors.add(:calendar_closes_at, :after_opening) if calendar_closes_at <= calendar_opens_at
   end
 end

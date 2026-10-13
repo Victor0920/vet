@@ -1,0 +1,79 @@
+<%# Shared by opening_hours/new and /edit. Locals: store, opening_hour, title (the page heading).
+    New: tick several days to add the same period to all of them (weekdays[], read by the controller).
+    Edit: one period is one day, so it's a plain select %>
+<%= form_with model: [store, opening_hour],
+      data: { controller: "unsaved-changes", unsaved_changes_message_value: t("shared.unsaved_changes"),
+              unsaved_changes_leave_label_value: t("shared.unsaved_changes_leave"),
+              unsaved_changes_save_label_value: t("shared.unsaved_changes_save"),
+              unsaved_changes_dirty_value: opening_hour.errors.any? } do |f| %>
+  <div class="resource-form__toolbar">
+    <%= render "shared/back_link", path: store_path(store), label: t("rooms.form.back_to", store: store.name.presence || t("stores.unnamed")) %>
+
+    <div class="page-header__actions">
+      <%= link_to t("shared.cancel"), store_path(store), class: "btn btn--ghost" %>
+      <%= f.submit (opening_hour.persisted? ? t("shared.save_changes") : t("opening_hours.form.create")), class: "btn btn--primary" %>
+    </div>
+  </div>
+
+  <div class="resource-form stack">
+    <h1 class="page-header__title"><%= title %></h1>
+
+    <% if opening_hour.errors.any? %>
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <ul class="form-errors">
+          <% opening_hour.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <section class="card">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("opening_hours.form.details") %></h2>
+          <p class="card__description"><%= t("opening_hours.form.details_hint") %></p>
+        </div>
+      </header>
+      <dl class="field-list">
+        <div class="field-row">
+          <% if opening_hour.persisted? %>
+            <dt class="field-row__label"><%= f.label :weekday %></dt>
+            <dd class="field-row__value">
+              <%= f.select :weekday, OpeningHour::WEEKDAYS.map { |wday| [t("date.day_names")[wday].capitalize, wday] }, {},
+                    class: "select", aria: { invalid: opening_hour.errors[:weekday].any? } %>
+            </dd>
+          <% else %>
+            <dt class="field-row__label" id="weekdays-label"><%= t("opening_hours.form.weekdays") %></dt>
+            <dd class="field-row__value">
+              <%# Each day is a real checkbox (hidden) with a pill <label>: clicking the pill ticks it %>
+              <div class="weekday-picker" role="group" aria-labelledby="weekdays-label">
+                <% OpeningHour::WEEKDAYS.each do |wday| %>
+                  <%= check_box_tag "weekdays[]", wday, @weekdays.include?(wday), id: "weekday_#{wday}", class: "weekday-picker__input" %>
+                  <label for="weekday_<%= wday %>" class="weekday-picker__day"><%= t("date.abbr_day_names")[wday].capitalize %></label>
+                <% end %>
+              </div>
+              <p class="form-hint"><%= t("opening_hours.form.weekdays_hint") %></p>
+            </dd>
+          <% end %>
+        </div>
+        <%# step: 900 seconds = 15 minutes, so the pickers go in quarter hours %>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :opens_at %></dt>
+          <dd class="field-row__value">
+            <%= f.time_field :opens_at, class: "input calendar-settings__time", step: 900, required: true,
+                  aria: { invalid: opening_hour.errors[:opens_at].any? } %>
+          </dd>
+        </div>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :closes_at %></dt>
+          <dd class="field-row__value">
+            <%= f.time_field :closes_at, class: "input calendar-settings__time", step: 900, required: true,
+                  aria: { invalid: opening_hour.errors[:closes_at].any? } %>
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+<% end %>

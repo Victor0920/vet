@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_180210) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_182429) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -138,6 +138,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_180210) do
     t.string "invoice_layout", default: "classic", null: false
     t.string "invoice_color", default: "teal", null: false
     t.text "invoice_footer"
+    t.string "calendar_opens_at", default: "08:00", null: false
+    t.string "calendar_closes_at", default: "20:00", null: false
+    t.integer "default_appointment_minutes", default: 30, null: false
     t.index ["login_code"], name: "index_enterprises_on_login_code", unique: true
   end
 
@@ -192,6 +195,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_180210) do
     t.index ["employee_id"], name: "index_messages_on_employee_id"
     t.index ["read_at"], name: "index_messages_on_read_at"
     t.index ["whatsapp_message_id"], name: "index_messages_on_whatsapp_message_id"
+  end
+
+  create_table "opening_hours", force: :cascade do |t|
+    t.integer "store_id", null: false
+    t.integer "weekday", null: false
+    t.string "opens_at", null: false
+    t.string "closes_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["store_id", "weekday"], name: "index_opening_hours_on_store_id_and_weekday"
+    t.index ["store_id"], name: "index_opening_hours_on_store_id"
   end
 
   create_table "pet_species", force: :cascade do |t|
@@ -339,6 +353,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_180210) do
   add_foreign_key "invoices", "stores"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "employees"
+  add_foreign_key "opening_hours", "stores"
   add_foreign_key "pet_weights", "pets"
   add_foreign_key "pets", "customers"
   add_foreign_key "pets", "employees", column: "usual_employee_id"

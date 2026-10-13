@@ -64,6 +64,41 @@
   </div>
 </section>
 
+<%# Weekly opening hours (OpeningHour), for automatic bookings. The calendar's visible hours are a
+    separate setting (Settings → Appointments and calendar). @opening_hours: periods grouped by weekday %>
+<header class="customer-profile__section-header customer-profile__section-header--spaced">
+  <div>
+    <h2 class="section__title"><%= t(".opening_hours") %></h2>
+    <p class="text-muted"><%= t(".opening_hours_hint") %></p>
+  </div>
+  <%= link_to new_store_opening_hour_path(@store), class: "btn btn--secondary" do %>
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path
+        d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"
+      /></svg>
+    <%= t(".new_opening_hour") %>
+  <% end %>
+</header>
+
+<%# Monday first (OpeningHour::WEEKDAYS); each period links to its edit page, where it can also be deleted %>
+<ul class="card opening-hours">
+  <% OpeningHour::WEEKDAYS.each do |wday| %>
+    <% periods = @opening_hours[wday] || [] %>
+    <li class="opening-hours__day">
+      <span class="opening-hours__name"><%= t("date.day_names")[wday].capitalize %></span>
+      <span class="opening-hours__periods">
+        <% if periods.any? %>
+          <% periods.each do |period| %>
+            <%= link_to "#{period.opens_at} – #{period.closes_at}", edit_store_opening_hour_path(@store, period),
+                  class: "opening-hours__period", aria: { label: t(".edit_period", day: t("date.day_names")[wday], from: period.opens_at, to: period.closes_at) } %>
+          <% end %>
+        <% else %>
+          <span class="opening-hours__closed"><%= t(".closed") %></span>
+        <% end %>
+      </span>
+    </li>
+  <% end %>
+</ul>
+
 <header class="customer-profile__section-header customer-profile__section-header--spaced">
   <div>
     <h2 class="section__title"><%= t(".rooms") %></h2>
