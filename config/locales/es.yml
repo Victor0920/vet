@@ -673,56 +673,41 @@ es:
       subtitle: "Gestiona tu negocio: empresa, centros, equipo, catálogo, facturación y comunicación con clientes."
       coming_soon: "Próximamente"
       groups:
-        business:
-          title: "Negocio"
-          description: "Los datos de tu empresa y los centros donde trabajas."
-        team:
-          title: "Equipo"
-          description: "Quién trabaja contigo y qué puede hacer."
-        catalogue:
-          title: "Catálogo"
-          description: "Cómo se organizan los productos y servicios."
-        appointments:
-          title: "Citas y agenda"
-          description: "Cómo se ve la agenda y cuánto duran las citas."
-        billing:
-          title: "Facturación"
-          description: "La numeración y el aspecto de tus facturas."
-        messaging:
-          title: "Comunicación"
-          description: "Los canales con los que hablas con tus clientes."
-      tiles:
+        business: "Negocio"
+        team: "Equipo"
+        catalogue: "Catálogo"
+        appointments: "Citas y agenda"
+        billing: "Facturación"
+        messaging: "Comunicación"
+      # Una línea por ajuste: si no cabe, se corta con "…"
+      items:
         enterprise:
           title: "Datos de la empresa"
-          description: "Nombre, datos fiscales y dirección, tal como salen en las facturas."
-          items: ["Datos fiscales", "Dirección"]
+          description: "Nombre, datos fiscales y dirección"
         stores:
           title: "Centros y salas"
-          description: "Tus clínicas y las salas donde se reservan citas."
-          items: ["Centros", "Salas", "Horario de apertura", "Códigos de facturación"]
+          description: "Clínicas, salas, horario de apertura y códigos de facturación"
         employees:
           title: "Empleados"
-          description: "Da de alta al equipo, asigna roles y desactiva cuentas."
+          description: "Altas, roles y cuentas desactivadas"
         access:
           title: "Acceso"
-          description: "El ID de empresa que escribe tu equipo para entrar."
+          description: "El ID de empresa con el que entra tu equipo"
         product_categories:
           title: "Categorías de productos"
-          description: "Agrupa los productos y elige sus colores."
+          description: "Grupos y colores de los productos"
         service_categories:
           title: "Categorías de servicios"
-          description: "Agrupa los servicios y elige sus colores."
+          description: "Grupos y colores de los servicios"
         calendar:
-          title: "Citas y agenda"
-          description: "Las horas visibles en la agenda y la duración por defecto de las citas."
-          items: ["Horas visibles", "Duración de las citas"]
+          title: "Agenda"
+          description: "Horas visibles y duración de las citas"
         invoicing:
           title: "Facturas"
-          description: "Cómo se numeran las facturas y cómo es el PDF."
-          items: ["Numeración", "Diseño y color", "Logo", "Nota al pie"]
+          description: "Numeración, diseño, color, logo y nota al pie"
         whatsapp:
           title: "WhatsApp"
-          description: "Conecta el número desde el que escribes a los clientes."
+          description: "El número desde el que escribes a los clientes"
 
   # ---------- Páginas ----------
   pages:
