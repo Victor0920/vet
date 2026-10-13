@@ -40,6 +40,30 @@
         </div>
       </section>
     <% end %>
+
+    <%# Your one reply, shown to the employee on /help. Write, edit or empty it any time:
+        an empty box removes it (Feedback normalizes "" to nil) %>
+    <%= form_with model: @feedback, url: developer_feedback_path(@feedback), method: :patch, class: "card" do |f| %>
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= f.label :response, t(".response") %></h2>
+          <p class="card__description">
+            <% if @feedback.responded_at %>
+              <%= t(".response_saved", time: time_ago_in_words(@feedback.responded_at)) %>
+            <% else %>
+              <%= t(".response_hint") %>
+            <% end %>
+          </p>
+        </div>
+      </header>
+      <div class="card__body">
+        <%= f.text_area :response, rows: 5, maxlength: 5000, class: "textarea",
+              placeholder: t(".response_placeholder") %>
+      </div>
+      <footer class="card__footer developer-feedback__reply-footer">
+        <%= f.submit t(".save_response"), class: "btn btn--primary" %>
+      </footer>
+    <% end %>
   </div>
 
   <aside class="card">

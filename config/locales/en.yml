@@ -135,6 +135,7 @@ en:
         message: "Message"
         images: "Images"
         status: "Status"
+        response: "Reply"
         page_url: "Page"
         user_agent: "Browser"
         enterprise: "Company"
@@ -320,7 +321,7 @@ en:
     feedbacks:
       created: "Thank you! I've got it and will get back to you as soon as I can"
       rate_limited: "You've sent a lot in a row. Wait a while or contact me directly"
-      status_updated: "Status updated"
+      updated: "Saved"
     calendar_settings:
       updated: "Appointment and calendar settings updated"
     opening_hours:
@@ -643,6 +644,8 @@ en:
         title: "What you've sent"
         sent: "Sent %{time} ago"
         image_alt: "Attached screenshot"
+        reply: "Reply from the developer"
+        reply_time: "%{time} ago"
         empty: "You haven't sent anything yet"
         empty_hint: "What you send will show up here with its status: Received, In progress or Resolved."
 
@@ -656,9 +659,15 @@ en:
         filter: "Filter by status"
         all: "All"
         deleted_employee: "Deleted employee"
+        responded: "Replied"
         empty: "Nothing here"
       show:
         title: "Feedback #%{id}"
+        response: "Reply"
+        response_hint: "The employee sees it on their Help & feedback page. Change it any time; empty it to remove it."
+        response_saved: "Saved %{time} ago. The employee sees it on Help & feedback."
+        response_placeholder: "For example: Thanks! It's fixed now, reload the page and try again."
+        save_response: "Save reply"
 
   feedback_mailer:
     submitted:

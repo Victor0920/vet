@@ -125,6 +125,7 @@ es:
         message: "Mensaje"
         images: "Imágenes"
         status: "Estado"
+        response: "Respuesta"
         page_url: "Página"
         user_agent: "Navegador"
         enterprise: "Empresa"
@@ -309,7 +310,7 @@ es:
     feedbacks:
       created: "¡Gracias! Lo he recibido y te responderé lo antes posible"
       rate_limited: "Has enviado muchas sugerencias seguidas. Espera un rato o escríbeme directamente"
-      status_updated: "Estado actualizado"
+      updated: "Guardado"
     calendar_settings:
       updated: "Ajustes de citas y agenda actualizados"
     opening_hours:
@@ -632,6 +633,8 @@ es:
         title: "Tus envíos"
         sent: "Enviado hace %{time}"
         image_alt: "Captura adjunta"
+        reply: "Respuesta del desarrollador"
+        reply_time: "hace %{time}"
         empty: "Todavía no has enviado nada"
         empty_hint: "Lo que envíes aparecerá aquí, con su estado: Recibido, En curso o Resuelto."
 
@@ -645,9 +648,15 @@ es:
         filter: "Filtrar por estado"
         all: "Todas"
         deleted_employee: "Empleado eliminado"
+        responded: "Respondida"
         empty: "No hay nada aquí"
       show:
         title: "Sugerencia n.º %{id}"
+        response: "Respuesta"
+        response_hint: "El empleado la verá en su página de Ayuda y sugerencias. Puedes cambiarla cuando quieras; si la vacías, desaparece."
+        response_saved: "Guardada hace %{time}. El empleado la ve en Ayuda y sugerencias."
+        response_placeholder: "Por ejemplo: ¡Gracias! Ya está arreglado, recarga la página y vuelve a probar."
+        save_response: "Guardar respuesta"
 
   feedback_mailer:
     submitted:

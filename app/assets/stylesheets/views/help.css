@@ -492,3 +492,45 @@
     padding: var(--space-3) var(--space-4);
   }
 }
+
+/* ---------- The developer's reply (feedbacks#index, under each submission) ---------- */
+
+/* Set apart from the employee's own message: tinted, with the brand colour on the left, like a quote */
+.help-reply {
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: var(--color-primary-subtle);
+}
+
+.help-reply__title {
+  margin: 0 0 var(--space-1);
+  color: var(--color-primary-text);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.help-reply__time {
+  font-weight: var(--weight-regular);
+  color: var(--color-text-subtle);
+}
+
+.help-reply__text {
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+
+  p {
+    margin: 0;
+  }
+
+  p + p {
+    margin-top: var(--space-1);
+  }
+}
+
+/* developer/feedbacks#show: the reply form's save button on the right */
+.developer-feedback__reply-footer {
+  display: flex;
+  justify-content: flex-end;
+}

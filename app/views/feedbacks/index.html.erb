@@ -162,6 +162,16 @@
                   <% end %>
                 </div>
               <% end %>
+              <%# The developer's reply (one per feedback, set in /developer/feedback) %>
+              <% if feedback.response %>
+                <div class="help-reply">
+                  <p class="help-reply__title">
+                    <%= t(".mine.reply") %>
+                    <span class="help-reply__time">· <%= t(".mine.reply_time", time: time_ago_in_words(feedback.responded_at)) %></span>
+                  </p>
+                  <div class="help-reply__text"><%= simple_format(feedback.response) %></div>
+                </div>
+              <% end %>
             </li>
           <% end %>
         </ul>

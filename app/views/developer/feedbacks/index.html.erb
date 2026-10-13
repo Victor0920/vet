@@ -39,6 +39,9 @@
           </span>
           <span class="developer-inbox__badges">
             <span class="badge"><%= t(feedback.kind, scope: "feedbacks.kinds") %></span>
+            <% if feedback.response %>
+              <span class="badge badge--primary"><%= t(".responded") %></span>
+            <% end %>
             <% if feedback.images.attached? %>
               <span class="badge"><%= render "shared/icons/photo" %><%= feedback.images.size %></span>
             <% end %>

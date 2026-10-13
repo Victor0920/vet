@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_13_093009) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_103333) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -154,6 +154,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_093009) do
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "response"
+    t.datetime "responded_at"
     t.index ["employee_id"], name: "index_feedbacks_on_employee_id"
     t.index ["enterprise_id"], name: "index_feedbacks_on_enterprise_id"
     t.index ["status", "created_at"], name: "index_feedbacks_on_status_and_created_at"

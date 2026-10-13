@@ -15,8 +15,9 @@ module Developer
     def update
       @feedback = Feedback.find(params[:id])
 
-      if @feedback.update(params.expect(feedback: [ :status ]))
-        redirect_to developer_feedback_path(@feedback), notice: t("flash.feedbacks.status_updated")
+      # Two forms send here: the status select and the reply box, each with only its own field
+      if @feedback.update(params.expect(feedback: [ :status, :response ]))
+        redirect_to developer_feedback_path(@feedback), notice: t("flash.feedbacks.updated")
       else
         redirect_to developer_feedback_path(@feedback), alert: @feedback.errors.full_messages.to_sentence
       end

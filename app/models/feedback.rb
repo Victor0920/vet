@@ -12,6 +12,12 @@ class Feedback < ApplicationRecord
   normalizes :message, with: ->(text) { text.strip }
   normalizes :page_url, :user_agent, with: ->(text) { text.first(500).presence }
   validates :message, presence: true, length: { maximum: 5000 }
+
+  # The developer's reply (/developer/feedback/:id), shown to the employee on /help. One per feedback,
+  # editable any time; responded_at follows it, and clearing the reply clears the date
+  normalizes :response, with: ->(text) { text.strip.presence }
+  validates :response, length: { maximum: 5000 }
+  before_save { self.responded_at = response && Time.current if will_save_change_to_response? }
   validate :images_are_valid
 
   # Tells the developer by email, in the background so submitting stays fast
