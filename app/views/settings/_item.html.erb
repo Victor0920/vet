@@ -1,0 +1,29 @@
+<%# One setting inside a group's card: icon · title + one-line description · arrow (or "Coming soon").
+    Locals:
+      icon        - name of a partial in shared/icons ("tag", "cog"…)
+      title       - the setting's name
+      description - one line about what you manage there (cut with "…" if it doesn't fit)
+      path        - where it links; leave it out (nil) while that area isn't built
+                    yet and the row shows "Coming soon" instead of being a link %>
+<% path = local_assigns[:path] %>
+
+<% content = capture do %>
+  <span class="settings-item__icon"><%= render "shared/icons/#{icon}" %></span>
+  <span class="settings-item__text">
+    <span class="settings-item__title"><%= title %></span>
+    <span class="settings-item__description"><%= description %></span>
+  </span>
+  <% if path %>
+    <svg class="settings-item__arrow" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+  <% else %>
+    <span class="badge settings-item__soon"><%= t("settings.show.coming_soon") %></span>
+  <% end %>
+<% end %>
+
+<li>
+  <% if path %>
+    <%= link_to content, path, class: "settings-item" %>
+  <% else %>
+    <div class="settings-item settings-item--soon"><%= content %></div>
+  <% end %>
+</li>
