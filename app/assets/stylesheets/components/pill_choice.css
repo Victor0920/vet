@@ -1,0 +1,49 @@
+/*
+ * Pill buttons for picking one or several options: a real radio/checkbox (hidden) followed by
+ * its <label>, which shows whether it's picked. Clicking the pill picks it; arrow keys/space still work.
+ *   <div class="pill-choices">
+ *     <input type="checkbox" class="pill-choice__input" id="x"><label for="x" class="pill-choice">Lun</label>
+ *   </div>
+ * Used by the opening hours day picker and the feedback type (problem / idea / question…)
+ */
+.pill-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1-5);
+}
+
+.pill-choice__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pill-choice {
+  min-width: 3rem;
+  padding: var(--space-1-5) var(--space-3);
+  border: var(--border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+.pill-choice__input:checked + .pill-choice {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--white);
+}
+
+.pill-choice__input:focus-visible + .pill-choice {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

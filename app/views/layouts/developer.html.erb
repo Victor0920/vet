@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<%# The developer's private pages (Developer::BaseController): the app's styles, no employee sidebar %>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8">
+    <title><%= content_for(:title) ? "#{content_for(:title)} · Vet" : "Vet" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <header class="developer-bar">
+      <%= link_to developer_feedbacks_path, class: "developer-bar__brand" do %>
+        <span class="brand-mark"><%= render "shared/paw_icon" %></span>
+        <span>Vet · <%= t("developer.title") %></span>
+      <% end %>
+    </header>
+
+    <main class="developer-main">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+
+    <%= render "shared/confirm_dialog" %>
+  </body>
+</html>

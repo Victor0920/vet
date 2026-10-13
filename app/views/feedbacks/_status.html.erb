@@ -1,0 +1,4 @@
+<%# locals: (feedback:) -%>
+<%# The status chip the employee sees (and the developer sets): grey, amber, green %>
+<% tone = { "in_progress" => "badge--warning", "resolved" => "badge--success" }[feedback.status] %>
+<span class="badge <%= tone %>"><%= t(feedback.status, scope: "feedbacks.statuses") %></span>

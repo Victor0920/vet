@@ -65,6 +65,9 @@ en:
       opening_hour:
         one: "Opening hours"
         other: "Opening hours"
+      feedback:
+        one: "Feedback"
+        other: "Feedback"
       appointment:
         one: "Appointment"
         other: "Appointments"
@@ -127,6 +130,15 @@ en:
         weekday: "Day"
         opens_at: "Opens"
         closes_at: "Closes"
+      feedback:
+        kind: "Type"
+        message: "Message"
+        images: "Images"
+        status: "Status"
+        page_url: "Page"
+        user_agent: "Browser"
+        enterprise: "Company"
+        employee: "Employee"
       appointment:
         title: "Title"
         starts_at: "Starts"
@@ -245,6 +257,9 @@ en:
     errors:
       messages:
         must_be_after_start: "must be after the start time"
+        too_many_images: "can't be more than %{max}"
+        jpg_png_webp_or_gif_only: "must be JPG, PNG, WebP or GIF"
+        image_too_big: "can't be bigger than %{max} each"
         after_opening: "must be after the opening time"
         overlaps: "Overlaps another period on %{day}"
         no_weekdays: "Tick at least one day"
@@ -302,6 +317,10 @@ en:
       updated: "Company details updated"
     invoice_settings:
       updated: "Invoice settings updated"
+    feedbacks:
+      created: "Thank you! I've got it and will get back to you as soon as I can"
+      rate_limited: "You've sent a lot in a row. Wait a while or contact me directly"
+      status_updated: "Status updated"
     calendar_settings:
       updated: "Appointment and calendar settings updated"
     opening_hours:
@@ -446,6 +465,7 @@ en:
     conversation:
       empty: "No messages yet"
     top_nav:
+      help: "Help & feedback"
       main: "Main"
       home: "Home"
       messaging: "Messaging"
@@ -584,6 +604,68 @@ en:
       hours_hint: "The hours the calendar shows, in 15-minute steps. It doesn't change the stores' opening hours."
       minutes_unit: "minutes"
       duration_hint: "When you create an appointment, its end time is filled in as the start time plus this length."
+
+  # ---------- Help & feedback (/help) ----------
+  feedbacks:
+    kinds:
+      problem: "Problem"
+      idea: "Idea"
+      question: "Question"
+      other: "Other"
+    statuses:
+      received: "Received"
+      in_progress: "In progress"
+      resolved: "Resolved"
+    index:
+      title: "Help & feedback"
+      subtitle: "Vet is a young product: tell me what's broken or what you're missing and I'll improve it."
+      contact:
+        title: "Contact the developer"
+        intro: "For anything urgent, write or call me directly."
+        email: "Email"
+        phone: "Phone"
+        whatsapp: "WhatsApp"
+        availability: "Mon–Fri 9:00–18:00, I reply within 24 h"
+      form:
+        title: "Report a problem or share an idea"
+        intro: "The more detail the better: what you were doing, what you expected and what happened."
+        kind: "Type"
+        message: "Message"
+        message_placeholder: "For example: saving an appointment in the rooms view leaves the page blank…"
+        images: "Screenshots"
+        add_images: "Add images"
+        remove_image: "Remove image"
+        images_hint: "Up to %{max} JPG, PNG, WebP or GIF images, 10 MB each at most. You can also paste a screenshot into the message."
+        too_many_images: "Only %{max} images can be sent: the rest weren't added."
+        privacy: "Try to keep customers' personal data (names, phones, addresses) out of screenshots. If you can't, cover it before sending."
+        submit: "Send"
+      mine:
+        title: "What you've sent"
+        sent: "Sent %{time} ago"
+        image_alt: "Attached screenshot"
+        empty: "You haven't sent anything yet"
+        empty_hint: "What you send will show up here with its status: Received, In progress or Resolved."
+
+  # ---------- Developer inbox (/developer/feedback) ----------
+  developer:
+    title: "Developer"
+    feedbacks:
+      index:
+        title: "Feedback inbox"
+        subtitle: "What employees of every company have sent."
+        filter: "Filter by status"
+        all: "All"
+        deleted_employee: "Deleted employee"
+        empty: "Nothing here"
+      show:
+        title: "Feedback #%{id}"
+
+  feedback_mailer:
+    submitted:
+      subject: "[%{enterprise}] New feedback: %{kind}"
+      heading: "New feedback: %{kind}"
+      intro: "%{employee} (%{enterprise}) wrote from Help & feedback:"
+      view: "Open in the inbox"
 
   rooms:
     new:

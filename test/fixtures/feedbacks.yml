@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  enterprise: one
+  employee: one
+  kind: problem
+  message: "Al guardar una cita, la página se queda en blanco."
+  status: received
+  page_url: "/appointments"
+  user_agent: "Mozilla/5.0 (Macintosh) Chrome/130.0"
+
+two:
+  enterprise: two
+  employee: two
+  kind: idea
+  message: "Estaría bien exportar las facturas a Excel."
+  status: resolved
+  page_url: "/invoices"
+  user_agent: "Mozilla/5.0 (Windows) Firefox/131.0"

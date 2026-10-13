@@ -457,51 +457,6 @@
   font-size: var(--text-sm);
 }
 
-/* ---------- opening_hours#new: day picker ---------- */
-
-/* Real checkboxes, hidden; the pill <label> after each one shows whether it's ticked */
-.weekday-picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1-5);
-}
-
-.weekday-picker__input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.weekday-picker__day {
-  min-width: 3rem;
-  padding: var(--space-1-5) var(--space-3);
-  border: var(--border);
-  border-radius: var(--radius-full);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
-
-  &:hover {
-    background: var(--color-surface-hover);
-  }
-}
-
-.weekday-picker__input:checked + .weekday-picker__day {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
-  color: var(--white);
-}
-
-.weekday-picker__input:focus-visible + .weekday-picker__day {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-
 /* ---------- opening_hours#edit: delete, below the form ---------- */
 
 .opening-hour-delete {

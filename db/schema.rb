@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_182429) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_093009) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -142,6 +142,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_182429) do
     t.string "calendar_closes_at", default: "20:00", null: false
     t.integer "default_appointment_minutes", default: 30, null: false
     t.index ["login_code"], name: "index_enterprises_on_login_code", unique: true
+  end
+
+  create_table "feedbacks", force: :cascade do |t|
+    t.integer "enterprise_id", null: false
+    t.integer "employee_id"
+    t.string "kind", default: "problem", null: false
+    t.text "message", null: false
+    t.string "status", default: "received", null: false
+    t.string "page_url"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_feedbacks_on_employee_id"
+    t.index ["enterprise_id"], name: "index_feedbacks_on_enterprise_id"
+    t.index ["status", "created_at"], name: "index_feedbacks_on_status_and_created_at"
   end
 
   create_table "invoice_products", force: :cascade do |t|
@@ -342,6 +357,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_182429) do
   add_foreign_key "customers", "enterprises"
   add_foreign_key "employees", "enterprises"
   add_foreign_key "employees", "stores", column: "default_store_id"
+  add_foreign_key "feedbacks", "employees"
+  add_foreign_key "feedbacks", "enterprises"
   add_foreign_key "invoice_products", "invoices"
   add_foreign_key "invoice_products", "products"
   add_foreign_key "invoice_products", "services"

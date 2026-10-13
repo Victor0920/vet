@@ -47,11 +47,11 @@
           <% else %>
             <dt class="field-row__label" id="weekdays-label"><%= t("opening_hours.form.weekdays") %></dt>
             <dd class="field-row__value">
-              <%# Each day is a real checkbox (hidden) with a pill <label>: clicking the pill ticks it %>
-              <div class="weekday-picker" role="group" aria-labelledby="weekdays-label">
+              <%# Each day is a real checkbox (hidden) with a pill <label>: clicking the pill ticks it (pill_choice.css) %>
+              <div class="pill-choices" role="group" aria-labelledby="weekdays-label">
                 <% OpeningHour::WEEKDAYS.each do |wday| %>
-                  <%= check_box_tag "weekdays[]", wday, @weekdays.include?(wday), id: "weekday_#{wday}", class: "weekday-picker__input" %>
-                  <label for="weekday_<%= wday %>" class="weekday-picker__day"><%= t("date.abbr_day_names")[wday].capitalize %></label>
+                  <%= check_box_tag "weekdays[]", wday, @weekdays.include?(wday), id: "weekday_#{wday}", class: "pill-choice__input" %>
+                  <label for="weekday_<%= wday %>" class="pill-choice"><%= t("date.abbr_day_names")[wday].capitalize %></label>
                 <% end %>
               </div>
               <p class="form-hint"><%= t("opening_hours.form.weekdays_hint") %></p>

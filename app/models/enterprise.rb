@@ -12,6 +12,7 @@ class Enterprise < ApplicationRecord
   has_many :invoice_products, through: :invoices
   has_many :services, dependent: :destroy
   has_many :service_categories, dependent: :destroy
+  has_many :feedbacks, dependent: :destroy
   has_one_attached :logo do |attachable|
     attachable.variant :thumb, resize_to_limit: [ 320, 320 ], preprocessed: true
   end
