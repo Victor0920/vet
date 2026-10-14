@@ -71,4 +71,16 @@
             title: t(".items.whatsapp.title"), description: t(".items.whatsapp.description") %>
     </ul>
   </section>
+
+  <%# The clinic's data is theirs: export it all whenever they want (DataExportsController),
+      and bring customers, pets and the catalogue in from another program (ImportsController) %>
+  <section class="settings-group" aria-labelledby="settings-data">
+    <h2 class="settings-group__title" id="settings-data"><%= t(".groups.data") %></h2>
+    <ul class="card settings-group__list">
+      <%= render "settings/item", icon: "arrow_down_tray", path: data_export_path,
+            title: t(".items.export.title"), description: t(".items.export.description") %>
+      <%= render "settings/item", icon: "arrow_up_tray", path: imports_path,
+            title: t(".items.import.title"), description: t(".items.import.description") %>
+    </ul>
+  </section>
 </div>

@@ -59,6 +59,10 @@ Rails.application.routes.draw do
     end
     resource :access, only: %i[ show edit update ], controller: :access
     resource :calendar_settings, path: "calendar", only: %i[ show edit update ]
+    resource :data_export, path: "data/export", only: %i[ show create ]
+    resources :imports, path: "data/imports", only: %i[ index new create show destroy ] do
+      resource :run, only: :create, module: :imports
+    end
   end
   resource :settings, only: :show
 

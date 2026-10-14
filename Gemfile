@@ -78,3 +78,4 @@ gem "prawn-table", "~> 0.2.2"
 gem "chartkick"
 
 gem "lexxy", "~> 1.0"
+gem "rubyzip", "~> 3.4", require: "zip"

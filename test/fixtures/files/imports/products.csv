@@ -1,0 +1,8 @@
+id;category;name;description;barcode;price;stock;show_warning_when_stock_under_x_items
+301;Alimentación;Pienso 3kg;Para perros adultos;8410000000011;24,50;10;3
+302;Alimentación;Antiparasitario;;;12.9;;
+303;mystring;Jeringa;;;0,30;100;
+304;;mystring;;;1;;
+305;;Collar;;8410000000011;9,99;;
+306;;Champú;;;doce;;
+307;;Vendas;;;2;-3;

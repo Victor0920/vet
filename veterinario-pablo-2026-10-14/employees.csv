@@ -1,0 +1,3 @@
+﻿id,username,first_name,last_name,email_address,phone,role,active,created_at
+1,gustavo_hernandez,Gustavo,Hernandez,gustavohernandez@gmail.com,+34684364409,admin,true,2026-10-01T11:12:17+02:00
+2,pablo_cat,Pablo,Calatayud,pablo@gmail.com,+34654654654,vet,true,2026-10-11T19:28:35+02:00

@@ -53,6 +53,9 @@ en:
   # ---------- Models & attributes ----------
   activerecord:
     models:
+      import:
+        one: "Import"
+        other: "Imports"
       store:
         one: "Store"
         other: "Stores"
@@ -130,6 +133,11 @@ en:
         weekday: "Day"
         opens_at: "Opens"
         closes_at: "Closes"
+      import:
+        kind: "Type"
+        status: "Status"
+        employee: "Uploaded by"
+        file: "File"
       feedback:
         kind: "Type"
         message: "Message"
@@ -257,6 +265,8 @@ en:
     # Custom validation messages: errors.add(:ends_at, :must_be_after_start)
     errors:
       messages:
+        csv_only: "must be a .csv file"
+        too_big: "can't be bigger than 5 MB"
         must_be_after_start: "must be after the start time"
         too_many_images: "can't be more than %{max}"
         jpg_png_webp_or_gif_only: "must be JPG, PNG, WebP or GIF"
@@ -324,6 +334,17 @@ en:
       updated: "Saved"
     calendar_settings:
       updated: "Appointment and calendar settings updated"
+    data_exports:
+      wrong_password: "The password isn't correct"
+      rate_limited: "Too many downloads. Try again in an hour."
+    imports:
+      completed:
+        one: "1 row imported"
+        other: "%{count} rows imported"
+      failed: "The import failed and nothing was saved. Check the file and try again."
+      discarded: "Import discarded"
+      not_found: "Import not found"
+      rate_limited: "Too many imports. Try again in an hour."
     opening_hours:
       created:
         one: "Period added"
@@ -585,6 +606,144 @@ en:
       weekdays: "Days"
       weekdays_hint: "The same hours are added to every ticked day."
 
+  # ---------- Import data (/settings/data/imports) ----------
+  imports:
+    kinds:
+      customers: "Customers"
+      pets: "Pets"
+      products: "Products"
+      services: "Services"
+    statuses:
+      pending: "Not confirmed"
+      completed: "Imported"
+    # Why the whole file can't be read (Import::Unreadable)
+    unreadable:
+      malformed: "The CSV is malformed near line %{line} (an unclosed quote?)."
+      missing_columns: "Required columns are missing: %{columns}. The first row must have the column names, like the template."
+      too_many_rows: "It has more than %{max} rows. Split it into several files."
+    # Why a row is skipped (Import::Base and each type)
+    problems:
+      date: "%{column}: \"%{value}\" isn't a date (use 2026-10-14 or 14/10/2026)"
+      number: "%{column}: \"%{value}\" isn't a number"
+      boolean: "%{column}: \"%{value}\" isn't yes or no"
+      sex: "sex: \"%{value}\" isn't Male/Female (or Macho/Hembra, Hombre/Mujer)"
+      species: "species: \"%{value}\" isn't a known species"
+      owner_not_found: "Owner not found: no customer has that document, email or phone. Import the customers first."
+      owner_ambiguous: "Several customers have that email or phone: give the owner's document number."
+    index:
+      title: "Import data"
+      subtitle: "Bring in customers, pets, products and services from another program, or from an export."
+      new: "New import"
+      steps:
+        order:
+          title: "Customers first"
+          description: "Pets are linked to their owner, so the owner has to exist first."
+        preview:
+          title: "Review before importing"
+          description: "You'll see which rows are new, which already exist and which have errors. Nothing is saved until you confirm."
+        safe:
+          title: "Never overwrites"
+          description: "It only adds. What already exists is skipped, so you can upload the same file again without duplicating anything."
+      history: "History"
+      columns:
+        date: "Date"
+        result: "Result"
+      result: "%{created} created · %{duplicates} already existed · %{errors} with errors"
+      review: "Review and confirm"
+      empty: "You haven't imported anything yet"
+      empty_hint: "Start with customers: download the template or upload the CSV from your previous program."
+    new:
+      title: "New import"
+      subtitle: "One file per type. You'll see a preview first."
+      kind_hint: "Import customers before pets."
+      file_hint: "A CSV up to 5 MB and 5,000 rows. Comma or semicolon separated, the way Excel saves it."
+      nothing_saved: "Uploading only checks the file: nothing is saved until you press \"Import\" on the next step."
+      submit: "Check file"
+      formats: "Columns for each type"
+      formats_hint: "The first row has the column names. All other columns are optional, in any order."
+      template: "Download template"
+      columns:
+        customers: "Required: first_name. Also: first_surname, second_surname, document_type, document_number, sex, born_on, address, post_code, province, first_phone, second_phone, email."
+        pets: "Required: name, and the owner as customer_document_number, customer_email or customer_phone. Also: species, breed, sex, born_on, color, sterilized, transponder_number, transponder_location, notes."
+        products: "Required: name. Also: category, description, barcode, price, stock, show_warning_when_stock_under_x_items."
+        services: "Required: name. Also: category, description, price."
+      duplicates:
+        customers: "Already exists if the document, the email, or the name with the phone match."
+        pets: "Already exists if the microchip, or the name with the same owner, match."
+        products: "Already exists if the barcode or the name match. New categories are created."
+        services: "Already exists if the name matches. New categories are created."
+      values: "Dates as 2026-10-14 or 14/10/2026. Prices as 14.99 or 14,99. Sex: Male/Female, Macho/Hembra or Hombre/Mujer. Yes/no: true/false, yes/no or 1/0. Species: dog, Perro or Dog."
+    show:
+      title: "Import"
+      heading: "Import %{kind}"
+      uploaded: "Uploaded on %{date} by %{name}"
+      counts:
+        new: "new, will be imported"
+        created: "imported"
+        duplicates: "already existed, skipped"
+        errors: "with errors, skipped"
+      errors: "Rows with errors"
+      errors_hint: "They won't be imported. Fix them in your file and upload the whole file again: whatever was already imported will be skipped."
+      columns:
+        line: "Row"
+        record: "Data"
+        problem: "Problem"
+      new:
+        one: "1 new row"
+        other: "%{count} new rows"
+      new_hint: "Created when you confirm."
+      duplicates:
+        one: "1 row already exists"
+        other: "%{count} rows already exist"
+      duplicates_hint: "Already in the app (or repeated in the file). Left untouched."
+      more:
+        one: "And 1 more."
+        other: "And %{count} more."
+      confirm_hint: "All the new rows are created at once, or none if something fails. Then the file is deleted."
+      run:
+        zero: "Nothing to import"
+        one: "Import 1 row"
+        other: "Import %{count} rows"
+      discard: "Discard"
+      discard_confirm: "Discard this import? Nothing was imported; this only deletes the uploaded file."
+      unreadable: "The file can't be read"
+      upload_another: "Upload another file"
+      completed_note: "Imported on %{date}. The uploaded file was deleted; only these numbers are kept."
+      new_import: "New import"
+      see_records:
+        customers: "See customers"
+        pets: "See pets"
+        products: "See products"
+        services: "See services"
+
+  # ---------- Export data (/settings/data/export) ----------
+  data_exports:
+    show:
+      title: "Export data"
+      subtitle: "Your data is yours. Download it whenever you want, without asking us and at no cost: if you ever leave, it comes with you."
+      contents: "What's included"
+      contents_hint: "A .zip file with one CSV per table. Every row keeps its ID and relations use it (customer_id, invoice_id…), so another program can rebuild everything."
+      groups:
+        business:
+          title: "Business"
+          description: "Company, clinics, rooms, opening hours and team."
+        clinical:
+          title: "Customers and pets"
+          description: "Records, pet notes and weight history."
+        catalogue:
+          title: "Catalogue"
+          description: "Products and services with their categories, archived ones too."
+        history:
+          title: "History"
+          description: "Appointments, invoices with their lines, and messages."
+      format: "Format: UTF-8 CSV, comma-separated, with ISO dates (2026-10-14) and dot decimals. Opens in Excel, Google Sheets or Numbers."
+      not_included: "Passwords and sessions aren't included. Photos and invoice PDFs are coming soon."
+      download: "Download"
+      download_hint: "It contains your customers' personal data: keep it somewhere safe."
+      password: "Your password"
+      password_hint: "We ask for it again to confirm it's you."
+      submit: "Download my data (.zip)"
+
   # ---------- Appointments and calendar (/settings/calendar) ----------
   calendar_settings:
     show:
@@ -781,6 +940,7 @@ en:
         appointments: "Appointments and calendar"
         billing: "Billing"
         messaging: "Messaging"
+        data: "Your data"
       # One line per setting: cut with "…" when it doesn't fit
       items:
         enterprise:
@@ -810,6 +970,12 @@ en:
         whatsapp:
           title: "WhatsApp"
           description: "The number you message customers from"
+        export:
+          title: "Export data"
+          description: "Download everything as CSV, whenever you want"
+        import:
+          title: "Import data"
+          description: "Bring customers, pets and catalogue from another program"
 
   # ---------- Pages ----------
   pages:

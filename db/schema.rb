@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_13_103333) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_14_083337) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -159,6 +159,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_103333) do
     t.index ["employee_id"], name: "index_feedbacks_on_employee_id"
     t.index ["enterprise_id"], name: "index_feedbacks_on_enterprise_id"
     t.index ["status", "created_at"], name: "index_feedbacks_on_status_and_created_at"
+  end
+
+  create_table "imports", force: :cascade do |t|
+    t.integer "enterprise_id", null: false
+    t.integer "employee_id", null: false
+    t.string "kind", null: false
+    t.string "status", default: "pending", null: false
+    t.integer "created_count", default: 0, null: false
+    t.integer "duplicate_count", default: 0, null: false
+    t.integer "error_count", default: 0, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_imports_on_employee_id"
+    t.index ["enterprise_id"], name: "index_imports_on_enterprise_id"
   end
 
   create_table "invoice_products", force: :cascade do |t|
@@ -361,6 +376,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_13_103333) do
   add_foreign_key "employees", "stores", column: "default_store_id"
   add_foreign_key "feedbacks", "employees"
   add_foreign_key "feedbacks", "enterprises"
+  add_foreign_key "imports", "employees"
+  add_foreign_key "imports", "enterprises"
   add_foreign_key "invoice_products", "invoices"
   add_foreign_key "invoice_products", "products"
   add_foreign_key "invoice_products", "services"
