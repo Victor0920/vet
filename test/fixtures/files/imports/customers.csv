@@ -1,0 +1,9 @@
+﻿id,first_name,first_surname,second_surname,document_type,document_number,sex,born_on,address,post_code,province,first_phone,second_phone,email,created_at
+101,Ana,García,López,DNI,12345678Z,Female,1985-03-14,Calle Mayor 1,28001,Madrid,+34 666 111 222,,ana@example.com,2025-01-10T09:00:00+01:00
+102,Copia,Del Fixture,,DNI,mystring,,,,,,,,,2025-01-10T09:00:00+01:00
+103,Luis,García,,,,Male,,,,,,,ANA@example.com,2025-01-10T09:00:00+01:00
+104,Marta,Ruiz,,,,Female,31/02/1990,,,,,,,2025-01-10T09:00:00+01:00
+105,Pedro,Sanz,,,,Otro,,,,,,,,2025-01-10T09:00:00+01:00
+,,,,,,,,,,,,,,
+107,Jorge,Martín,,,,Male,,'=1+1,,,,,,2025-01-10T09:00:00+01:00
+108,Rosa,Pérez,,,,,,,,,600 000 000,,,2025-01-10T09:00:00+01:00

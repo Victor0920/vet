@@ -1,0 +1,4 @@
+<%# Pending = uploaded but not confirmed yet (nothing imported); completed = the rows are in %>
+<span class="badge <%= import.completed? ? "badge--success" : "badge--warning" %>">
+  <%= t(import.status, scope: "imports.statuses") %>
+</span>

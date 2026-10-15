@@ -1,0 +1,2 @@
+﻿customer_document_number,customer_email,customer_phone,species,name,breed,sex,born_on,color,sterilized,transponder_number,transponder_location,notes
+12345678Z,,,dog,Luna,Mestiza,Female,2020-05-01,Negra,true,941000000000001,Cuello izquierdo,Alérgica al pollo

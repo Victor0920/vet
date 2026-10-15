@@ -1,0 +1,14 @@
+﻿id,invoice_id,product_id,service_id,description,quantity,price
+1,1,1,,,1,12.99
+2,1,,,Llavero,1,2.0
+3,2,,,pienso gastrointestinal,1,45.0
+4,3,1,,,1,14.99
+5,4,1,,,1,14.99
+6,5,1,,,1,14.99
+7,5,,1,,1,180.0
+8,6,,1,,1,180.0
+9,7,2,,,2,41.5
+10,7,,,premios,1,2.0
+11,8,2,,,-1,41.5
+12,9,2,,,2,41.5
+13,9,,,Llavero solidario,1,3.0

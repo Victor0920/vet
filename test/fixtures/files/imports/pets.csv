@@ -1,0 +1,10 @@
+﻿id,customer_id,customer_document_number,customer_email,customer_phone,species,name,breed,sex,born_on,color,sterilized,transponder_number,transponder_location,usual_employee_id,created_at,notes
+201,1,MyString,,,Perro,Luna,Mestiza,Hembra,2020-05-01,Negra,sí,941000000000001,Cuello izquierdo,,2025-01-10T09:00:00+01:00,"Alérgica al pollo
+Vacunada en marzo <rabia>"
+202,1,,mystring,,cat,Toby,,Macho,,,no,,,,,
+203,1,MyString,,,dog,mystring,,,,,,,,,,
+204,1,MyString,,,dog,Luna 2,,,,,,941 000 000 000 001,,,,
+205,9,00000000T,,,dog,Rex,,,,,,,,,,
+206,1,MyString,,,Dragón,Kira,,,,,,,,,,
+207,1,MyString,,,dog,Nala,,,,,quizás,,,,,
+208,7,,,600 123 456,dog,Coco,,,,,,,,,,

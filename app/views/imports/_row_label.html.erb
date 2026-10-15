@@ -1,0 +1,19 @@
+<%# What a preview row is, in a few words: the customer's name, the pet and its owner, the product… %>
+<% record = row.record %>
+<% case kind %>
+<% when "customers" %>
+  <%= [record.first_name, record.first_surname].compact_blank.join(" ") %>
+  <% if record.document_number.present? || record.email.present? %>
+    <span class="text-muted">· <%= record.document_number.presence || record.email %></span>
+  <% end %>
+<% when "pets" %>
+  <%= record.name %>
+  <% if record.customer %>
+    <span class="text-muted">· <%= record.customer.full_name %></span>
+  <% end %>
+<% else %>
+  <%= record.name %>
+  <% if record.price %>
+    <span class="text-muted">· <%= number_to_currency(record.price) %></span>
+  <% end %>
+<% end %>

@@ -1,0 +1,5 @@
+﻿id,customer_id,customer_document_number,species,name,breed,sex,born_on,color,sterilized,transponder_number,transponder_location,usual_employee_id,created_at,notes
+3,2,123456222D,dog,Jodie,Border Collie,Female,2020-04-28,Merle,false,102320446df43000,Cuello derecho,,2026-10-06T07:54:49+02:00,"Timida pero buena
+Tiene leishmania
+Esta castrada
+Esta operada de displasia trasera"

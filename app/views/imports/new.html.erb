@@ -1,0 +1,80 @@
+<% content_for :title, t(".title") %>
+
+<%= render "shared/back_link", path: imports_path, label: t("imports.index.title") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+</div>
+
+<div class="data-export">
+  <section class="card">
+    <%= form_with model: @import, url: imports_path, class: "card__body form" do |f| %>
+      <% if @import.errors.any? %>
+        <div class="alert alert--danger" role="alert">
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+          <ul class="form-errors">
+            <% @import.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%# Radio pills (pill_choice.css): one type per file %>
+      <fieldset class="form-field">
+        <legend class="label"><%= Import.human_attribute_name(:kind) %></legend>
+        <div class="pill-choices">
+          <% Import::KINDS.each do |kind| %>
+            <%= f.radio_button :kind, kind, class: "pill-choice__input" %>
+            <%= f.label :kind, t(kind, scope: "imports.kinds"), value: kind, class: "pill-choice" %>
+          <% end %>
+        </div>
+        <p class="form-hint"><%= t(".kind_hint") %></p>
+      </fieldset>
+
+      <div class="form-field">
+        <%= f.label :file, class: "label" %>
+        <%= f.file_field :file, class: "input", accept: ".csv,text/csv", required: true,
+              aria: { invalid: @import.errors[:file].any? } %>
+        <p class="form-hint"><%= t(".file_hint") %></p>
+      </div>
+
+      <div class="alert alert--info">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg>
+        <p><%= t(".nothing_saved") %></p>
+      </div>
+
+      <div class="import-actions">
+        <%= link_to t("shared.cancel"), imports_path, class: "btn btn--ghost" %>
+        <%= f.submit t(".submit"), class: "btn btn--primary" %>
+      </div>
+    <% end %>
+  </section>
+
+  <%# The columns each type reads (Import::Customers…) and when a row counts as "already there".
+      The templates are static files in public/import-templates %>
+  <section class="card">
+    <header class="card__header">
+      <div>
+        <h2 class="card__title"><%= t(".formats") %></h2>
+        <p class="card__description"><%= t(".formats_hint") %></p>
+      </div>
+    </header>
+    <div class="card__body import-formats">
+      <% Import::KINDS.each do |kind| %>
+        <div class="import-format">
+          <div class="import-format__header">
+            <h3 class="data-export__group-title"><%= t(kind, scope: "imports.kinds") %></h3>
+            <%= link_to t(".template"), "/import-templates/#{kind}.csv", download: "#{kind}.csv", class: "text-sm" %>
+          </div>
+          <p class="text-sm"><%= t(".columns.#{kind}") %></p>
+          <p class="text-muted text-sm"><%= t(".duplicates.#{kind}") %></p>
+        </div>
+      <% end %>
+      <p class="text-muted text-sm"><%= t(".values") %></p>
+    </div>
+  </section>
+</div>

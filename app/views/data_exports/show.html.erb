@@ -1,0 +1,67 @@
+<% content_for :title, t(".title") %>
+
+<%= render "shared/back_link", path: settings_path, label: t("settings.back") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+</div>
+
+<div class="data-export">
+  <%# What's in the ZIP: one CSV per table (DataExport#tables), shown in four groups.
+      Keep these file names in sync with DataExport when adding a table %>
+  <section class="card">
+    <header class="card__header">
+      <div>
+        <h2 class="card__title"><%= t(".contents") %></h2>
+        <p class="card__description"><%= t(".contents_hint") %></p>
+      </div>
+    </header>
+    <div class="card__body data-export__groups">
+      <% { business: %w[enterprise stores rooms opening_hours employees],
+           clinical: %w[customers pets pet_weights],
+           catalogue: %w[product_categories products service_categories services],
+           history: %w[appointments invoices invoice_lines messages] }.each do |group, files| %>
+        <div class="data-export__group">
+          <h3 class="data-export__group-title"><%= t(".groups.#{group}.title") %></h3>
+          <p class="text-muted text-sm"><%= t(".groups.#{group}.description") %></p>
+          <ul class="data-export__files">
+            <% files.each do |file| %>
+              <li><code><%= file %>.csv</code></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+    </div>
+    <footer class="card__body data-export__notes">
+      <p><%= t(".format") %></p>
+      <p><%= t(".not_included") %></p>
+    </footer>
+  </section>
+
+  <%# turbo: false: Turbo submits forms with fetch and expects HTML back, so the ZIP would never
+      reach the browser's downloads. A normal submit lets the browser save the file.
+      A wrong password redirects back here with an alert %>
+  <section class="card data-export__download">
+    <header class="card__header">
+      <div>
+        <h2 class="card__title"><%= t(".download") %></h2>
+        <p class="card__description"><%= t(".download_hint") %></p>
+      </div>
+    </header>
+    <%= form_with url: data_export_path, method: :post, class: "card__body form", data: { turbo: false } do |f| %>
+      <div class="form-field">
+        <%= f.label :password, t(".password"), class: "label" %>
+        <%= f.password_field :password, class: "input", required: true, autocomplete: "current-password" %>
+        <p class="form-hint"><%= t(".password_hint") %></p>
+      </div>
+
+      <%= button_tag type: "submit", class: "btn btn--primary data-export__submit" do %>
+        <%= render "shared/icons/arrow_down_tray" %>
+        <%= t(".submit") %>
+      <% end %>
+    <% end %>
+  </section>
+</div>

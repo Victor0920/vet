@@ -1,0 +1,12 @@
+﻿id,store_id,room_id,employee_id,customer_id,pet_id,title,starts_at,ends_at,description
+1,1,1,1,1,2,Lavado y cortado de pelo,2026-09-30T10:00:00+02:00,2026-09-30T11:30:00+02:00,La gata es muy buena. Ha dicho que le mires las orejas también
+2,2,4,1,2,3,Vacuna Rabia,2026-10-06T09:00:00+02:00,2026-10-06T11:30:00+02:00,""
+3,2,6,1,2,3,chequeo general,2026-10-06T08:30:00+02:00,2026-10-06T09:30:00+02:00,""
+4,2,6,1,2,3,Castración,2026-10-08T09:00:00+02:00,2026-10-08T09:30:00+02:00,asdfasdf
+5,2,6,1,,,Rai - esterilización gata,2026-10-09T11:00:00+02:00,2026-10-09T11:30:00+02:00,tfno: 684364409
+6,2,5,1,1,1,Revisión bulto,2026-10-09T12:00:00+02:00,2026-10-09T12:30:00+02:00,Le ha salido un bulto cerca de el coxis
+7,2,4,2,1,1,Titan analítica completa,2026-10-12T10:00:00+02:00,2026-10-12T10:30:00+02:00,"Analítica completa, Dice que:
+
+• Esta cansado
+• No se tumba en la cama"
+8,2,6,1,,,Camada encontrada adopción,2026-10-12T13:00:00+02:00,2026-10-12T14:00:00+02:00,Han encontrado una camada de gatos. Hay que esterilizarlos y vacunarlos para adopción

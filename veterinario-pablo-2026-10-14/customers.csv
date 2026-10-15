@@ -1,0 +1,2 @@
+﻿id,first_name,first_surname,second_surname,document_type,document_number,sex,born_on,address,post_code,province,first_phone,second_phone,email,created_at
+2,Amador,Ortega,Cano,DNI,123456222D,Male,1997-07-28,"CAMINO HIJUELA DE POZO, 82-B",03680,Alicante,684364411,"",atroshionant123@gmail.com,2026-10-05T10:02:02+02:00

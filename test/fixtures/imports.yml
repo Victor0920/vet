@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  enterprise: one
+  employee: one
+  kind: customers
+  status: pending
+  created_count: 1
+  duplicate_count: 1
+  error_count: 1
+  completed_at: 2026-10-14 10:33:37
+
+two:
+  enterprise: two
+  employee: two
+  kind: customers
+  status: pending
+  created_count: 1
+  duplicate_count: 1
+  error_count: 1
+  completed_at: 2026-10-14 10:33:37

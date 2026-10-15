@@ -43,6 +43,9 @@ es:
   # ---------- Modelos y atributos ----------
   activerecord:
     models:
+      import:
+        one: "Importación"
+        other: "Importaciones"
       store:
         one: "Centro"
         other: "Centros"
@@ -120,6 +123,11 @@ es:
         weekday: "Día"
         opens_at: "Abre"
         closes_at: "Cierra"
+      import:
+        kind: "Tipo"
+        status: "Estado"
+        employee: "Subida por"
+        file: "Archivo"
       feedback:
         kind: "Tipo"
         message: "Mensaje"
@@ -246,6 +254,8 @@ es:
         service: "Servicio de la línea"
     errors:
       messages:
+        csv_only: "tiene que ser un archivo .csv"
+        too_big: "no puede pesar más de 5 MB"
         must_be_after_start: "debe ser posterior a la hora de inicio"
         too_many_images: "no pueden ser más de %{max}"
         jpg_png_webp_or_gif_only: "deben ser JPG, PNG, WebP o GIF"
@@ -313,6 +323,17 @@ es:
       updated: "Guardado"
     calendar_settings:
       updated: "Ajustes de citas y agenda actualizados"
+    data_exports:
+      wrong_password: "La contraseña no es correcta"
+      rate_limited: "Demasiadas descargas. Inténtalo de nuevo dentro de una hora."
+    imports:
+      completed:
+        one: "1 fila importada"
+        other: "%{count} filas importadas"
+      failed: "No se ha podido importar: no se ha guardado nada. Revisa el archivo e inténtalo de nuevo."
+      discarded: "Importación descartada"
+      not_found: "No se ha encontrado la importación"
+      rate_limited: "Demasiadas importaciones. Inténtalo de nuevo dentro de una hora."
     opening_hours:
       created:
         one: "Periodo añadido"
@@ -574,6 +595,144 @@ es:
       weekdays: "Días"
       weekdays_hint: "Se añadirá el mismo horario a cada día marcado."
 
+  # ---------- Importar datos (/settings/data/imports) ----------
+  imports:
+    kinds:
+      customers: "Clientes"
+      pets: "Mascotas"
+      products: "Productos"
+      services: "Servicios"
+    statuses:
+      pending: "Sin confirmar"
+      completed: "Importada"
+    # Por qué no se puede leer el archivo entero (Import::Unreadable)
+    unreadable:
+      malformed: "El CSV está mal formado cerca de la línea %{line} (¿unas comillas sin cerrar?)."
+      missing_columns: "Faltan columnas obligatorias: %{columns}. La primera fila tiene que llevar los nombres de las columnas, como en la plantilla."
+      too_many_rows: "Tiene más de %{max} filas. Divídelo en varios archivos."
+    # Por qué se salta una fila (Import::Base y cada tipo)
+    problems:
+      date: "%{column}: «%{value}» no es una fecha (usa 2026-10-14 o 14/10/2026)"
+      number: "%{column}: «%{value}» no es un número"
+      boolean: "%{column}: «%{value}» no es sí o no"
+      sex: "sex: «%{value}» no es Male/Female (o Macho/Hembra, Hombre/Mujer)"
+      species: "species: «%{value}» no es una especie conocida"
+      owner_not_found: "No se encuentra el dueño: ningún cliente tiene ese documento, email o teléfono. Importa antes los clientes."
+      owner_ambiguous: "Hay varios clientes con ese email o teléfono: indica el documento del dueño."
+    index:
+      title: "Importar datos"
+      subtitle: "Trae clientes, mascotas, productos y servicios desde otro programa, o desde una exportación."
+      new: "Nueva importación"
+      steps:
+        order:
+          title: "Primero los clientes"
+          description: "Las mascotas se enlazan con su dueño, así que el dueño tiene que existir antes."
+        preview:
+          title: "Revisas antes de importar"
+          description: "Verás qué filas son nuevas, cuáles ya existen y cuáles tienen errores. No se guarda nada hasta que confirmes."
+        safe:
+          title: "Nunca sobrescribe"
+          description: "Solo añade. Lo que ya existe se salta, así que puedes subir el mismo archivo otra vez sin duplicar nada."
+      history: "Historial"
+      columns:
+        date: "Fecha"
+        result: "Resultado"
+      result: "%{created} creadas · %{duplicates} ya existían · %{errors} con errores"
+      review: "Revisar y confirmar"
+      empty: "Aún no has importado nada"
+      empty_hint: "Empieza por los clientes: descarga la plantilla o sube el CSV de tu programa anterior."
+    new:
+      title: "Nueva importación"
+      subtitle: "Un archivo por tipo. Primero verás una vista previa."
+      kind_hint: "Importa los clientes antes que las mascotas."
+      file_hint: "CSV de hasta 5 MB y 5.000 filas. Vale separado por comas o por punto y coma, como lo guarda Excel."
+      nothing_saved: "Al subirlo solo se revisa: no se guarda nada hasta que pulses «Importar» en el siguiente paso."
+      submit: "Revisar archivo"
+      formats: "Columnas de cada tipo"
+      formats_hint: "La primera fila lleva los nombres de las columnas. Las demás son opcionales, y el orden da igual."
+      template: "Descargar plantilla"
+      columns:
+        customers: "Obligatoria: first_name. También: first_surname, second_surname, document_type, document_number, sex, born_on, address, post_code, province, first_phone, second_phone, email."
+        pets: "Obligatoria: name, y el dueño con customer_document_number, customer_email o customer_phone. También: species, breed, sex, born_on, color, sterilized, transponder_number, transponder_location, notes."
+        products: "Obligatoria: name. También: category, description, barcode, price, stock, show_warning_when_stock_under_x_items."
+        services: "Obligatoria: name. También: category, description, price."
+      duplicates:
+        customers: "Ya existe si coincide el documento, el email, o el nombre con el teléfono."
+        pets: "Ya existe si coincide el microchip, o el nombre con el mismo dueño."
+        products: "Ya existe si coincide el código de barras o el nombre. Las categorías nuevas se crean."
+        services: "Ya existe si coincide el nombre. Las categorías nuevas se crean."
+      values: "Fechas como 2026-10-14 o 14/10/2026. Precios como 14.99 o 14,99. Sexo: Male/Female, Macho/Hembra u Hombre/Mujer. Sí/no: true/false, sí/no o 1/0. Especie: dog, Perro o Dog."
+    show:
+      title: "Importación"
+      heading: "Importar %{kind}"
+      uploaded: "Subido el %{date} por %{name}"
+      counts:
+        new: "nuevas, se importarán"
+        created: "importadas"
+        duplicates: "ya existían, se saltan"
+        errors: "con errores, se saltan"
+      errors: "Filas con errores"
+      errors_hint: "No se importarán. Corrígelas en tu archivo y vuelve a subirlo entero: lo que ya se haya importado se saltará."
+      columns:
+        line: "Fila"
+        record: "Datos"
+        problem: "Problema"
+      new:
+        one: "1 fila nueva"
+        other: "%{count} filas nuevas"
+      new_hint: "Se crearán al confirmar."
+      duplicates:
+        one: "1 fila ya existe"
+        other: "%{count} filas ya existen"
+      duplicates_hint: "Ya están en la aplicación (o repetidas en el archivo). No se tocan."
+      more:
+        one: "Y 1 más."
+        other: "Y %{count} más."
+      confirm_hint: "Se crean todas las filas nuevas a la vez, o ninguna si algo falla. Después se borra el archivo."
+      run:
+        zero: "Nada que importar"
+        one: "Importar 1 fila"
+        other: "Importar %{count} filas"
+      discard: "Descartar"
+      discard_confirm: "¿Descartar esta importación? No se ha importado nada, solo se borra el archivo subido."
+      unreadable: "No se puede leer el archivo"
+      upload_another: "Subir otro archivo"
+      completed_note: "Importada el %{date}. El archivo subido se ha borrado; solo se guardan estos números."
+      new_import: "Nueva importación"
+      see_records:
+        customers: "Ver clientes"
+        pets: "Ver mascotas"
+        products: "Ver productos"
+        services: "Ver servicios"
+
+  # ---------- Exportar datos (/settings/data/export) ----------
+  data_exports:
+    show:
+      title: "Exportar datos"
+      subtitle: "Tus datos son tuyos. Descárgalos cuando quieras, sin pedírnoslo y sin coste: si un día te vas, te los llevas."
+      contents: "Qué incluye"
+      contents_hint: "Un archivo .zip con un CSV por tabla. Cada fila conserva su ID, y las relaciones lo usan (customer_id, invoice_id…), así que otro programa puede reconstruirlo todo."
+      groups:
+        business:
+          title: "Negocio"
+          description: "Empresa, centros, salas, horarios y equipo."
+        clinical:
+          title: "Clientes y mascotas"
+          description: "Fichas, notas de las mascotas e historial de peso."
+        catalogue:
+          title: "Catálogo"
+          description: "Productos y servicios con sus categorías, también los archivados."
+        history:
+          title: "Historial"
+          description: "Citas, facturas con sus líneas y mensajes."
+      format: "Formato: CSV en UTF-8, separado por comas, con fechas ISO (2026-10-14) y decimales con punto. Se abre en Excel, Google Sheets o Numbers."
+      not_included: "No incluye contraseñas ni sesiones. Las fotos y los PDF de las facturas llegarán pronto."
+      download: "Descargar"
+      download_hint: "Contiene datos personales de tus clientes: guárdalo en un lugar seguro."
+      password: "Tu contraseña"
+      password_hint: "Te la pedimos otra vez para confirmar que eres tú."
+      submit: "Descargar mis datos (.zip)"
+
   # ---------- Citas y agenda (/settings/calendar) ----------
   calendar_settings:
     show:
@@ -770,6 +929,7 @@ es:
         appointments: "Citas y agenda"
         billing: "Facturación"
         messaging: "Comunicación"
+        data: "Tus datos"
       # Una línea por ajuste: si no cabe, se corta con "…"
       items:
         enterprise:
@@ -799,6 +959,12 @@ es:
         whatsapp:
           title: "WhatsApp"
           description: "El número desde el que escribes a los clientes"
+        export:
+          title: "Exportar datos"
+          description: "Descarga todo en CSV, cuando quieras"
+        import:
+          title: "Importar datos"
+          description: "Trae clientes, mascotas y catálogo desde otro programa"
 
   # ---------- Páginas ----------
   pages:

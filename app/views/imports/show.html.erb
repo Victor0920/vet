@@ -1,0 +1,145 @@
+<% content_for :title, t(".title") %>
+
+<%= render "shared/back_link", path: imports_path, label: t("imports.index.title") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">
+      <%= t(".heading", kind: t(@import.kind, scope: "imports.kinds").downcase) %>
+      <%= render "imports/status", import: @import %>
+    </h1>
+    <p class="page-header__subtitle">
+      <%= t(".uploaded", date: l(@import.created_at, format: :display), name: @import.employee.display_name) %>
+      <% if @import.pending? && @import.file.attached? %>
+        · <code><%= @import.file.filename %></code>
+      <% end %>
+    </p>
+  </div>
+</div>
+
+<% if @import.completed? %>
+  <%# Done: only the counts are kept, the file was deleted when the rows were created %>
+  <div class="stack">
+    <div class="import-summary">
+      <%= render "imports/count", tone: "success", count: @import.created_count, label: t(".counts.created") %>
+      <%= render "imports/count", tone: "neutral", count: @import.duplicate_count, label: t(".counts.duplicates") %>
+      <%= render "imports/count", tone: "danger", count: @import.error_count, label: t(".counts.errors") %>
+    </div>
+    <section class="card">
+      <div class="card__body import-confirm">
+        <p class="text-muted text-sm"><%= t(".completed_note", date: l(@import.completed_at, format: :display)) %></p>
+        <div class="import-actions">
+          <%= link_to t(".new_import"), new_import_path, class: "btn btn--secondary" %>
+          <%= link_to t(".see_records.#{@import.kind}"),
+                { "customers" => customers_path, "pets" => pets_path, "products" => products_path, "services" => services_path }[@import.kind],
+                class: "btn btn--primary" %>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<% elsif @unreadable %>
+  <%# The file couldn't be read at all (Import::Unreadable): nothing to preview %>
+  <section class="card">
+    <div class="card__body stack">
+      <div class="alert alert--danger" role="alert">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+        <div>
+          <p><strong><%= t(".unreadable") %></strong></p>
+          <p><%= @unreadable %></p>
+        </div>
+      </div>
+      <div class="import-actions">
+        <%= button_to t(".discard"), import_path(@import), method: :delete, class: "btn btn--ghost" %>
+        <%= link_to t(".upload_another"), new_import_path(kind: @import.kind), class: "btn btn--primary" %>
+      </div>
+    </div>
+  </section>
+
+<% else %>
+  <%# The preview: nothing has been saved yet. Errors are listed in full (they need fixing),
+      new and repeated rows are folded away, showing the first 100 %>
+  <% new_rows = @rows.select(&:new?) %>
+  <% duplicate_rows = @rows.select(&:duplicate?) %>
+  <% error_rows = @rows.select(&:error?) %>
+
+  <div class="stack">
+    <div class="import-summary">
+      <%= render "imports/count", tone: "success", count: new_rows.size, label: t(".counts.new") %>
+      <%= render "imports/count", tone: "neutral", count: duplicate_rows.size, label: t(".counts.duplicates") %>
+      <%= render "imports/count", tone: "danger", count: error_rows.size, label: t(".counts.errors") %>
+    </div>
+
+    <% if error_rows.any? %>
+      <section class="card">
+        <header class="card__header">
+          <div>
+            <h2 class="card__title"><%= t(".errors") %></h2>
+            <p class="card__description"><%= t(".errors_hint") %></p>
+          </div>
+        </header>
+        <div class="table-wrapper import-table">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="import-table__line"><%= t(".columns.line") %></th>
+                <th><%= t(".columns.record") %></th>
+                <th><%= t(".columns.problem") %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% error_rows.each do |row| %>
+                <tr>
+                  <td class="import-table__line"><%= row.line %></td>
+                  <td><%= render "imports/row_label", row: row, kind: @import.kind %></td>
+                  <td class="import-table__problems">
+                    <% row.messages.each do |message| %>
+                      <div><%= message %></div>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    <% end %>
+
+    <% [[new_rows, "new"], [duplicate_rows, "duplicates"]].each do |rows, group| %>
+      <% next if rows.empty? %>
+      <details class="card import-rows">
+        <summary class="card__header import-rows__summary">
+          <div>
+            <h2 class="card__title"><%= t(".#{group}", count: rows.size) %></h2>
+            <p class="card__description"><%= t(".#{group}_hint") %></p>
+          </div>
+        </summary>
+        <ul class="import-rows__list">
+          <% rows.first(100).each do |row| %>
+            <li>
+              <span class="import-table__line"><%= row.line %></span>
+              <span><%= render "imports/row_label", row: row, kind: @import.kind %></span>
+            </li>
+          <% end %>
+        </ul>
+        <% if rows.size > 100 %>
+          <p class="card__body text-muted text-sm"><%= t(".more", count: rows.size - 100) %></p>
+        <% end %>
+      </details>
+    <% end %>
+
+    <%# Discard deletes the upload; Import creates the new rows in one go (Imports::RunsController).
+        Turbo disables the button while it's sending, and run! refuses to run twice anyway %>
+    <section class="card">
+      <div class="card__body import-confirm">
+        <p class="text-muted text-sm"><%= t(".confirm_hint") %></p>
+        <div class="import-actions">
+          <%= button_to t(".discard"), import_path(@import), method: :delete, class: "btn btn--ghost",
+                form: { data: { turbo_confirm: t(".discard_confirm"), confirm_button: t(".discard") } } %>
+          <%= button_to t(".run", count: new_rows.size), import_run_path(@import),
+                class: "btn btn--primary", disabled: new_rows.empty? %>
+        </div>
+      </div>
+    </section>
+  </div>
+<% end %>

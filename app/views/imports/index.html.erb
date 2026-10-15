@@ -1,0 +1,72 @@
+<% content_for :title, t(".title") %>
+
+<%= render "shared/back_link", path: settings_path, label: t("settings.back") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+  <div class="page-header__actions">
+    <%= link_to new_import_path, class: "btn btn--primary" do %>
+      <%= render "shared/icons/arrow_up_tray" %>
+      <%= t(".new") %>
+    <% end %>
+  </div>
+</div>
+
+<div class="stack">
+  <%# The three promises, before the history: what an import can and can't do %>
+  <section class="card">
+    <ol class="card__body import-steps">
+      <% %w[order preview safe].each do |step| %>
+        <li>
+          <span class="import-steps__title"><%= t(".steps.#{step}.title") %></span>
+          <span class="text-muted text-sm"><%= t(".steps.#{step}.description") %></span>
+        </li>
+      <% end %>
+    </ol>
+  </section>
+
+  <section>
+    <h2 class="settings-group__title"><%= t(".history") %></h2>
+    <% if @imports.any? %>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%= t(".columns.date") %></th>
+              <th><%= Import.human_attribute_name(:kind) %></th>
+              <th><%= Import.human_attribute_name(:employee) %></th>
+              <th><%= Import.human_attribute_name(:status) %></th>
+              <th><%= t(".columns.result") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @imports.each do |import| %>
+              <tr>
+                <td><%= link_to l(import.created_at, format: :display), import_path(import) %></td>
+                <td><%= t(import.kind, scope: "imports.kinds") %></td>
+                <td><%= import.employee.display_name %></td>
+                <td><%= render "imports/status", import: import %></td>
+                <td class="text-muted">
+                  <% if import.completed? %>
+                    <%= t(".result", created: import.created_count, duplicates: import.duplicate_count, errors: import.error_count) %>
+                  <% else %>
+                    <%= link_to t(".review"), import_path(import) %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="card empty-state">
+        <%= render "shared/icons/arrow_up_tray" %>
+        <p class="empty-state__title"><%= t(".empty") %></p>
+        <p><%= t(".empty_hint") %></p>
+      </div>
+    <% end %>
+  </section>
+</div>

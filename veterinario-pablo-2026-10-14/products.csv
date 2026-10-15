@@ -1,0 +1,3 @@
+﻿id,product_category_id,name,description,barcode,price,stock,show_warning_when_stock_under_x_items,archived_at,created_at
+1,1,Vacuna Rabia,Vacuna antirrabica Vectron,,14.99,52,5,,2026-10-04T12:14:15+02:00
+2,3,Applaws Salmón 7kg,"Pienso hipoalergénico para gatos adultos, con 80% de carne y pescado, 20% de verduras y extractos naturales, sin cereales ni gluten, con aceite de salmón, prebióticos y levadura de cerveza. Croqueta pequeña.",,41.5,19,5,,2026-10-06T19:45:03+02:00
