@@ -14,6 +14,7 @@ class CustomersController < ApplicationController
   end
 
   def show
+    @debt = @customer.debt
     @pets = @customer.pets.includes(:pet_species, :rich_text_notes)
     @history = params[:history] == "invoices" ? "invoices" : "appointments"
     @query = params[:q].to_s.strip
@@ -25,7 +26,7 @@ class CustomersController < ApplicationController
       @invoices = @customer.invoices
         .search(@query)
         .dated_between(@from, @to)
-        .includes(:employee, invoice_products: [ :product, :service ])
+        .includes(:employee, :payments, invoice_products: [ :product, :service ], corrective_invoices: :invoice_products)
         .order(date: :desc)
     else
       @appointments = @customer.appointments

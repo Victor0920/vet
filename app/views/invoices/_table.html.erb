@@ -1,5 +1,6 @@
-<%# Shared by invoices#index and customers#show. Pass show_customer: false to hide
-    the customer column (on a customer's page it's always the same person). %>
+<%# Shared by invoices#index, customers#show and invoices#show (rectificativas). Pass show_customer: false
+    to hide the customer column (on a customer's page it's always the same person).
+    The status column needs the payments and rectificativas preloaded by the controller (no query per row). %>
 <% show_customer = local_assigns.fetch(:show_customer, true) %>
 <div class="table-wrapper">
   <table class="table">
@@ -11,6 +12,7 @@
           <th><%= t("invoices.columns.customer") %></th>
         <% end %>
         <th><%= t("invoices.columns.employee") %></th>
+        <th><%= t("invoices.columns.status") %></th>
         <th class="invoices-table__total"><%= t("invoices.columns.total") %></th>
       </tr>
     </thead>
@@ -35,6 +37,7 @@
             </td>
           <% end %>
           <td><%= invoice.employee.display_name %></td>
+          <td><%= render "invoices/payment_status", invoice: invoice %></td>
           <td class="table__numeric invoices-table__total">
             <%= number_to_currency(invoice.total, unit: "€", format: "%n %u") %>
           </td>

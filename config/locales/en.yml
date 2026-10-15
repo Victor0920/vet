@@ -101,6 +101,9 @@ en:
       invoice_product:
         one: "Invoice line"
         other: "Invoice lines"
+      payment:
+        one: "Payment"
+        other: "Payments"
     attributes:
       store:
         name: "Name"
@@ -249,6 +252,14 @@ en:
         store_id: "Store"
         invoice_products: "Lines"
         original_invoice: "Original invoice"
+        paid_now: "Paid"
+        payment_method: "Payment method"
+      payment:
+        amount: "Amount"
+        payment_method: "Payment method"
+        paid_at: "Date"
+        employee: "Taken by"
+        invoice: "Invoice"
       invoice_product:
         product: "Product"
         product_id: "Product"
@@ -298,12 +309,15 @@ en:
         jpg_png_or_webp_only: "must be a JPG, PNG or WebP image"
         inactive_employee: "has been deactivated: choose someone who is still active"
         archived: "has been archived and can't be added to new invoices"
+        more_than_owed: "can't be more than what's still owed"
       # Per-model wording, used instead of the generic message above
       models:
         invoice:
           attributes:
             number:
               taken: "is already used by another invoice"
+            paid_now:
+              needs_customer: "can't be turned off on an invoice without a customer: nobody would owe it"
         # Feminine fields: the generic "no es válido" would read "Categoría no es válido"
         product:
           attributes:
@@ -317,6 +331,16 @@ en:
           attributes:
             room:
               invalid: "is invalid"
+
+  # Forms that aren't tables (ActiveModel), like CustomerPayment
+  activemodel:
+    attributes:
+      customer_payment:
+        amount: "Amount"
+        payment_method: "Payment method"
+    errors:
+      messages:
+        more_than_owed: "can't be more than what they owe"
 
   # ---------- Flash messages (controllers) ----------
   flash:
@@ -395,6 +419,9 @@ en:
       updated: "Category updated"
       not_found: "Category not found"
       deleted: "Category deleted"
+    payments:
+      created: "Payment recorded"
+      deleted: "Payment deleted"
     invoices:
       created: "Invoice created"
       updated: "Invoice updated"
@@ -746,7 +773,7 @@ en:
           description: "Products and services with their categories, archived ones too."
         history:
           title: "History"
-          description: "Appointments, invoices with their lines, and messages."
+          description: "Appointments, invoices with their lines and payments, and messages."
       format: "Format: UTF-8 CSV, comma-separated, with ISO dates (2026-10-14) and dot decimals. Opens in Excel, Google Sheets or Numbers."
       not_included: "Passwords and sessions aren't included. Photos and invoice PDFs are coming soon."
       download: "Download"
@@ -1649,6 +1676,40 @@ en:
       details: "Details"
 
   # ---------- Invoices ----------
+  # Payments: each invoice's status, its payments card, the "Paid" switch and the customer's debt
+  payments:
+    methods:
+      cash: "Cash"
+      card: "Card"
+      transfer: "Bank transfer"
+      bizum: "Bizum"
+    status:
+      paid: "Paid"
+      due: "Owes %{amount}"
+    card:
+      title: "Payments"
+      paid_of: "Paid %{paid} of %{total}"
+      includes_refunds: "What's owed already takes its corrective invoices into account."
+      empty: "No payments yet."
+      date: "Date"
+      delete: "Delete payment"
+      delete_confirm: "Delete this payment? The invoice will owe that amount again."
+      new: "Record a payment"
+      amount_hint: "It can be part of it: the rest stays owed."
+      submit: "Record payment"
+    form:
+      title: "Payment"
+      paid_now: "Paid now"
+      paid_now_hint: "Turn it off if the customer will pay later: the invoice stays owed and adds to their debt."
+    customer:
+      debt: "Owes %{amount}"
+      debt_hint: "What's left to pay on their invoices, after payments and corrective invoices."
+      register: "Record payment"
+      title: "Record payment"
+      current_debt: "Current debt: %{amount}"
+      spread_hint: "It's spread over the unpaid invoices, oldest first."
+      submit: "Record payment"
+
   invoices:
     all_invoices: "All invoices"
     number: "Invoice #%{id}"
@@ -1667,6 +1728,7 @@ en:
       product: "Item"
       quantity: "Quantity"
       unit_price: "Price (incl. VAT)"
+      status: "Status"
       final_price: "Final price"
       subtotal: "Subtotal"
       vat: "VAT"
@@ -1680,6 +1742,8 @@ en:
       new_invoice: "New invoice"
       search_label: "Search invoices"
       search_placeholder: "Search by invoice number…"
+      customer: "Customer"
+      all_customers: "All customers"
       from: "From"
       to: "To"
       count:
@@ -1689,7 +1753,7 @@ en:
         one: "1 invoice matching “%{query}”"
         other: "%{count} invoices matching “%{query}”"
       no_matches: "No invoices match these filters"
-      no_matches_hint: "Try another number or widen the date range."
+      no_matches_hint: "Try another number, pick “All customers” or widen the date range."
       empty: "No invoices yet"
       empty_hint: "Invoices will show up here once the first is created."
     show:

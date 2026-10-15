@@ -194,5 +194,36 @@
         <p class="form-hint"><%= t(".lines_hint") %></p>
       </footer>
     </section>
+
+    <%# Only when creating: the "Paid" switch (Invoice#paid_now) records a payment for the whole total
+        when the invoice is saved. Off, the invoice stays owed (it needs a customer then).
+        Afterwards payments are managed on the invoice's page. %>
+    <% unless invoice.persisted? %>
+      <section class="card">
+        <header class="card__header">
+          <h2 class="card__title"><%= t("payments.form.title") %></h2>
+        </header>
+        <dl class="field-list">
+          <div class="field-row">
+            <dt class="field-row__label"><%= Invoice.human_attribute_name(:paid_now) %></dt>
+            <dd class="field-row__value">
+              <label class="switch">
+                <%= f.check_box :paid_now, class: "switch__input", role: "switch",
+                      aria: { describedby: "paid_now_hint", invalid: invoice.errors[:paid_now].any? } %>
+                <span class="switch__track" aria-hidden="true"></span>
+                <span class="switch__label"><%= t("payments.form.paid_now") %></span>
+              </label>
+              <p class="form-hint" id="paid_now_hint"><%= t("payments.form.paid_now_hint") %></p>
+            </dd>
+          </div>
+          <div class="field-row">
+            <dt class="field-row__label"><%= Invoice.human_attribute_name(:payment_method) %></dt>
+            <dd class="field-row__value invoice-form__payment-method">
+              <%= render "payments/method_pills", f: f, hide_legend: true %>
+            </dd>
+          </div>
+        </dl>
+      </section>
+    <% end %>
   </div>
 <% end %>

@@ -10,6 +10,9 @@
         <span class="badge badge--warning"><%= t("invoices.rectificativa") %></span>
       <% end %>
       <%= @invoice.date ? l(@invoice.date, format: :full) : "—" %>
+      <% unless @invoice.corrective? %>
+        · <%= render "invoices/payment_status", invoice: @invoice %>
+      <% end %>
     </p>
   </div>
   <div class="invoice-total">
@@ -189,6 +192,90 @@
       </div>
     <% end %>
   </section>
+
+  <%# Payments (Invoices::PaymentsController). What's still owed is worked out from them and from the
+      rectificativas (Invoice#amount_due), never stored. Rectificativas are never owed: no card for them %>
+  <% unless @invoice.corrective? %>
+    <section class="card" id="payments">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t("payments.card.title") %></h2>
+          <p class="card__description">
+            <%= t("payments.card.paid_of",
+                  paid: number_to_currency(@invoice.amount_paid, unit: "€", format: "%n %u"),
+                  total: number_to_currency(@invoice.total, unit: "€", format: "%n %u")) %>
+            <% if @invoice.corrective_invoices.any? %>
+              <%= t("payments.card.includes_refunds") %>
+            <% end %>
+          </p>
+        </div>
+        <%= render "invoices/payment_status", invoice: @invoice %>
+      </header>
+
+      <% if @payments.any? %>
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><%= t("payments.card.date") %></th>
+                <th><%= Payment.human_attribute_name(:payment_method) %></th>
+                <th><%= Payment.human_attribute_name(:employee) %></th>
+                <th class="invoices-table__total"><%= Payment.human_attribute_name(:amount) %></th>
+                <% if admin? %>
+                  <th><span class="sr-only"><%= t("payments.card.delete") %></span></th>
+                <% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% @payments.each do |payment| %>
+                <tr>
+                  <td class="table__numeric"><%= l(payment.paid_at, format: :display) %></td>
+                  <td><%= t(payment.payment_method, scope: "payments.methods") %></td>
+                  <td><%= payment.employee.display_name %></td>
+                  <td class="table__numeric invoices-table__total">
+                    <%= number_to_currency(payment.amount, unit: "€", format: "%n %u") %>
+                  </td>
+                  <%# Admins only (the controller checks too): undoes a payment entered by mistake %>
+                  <% if admin? %>
+                    <td class="invoice-payments__delete">
+                      <%= button_to invoice_payment_path(@invoice, payment), method: :delete,
+                            class: "btn btn--ghost btn--icon btn--sm", aria: { label: t("payments.card.delete") },
+                            form: { data: { turbo_confirm: t("payments.card.delete_confirm"), confirm_button: t("payments.card.delete") } } do %>
+                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd"/></svg>
+                      <% end %>
+                    </td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <p class="card__body text-muted text-sm"><%= t("payments.card.empty") %></p>
+      <% end %>
+
+      <%# What's left (or part of it): POST /invoices/:id/payments. scope: :payment sends payment[amount]
+          and payment[payment_method], what Invoices::PaymentsController expects %>
+      <% unless @invoice.paid? %>
+        <%= form_with scope: :payment, url: invoice_payments_path(@invoice), class: "card__footer invoice-payment-form" do |f| %>
+          <div class="form-field">
+            <%= f.label :amount, Payment.human_attribute_name(:amount), class: "label" %>
+            <div class="input-affix">
+              <%# "35.00", not "35.0"; locale: :en keeps the dot a number input needs %>
+              <%= f.number_field :amount, value: number_with_precision(@invoice.amount_due, precision: 2, locale: :en),
+                    class: "input", required: true,
+                    step: 0.01, min: 0.01, max: @invoice.amount_due, aria: { describedby: "payment_amount_hint" } %>
+              <span class="input-affix__suffix" aria-hidden="true">€</span>
+            </div>
+          </div>
+          <%= render "payments/method_pills", f: f %>
+          <%= f.submit t("payments.card.submit"), class: "btn btn--primary" %>
+          <%# Under the whole row, so the amount, the pills and the button stay lined up %>
+          <p class="form-hint invoice-payment-form__hint" id="payment_amount_hint"><%= t("payments.card.amount_hint") %></p>
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
 
   <%# Refunds and corrections made on this invoice. Reuses the index table (same columns,
       minus the customer, which is always this invoice's). %>

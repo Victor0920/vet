@@ -1,0 +1,68 @@
+<% content_for :title, t("payments.customer.title") %>
+
+<%# Loaded into the empty <turbo-frame id="modal"> at the bottom of customers/show, like the invoice's
+    "Send by email". modal#close (Esc, ✕, Cancel, backdrop) empties the frame; opened on its own page,
+    the close links lead back to the customer. modal#submitEnd: once saved, show the customer page in full.
+    POST /customers/:customer_id/payments → Customers::PaymentsController#create, which spreads the
+    amount over the unpaid invoices, oldest first (CustomerPayment) %>
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal modal--overlay" data-controller="modal"
+       data-action="keydown.esc@window->modal#close turbo:submit-end->modal#submitEnd">
+    <%= link_to "", customer_path(@customer), class: "modal__backdrop", tabindex: -1,
+          aria: { hidden: true }, data: { action: "modal#close", turbo_frame: "_top" } %>
+
+    <div class="modal__panel card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <header class="card__header">
+        <div>
+          <h2 class="card__title" id="modal-title"><%= t("payments.customer.title") %></h2>
+          <p class="card__description">
+            <%= @customer.full_name %> ·
+            <%= t("payments.customer.current_debt", amount: number_to_currency(@customer.debt, unit: "€", format: "%n %u")) %>
+          </p>
+        </div>
+        <%= link_to customer_path(@customer), class: "btn btn--ghost btn--icon btn--sm", aria: { label: t("shared.close") },
+              data: { action: "modal#close", turbo_frame: "_top" } do %>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+        <% end %>
+      </header>
+
+      <%# model: a CustomerPayment (ActiveModel, not a table), so the fields are customer_payment[…] %>
+      <%= form_with model: @payment, url: customer_payments_path(@customer), id: "customer-payment-form" do |f| %>
+        <div class="card__body form">
+          <% if @payment.errors.any? %>
+            <div class="alert alert--danger" role="alert">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+              <ul class="form-errors">
+                <% @payment.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="form-field">
+            <%= f.label :amount, class: "label" %>
+            <div class="input-affix input--short">
+              <%# "100.00", not "100.0"; locale: :en keeps the dot a number input needs %>
+              <%= f.number_field :amount, value: number_with_precision(@payment.amount, precision: 2, locale: :en),
+                    class: "input", required: true, autofocus: true, step: 0.01, min: 0.01,
+                    aria: { invalid: @payment.errors[:amount].any?, describedby: "customer_payment_amount_hint" } %>
+              <span class="input-affix__suffix" aria-hidden="true">€</span>
+            </div>
+            <p class="form-hint" id="customer_payment_amount_hint"><%= t("payments.customer.spread_hint") %></p>
+          </div>
+
+          <%= render "payments/method_pills", f: f %>
+        </div>
+      <% end %>
+
+      <footer class="card__footer modal__footer">
+        <div class="modal__footer-actions">
+          <%= link_to t("shared.cancel"), customer_path(@customer), class: "btn btn--ghost",
+                data: { action: "modal#close", turbo_frame: "_top" } %>
+          <%= button_tag t("payments.customer.submit"), type: "submit", form: "customer-payment-form", class: "btn btn--primary" %>
+        </div>
+      </footer>
+    </div>
+  </div>
+<% end %>

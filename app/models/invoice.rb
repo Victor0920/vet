@@ -9,6 +9,11 @@ class Invoice < ApplicationRecord
   has_many :invoice_products, dependent: :destroy
   accepts_nested_attributes_for :invoice_products, allow_destroy: true, reject_if: :blank_line?
   belongs_to :appointment, optional: true
+  has_many :payments, dependent: :destroy
+  # The "Pagada" switch and the payment method on the new invoice form (not columns):
+  # when it's on, creating the invoice also records a payment for the whole total
+  attribute :paid_now, :boolean, default: true
+  attribute :payment_method, :string, default: "cash"
   normalizes :number, with: ->(number) { number.strip.presence }
 
   validates :number, uniqueness: { scope: :enterprise_id }, allow_nil: true
@@ -19,6 +24,8 @@ class Invoice < ApplicationRecord
   validate :date_and_store_unchanged, on: :update
   validate :customer_and_appointment_in_enterprise
   validate :customer_matches_appointment
+  validate :paid_if_no_customer, on: :create
+  validates :payment_method, inclusion: { in: Payment::METHODS }, if: :paid_now, on: :create
 
   before_validation :assign_number, on: :create
   before_validation { self.customer ||= appointment&.customer }
@@ -27,6 +34,7 @@ class Invoice < ApplicationRecord
   scope :search, ->(query) {
     query.present? ? where("invoices.number LIKE ?", "%#{sanitize_sql_like(query)}%") : all
   }
+  scope :regular, -> { where(original_invoice_id: nil) }
 
   # Either end may be nil: only "from" means "from that day onwards"
   scope :dated_between, ->(from, to) {
@@ -79,6 +87,23 @@ class Invoice < ApplicationRecord
     raise
   end
 
+  # Money received so far. In Ruby (not SQL) so a list that preloads the payments costs no extra
+  # queries; a payment that's being built (not saved yet) doesn't count
+  def amount_paid
+    payments.reject(&:new_record?).sum(&:amount)
+  end
+
+  # What's still owed: the total, less what refunds took off (their totals are negative),
+  # less what's been paid. Never below 0: refunding a paid invoice is money given back, not
+  # negative debt. A rectificativa itself is never owed.
+  def amount_due
+    return 0 if corrective?
+    [ total + corrective_invoices.sum(&:total) - amount_paid, 0 ].max
+  end
+
+  def paid?
+    amount_due.zero?
+  end
 
   private
 
@@ -193,5 +218,16 @@ class Invoice < ApplicationRecord
     if customer && appointment&.customer && appointment.customer_id != customer_id
       errors.add(:customer, :doesnt_match_appointment, customer: appointment.customer.full_name)
     end
+  end
+
+  # Nobody can owe an invoice that has no customer
+  def paid_if_no_customer
+    errors.add(:paid_now, :needs_customer) if !paid_now && customer.nil? && !corrective?
+  end
+
+  # The "Pagada" switch: the whole total, taken by whoever is creating the invoice
+  def record_payment
+    payments.create!(enterprise: enterprise, amount: total, payment_method: payment_method,
+                     employee: Current.employee || employee)
   end
 end

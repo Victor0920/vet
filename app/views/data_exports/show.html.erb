@@ -23,7 +23,7 @@
       <% { business: %w[enterprise stores rooms opening_hours employees],
            clinical: %w[customers pets pet_weights],
            catalogue: %w[product_categories products service_categories services],
-           history: %w[appointments invoices invoice_lines messages] }.each do |group, files| %>
+           history: %w[appointments invoices invoice_lines payments messages] }.each do |group, files| %>
         <div class="data-export__group">
           <h3 class="data-export__group-title"><%= t(".groups.#{group}.title") %></h3>
           <p class="text-muted text-sm"><%= t(".groups.#{group}.description") %></p>

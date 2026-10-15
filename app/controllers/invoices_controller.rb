@@ -7,14 +7,19 @@ class InvoicesController < ApplicationController
     @query = params[:q].to_s.strip
     @from = date_param(:from)
     @to = date_param(:to)
+    @customer_id = params[:customer_id].presence
+    # For the customer filter's options
+    @customers = Current.enterprise.customers.order(:first_name, :first_surname)
     @invoices = Current.enterprise.invoices
       .search(@query)
       .dated_between(@from, @to)
-      .includes(:customer, :employee, invoice_products: :product) # one query per table, not per row
+      .includes(:customer, :employee, :payments, invoice_products: :product, corrective_invoices: :invoice_products)
       .order(date: :desc)
+    @invoices = @invoices.where(customer_id: @customer_id) if @customer_id
   end
 
   def show
+    @payments = @invoice.payments.includes(:employee).order(:paid_at)
     respond_to do |format|
       format.html
       format.pdf do
@@ -84,7 +89,7 @@ class InvoicesController < ApplicationController
   end
 
   def invoice_params
-    params.expect(invoice: [ :date, :store_id, :employee_id, :customer_id, :appointment_id,
+    params.expect(invoice: [ :date, :store_id, :employee_id, :customer_id, :appointment_id, :paid_now, :payment_method,
       invoice_products_attributes: [ [ :id, :item, :description, :price, :vat_rate, :quantity, :_destroy ] ] ])
   end
 

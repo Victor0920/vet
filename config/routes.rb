@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     resources :pets, except: :index do
       resources :weights, only: %i[ new create destroy ], module: :pets
     end
+    resources :payments, only: %i[ new create ], module: :customers
   end
   resources :pets, only: :index
 
@@ -43,6 +44,7 @@ Rails.application.routes.draw do
   resources :invoices do
     resource :email, only: %i[ new create ], module: :invoices
     resources :rectifications, only: %i[ new create ], module: :invoices
+    resources :payments, only: %i[ create destroy ], module: :invoices
   end
 
   post "/conversations/:id/messages", to: "conversations#create_message"

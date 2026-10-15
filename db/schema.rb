@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_15_151654) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_154321) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -241,6 +241,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_151654) do
     t.index ["store_id"], name: "index_opening_hours_on_store_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.integer "enterprise_id", null: false
+    t.integer "invoice_id", null: false
+    t.integer "employee_id", null: false
+    t.decimal "amount", precision: 9, scale: 2, null: false
+    t.string "payment_method", default: "cash", null: false
+    t.datetime "paid_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_payments_on_employee_id"
+    t.index ["enterprise_id"], name: "index_payments_on_enterprise_id"
+    t.index ["invoice_id"], name: "index_payments_on_invoice_id"
+  end
+
   create_table "pet_species", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -395,6 +409,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_15_151654) do
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "employees"
   add_foreign_key "opening_hours", "stores"
+  add_foreign_key "payments", "employees"
+  add_foreign_key "payments", "enterprises"
+  add_foreign_key "payments", "invoices"
   add_foreign_key "pet_weights", "pets"
   add_foreign_key "pets", "customers"
   add_foreign_key "pets", "employees", column: "usual_employee_id"

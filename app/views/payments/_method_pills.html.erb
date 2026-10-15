@@ -1,0 +1,15 @@
+<%# Cash / card / transfer / Bizum as radio pills (pill_choice.css), cash picked unless the form says
+    otherwise. `f` is any form builder whose object (or scope) has payment_method: the invoice form,
+    a payment on invoices#show, and the customer's payment popup.
+    f.object is false for a form_with scope: (no model), hence try.
+    hide_legend: true when the row already shows the label (the legend stays for screen readers). %>
+<fieldset class="form-field">
+  <legend class="<%= local_assigns[:hide_legend] ? "sr-only" : "label" %>"><%= Payment.human_attribute_name(:payment_method) %></legend>
+  <div class="pill-choices">
+    <% Payment::METHODS.each do |method| %>
+      <%= f.radio_button :payment_method, method, class: "pill-choice__input",
+            checked: (f.object.try(:payment_method) || "cash") == method %>
+      <%= f.label :payment_method, t(method, scope: "payments.methods"), value: method, class: "pill-choice" %>
+    <% end %>
+  </div>
+</fieldset>

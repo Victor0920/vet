@@ -108,6 +108,21 @@
   margin-bottom: var(--space-6);
 }
 
+/* "Debe 60,00 €" above the pets, with "Registrar pago" on the right (below on phones) */
+.customer-debt {
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+}
+
+.customer-debt__text {
+  flex: 1 1 14rem;
+}
+
+.customer-debt__action {
+  flex-shrink: 0;
+}
+
 /* Compact pet cards: several per row, each one only as tall as its photo */
 .pets-grid {
   display: grid;

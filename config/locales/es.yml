@@ -91,6 +91,9 @@ es:
       invoice_product:
         one: "Línea de factura"
         other: "Líneas de factura"
+      payment:
+        one: "Cobro"
+        other: "Cobros"
     attributes:
       store:
         name: "Nombre"
@@ -239,6 +242,14 @@ es:
         store_id: "Centro"
         invoice_products: "Líneas"
         original_invoice: "Factura original"
+        paid_now: "Pagada"
+        payment_method: "Forma de pago"
+      payment:
+        amount: "Importe"
+        payment_method: "Forma de pago"
+        paid_at: "Fecha"
+        employee: "Cobrado por"
+        invoice: "Factura"
       invoice_product:
         product: "Producto"
         product_id: "Producto"
@@ -287,12 +298,15 @@ es:
         jpg_png_or_webp_only: "debe ser una imagen JPG, PNG o WebP"
         inactive_employee: "está desactivado: elige a alguien que siga activo"
         archived: "está archivado y no se puede añadir a facturas nuevas"
+        more_than_owed: "no puede ser mayor que lo que queda por pagar"
       # Mensajes por modelo, usados en lugar del genérico de arriba
       models:
         invoice:
           attributes:
             number:
               taken: "ya lo usa otra factura"
+            paid_now:
+              needs_customer: "no se puede desactivar en una factura sin cliente: nadie quedaría debiéndola"
         # Feminine fields: the generic "no es válido" would read "Categoría no es válido"
         product:
           attributes:
@@ -306,6 +320,16 @@ es:
           attributes:
             room:
               invalid: "no es válida"
+
+  # Formularios que no son tablas (ActiveModel), como CustomerPayment
+  activemodel:
+    attributes:
+      customer_payment:
+        amount: "Importe"
+        payment_method: "Forma de pago"
+    errors:
+      messages:
+        more_than_owed: "no puede ser mayor que lo que debe"
 
   # ---------- Mensajes flash (controladores) ----------
   flash:
@@ -379,6 +403,9 @@ es:
     pet_weights:
       created: "Peso guardado"
       deleted: "Peso eliminado"
+    payments:
+      created: "Cobro registrado"
+      deleted: "Cobro eliminado"
     invoices:
       created: "Factura creada"
       updated: "Factura actualizada"
@@ -735,7 +762,7 @@ es:
           description: "Productos y servicios con sus categorías, también los archivados."
         history:
           title: "Historial"
-          description: "Citas, facturas con sus líneas y mensajes."
+          description: "Citas, facturas con sus líneas y cobros, y mensajes."
       format: "Formato: CSV en UTF-8, separado por comas, con fechas ISO (2026-10-14) y decimales con punto. Se abre en Excel, Google Sheets o Numbers."
       not_included: "No incluye contraseñas ni sesiones. Las fotos y los PDF de las facturas llegarán pronto."
       download: "Descargar"
@@ -1636,6 +1663,40 @@ es:
       details: "Detalles"
 
   # ---------- Facturas ----------
+  # Cobros: el estado de cada factura, su tarjeta de cobros, el interruptor "Pagada" y la deuda del cliente
+  payments:
+    methods:
+      cash: "Efectivo"
+      card: "Tarjeta"
+      transfer: "Transferencia"
+      bizum: "Bizum"
+    status:
+      paid: "Pagada"
+      due: "Debe %{amount}"
+    card:
+      title: "Cobros"
+      paid_of: "Pagado %{paid} de %{total}"
+      includes_refunds: "Lo pendiente ya descuenta sus rectificativas."
+      empty: "Todavía no hay cobros."
+      date: "Fecha"
+      delete: "Eliminar cobro"
+      delete_confirm: "¿Eliminar este cobro? La factura volverá a deber ese importe."
+      new: "Registrar un cobro"
+      amount_hint: "Puede ser una parte: el resto seguirá pendiente."
+      submit: "Registrar cobro"
+    form:
+      title: "Cobro"
+      paid_now: "Se cobra ahora"
+      paid_now_hint: "Apágalo si el cliente pagará más tarde: la factura quedará pendiente y sumará a su deuda."
+    customer:
+      debt: "Debe %{amount}"
+      debt_hint: "Lo que queda por pagar de sus facturas, descontando cobros y rectificativas."
+      register: "Registrar pago"
+      title: "Registrar pago"
+      current_debt: "Deuda actual: %{amount}"
+      spread_hint: "Se reparte entre las facturas pendientes, empezando por la más antigua."
+      submit: "Registrar pago"
+
   invoices:
     all_invoices: "Todas las facturas"
     number: "Factura #%{id}"
@@ -1654,6 +1715,7 @@ es:
       product: "Concepto"
       quantity: "Cantidad"
       unit_price: "Precio (IVA incl.)"
+      status: "Estado"
       final_price: "Precio final"
       subtotal: "Subtotal"
       vat: "IVA"
@@ -1667,6 +1729,8 @@ es:
       new_invoice: "Nueva factura"
       search_label: "Buscar facturas"
       search_placeholder: "Buscar por número de factura…"
+      customer: "Cliente"
+      all_customers: "Todos los clientes"
       from: "Desde"
       to: "Hasta"
       count:
@@ -1676,7 +1740,7 @@ es:
         one: "1 factura coincide con “%{query}”"
         other: "%{count} facturas coinciden con “%{query}”"
       no_matches: "Ninguna factura coincide con estos filtros"
-      no_matches_hint: "Prueba con otro número o amplía el rango de fechas."
+      no_matches_hint: "Prueba con otro número, elige «Todos los clientes» o amplía el rango de fechas."
       empty: "Todavía no hay facturas"
       empty_hint: "Las facturas aparecerán aquí cuando se cree la primera."
     show:

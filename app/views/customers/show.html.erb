@@ -95,6 +95,20 @@
         <%= t(".new_appointment") %>
       <% end %>
     </div>
+
+    <%# What the customer owes (Customer#debt, set by the controller as @debt). "Registrar pago" opens
+        customers/payments/new in the "modal" frame at the bottom of this page %>
+    <% if @debt.positive? %>
+      <div class="alert alert--warning customer-debt" role="status">
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M1 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4Zm12 4a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM4 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm13-1a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM1.75 14.5a.75.75 0 0 0 0 1.5c4.417 0 8.693.603 12.749 1.73 1.111.309 2.251-.512 2.251-1.696v-.784a.75.75 0 0 0-1.5 0v.784a.272.272 0 0 1-.35.25A49.043 49.043 0 0 0 1.75 14.5Z" clip-rule="evenodd"/></svg>
+        <div class="customer-debt__text">
+          <p><strong><%= t("payments.customer.debt", amount: number_to_currency(@debt, unit: "€", format: "%n %u")) %></strong></p>
+          <p><%= t("payments.customer.debt_hint") %></p>
+        </div>
+        <%= link_to t("payments.customer.register"), new_customer_payment_path(@customer),
+              class: "btn btn--primary btn--sm customer-debt__action", data: { turbo_frame: "modal" } %>
+      </div>
+    <% end %>
     <header class="customer-profile__section-header">
       <div>
         <h2 class="section__title"><%= t(".pets") %></h2>
@@ -316,3 +330,6 @@
     <% end %>
   </section>
 </div>
+
+<%# Popups (e.g. "Registrar pago") load into this frame %>
+<%= turbo_frame_tag "modal" %>

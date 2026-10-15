@@ -6,8 +6,20 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  max-width: 48rem;
+  max-width: 64rem;
   margin-bottom: var(--space-3);
+}
+
+/* Customer picker between the search and the dates; full width on phones (wraps) */
+.invoices-filters__customer {
+  flex: 1 1 14rem;
+  max-width: 18rem;
+}
+
+@media (max-width: 40rem) {
+  .invoices-filters__customer {
+    max-width: none;
+  }
 }
 
 .invoices-filters__search {
@@ -384,4 +396,39 @@ turbo-frame#invoices {
     height: var(--icon-sm);
     flex-shrink: 0;
   }
+}
+
+/* ---------- invoices#show: payments ---------- */
+
+/* Amount, method and the button in one row under the payments, wrapping on narrow screens */
+.invoice-payment-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4);
+
+  .form-field:first-child {
+    flex: 0 1 12rem;
+  }
+
+  .form-field {
+    margin: 0;
+  }
+}
+
+.invoice-payment-form__hint {
+  flex-basis: 100%;
+  margin-top: calc(var(--space-2) * -1);
+}
+
+/* The delete button: as narrow as the icon */
+.table .invoice-payments__delete {
+  width: 1%;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* New invoice: the method pills sit where an input would */
+.invoice-form__payment-method .form-field {
+  margin: 0;
 }

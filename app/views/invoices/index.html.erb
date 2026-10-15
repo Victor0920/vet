@@ -15,9 +15,9 @@
   </div>
 </div>
 
-<%# Same pattern as customers#index: typing or picking a date submits the form
+<%# Same pattern as customers#index: typing, picking a customer or a date submits the form
     (debounced by search_controller.js) into the "invoices" frame, so only the table
-    is replaced. All three params end up in the URL: /invoices?q=…&from=…&to=… %>
+    is replaced. All the params end up in the URL: /invoices?q=…&customer_id=…&from=…&to=… %>
 <%= form_with url: invoices_path, method: :get, role: "search", class: "invoices-filters",
     data: { controller: "search", turbo_frame: "invoices", turbo_action: "replace" } do %>
   <div class="search-field invoices-filters__search">
@@ -28,6 +28,19 @@
           placeholder: t(".search_placeholder"),
           autocomplete: "off",
           data: { action: "input->search#submit" } %>
+  </div>
+
+  <%# item_picker_controller.js (same as the invoice form) turns the select into a dropdown with
+      "All customers" on top and a search box for the customers below it %>
+  <div class="item-picker invoices-filters__customer" data-controller="item-picker"
+       data-item-picker-placeholder-value="<%= t("invoices.form.search_customers") %>"
+       data-item-picker-empty-value="<%= t("invoices.form.no_customers_match") %>">
+    <%= label_tag :customer_id, t(".customer"), class: "sr-only" %>
+    <%= select_tag :customer_id,
+          options_from_collection_for_select(@customers, :id, :full_name, @customer_id),
+          include_blank: t(".all_customers"),
+          class: "select",
+          data: { action: "change->search#submit", item_picker_target: "select" } %>
   </div>
 
   <div class="invoices-filters__dates">
@@ -50,7 +63,7 @@
 
   <% if @invoices.any? %>
     <%= render "table", invoices: @invoices %>
-  <% elsif @query.present? || @from || @to %>
+  <% elsif @query.present? || @customer_id || @from || @to %>
     <div class="empty-state">
       <%= render "shared/icons/magnifying_glass" %>
       <p class="empty-state__title"><%= t(".no_matches") %></p>

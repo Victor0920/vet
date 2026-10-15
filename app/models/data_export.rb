@@ -64,6 +64,8 @@ class DataExport
       "invoices" => [ e.invoices, read(:id, :number, :series, :sequence_number, :date, :store_id, :employee_id,
         :customer_id, :appointment_id, :original_invoice_id) ],
       "invoice_lines" => [ e.invoice_products, read(:id, :invoice_id, :product_id, :service_id, :description, :quantity, :price, :vat_rate) ],
+      # What's still owed isn't stored: it's each invoice's total less these payments (and its rectificativas)
+      "payments" => [ Payment.where(enterprise: e), read(:id, :invoice_id, :amount, :payment_method, :paid_at, :employee_id, :created_at) ],
       "messages" => [ Message.where(conversation: e.conversations).includes(:conversation),
         read(:id).merge("customer_id" => ->(message) { message.conversation.customer_id })
           .merge(read(:sender, :employee_id, :text, :created_at)) ]

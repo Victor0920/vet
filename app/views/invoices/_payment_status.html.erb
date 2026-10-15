@@ -1,0 +1,12 @@
+<%# Whether an invoice is paid, for the invoice lists and invoices#show.
+    Green "Paid"; otherwise what's still owed (Invoice#amount_due): orange when part of it has been
+    paid, red when nothing has. Rectificativas are never owed, so they show nothing. %>
+<% if invoice.corrective? %>
+  <span class="text-subtle">—</span>
+<% elsif invoice.paid? %>
+  <span class="badge badge--success"><%= t("payments.status.paid") %></span>
+<% else %>
+  <span class="badge <%= invoice.amount_paid.positive? ? "badge--warning" : "badge--danger" %>">
+    <%= t("payments.status.due", amount: number_to_currency(invoice.amount_due, unit: "€", format: "%n %u")) %>
+  </span>
+<% end %>

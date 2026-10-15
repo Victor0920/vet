@@ -5,14 +5,17 @@ class Customer < ApplicationRecord
   has_one :conversation, dependent: :destroy
   belongs_to :enterprise
   has_one_attached :photo do |attachable|
-  attachable.variant :small, resize_to_fill: [ 80, 80 ], preprocessed: true
-  attachable.variant :medium, resize_to_fill: [ 192, 192 ], preprocessed: true
-end
+    attachable.variant :small, resize_to_fill: [ 80, 80 ], preprocessed: true
+    attachable.variant :medium, resize_to_fill: [ 192, 192 ], preprocessed: true
+  end
 
   def full_name
     [ first_name, first_surname ].compact_blank.join(" ").presence || "Customer ##{id}"
   end
 
+  def debt
+    invoices.regular.includes(:invoice_products, :payments, corrective_invoices: :invoice_products).sum(&:amount_due)
+  end
 
   SEARCHABLE_COLUMNS = %w[ first_name first_surname second_surname first_phone second_phone document_number email ].freeze
 
