@@ -151,6 +151,15 @@
   white-space: nowrap;
 }
 
+/* A product's reference code, after its name */
+.item-picker__reference {
+  flex-shrink: 0;
+  color: var(--color-text-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
 .item-picker__price {
   margin-left: auto;
   color: var(--color-text-subtle);

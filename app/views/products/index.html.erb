@@ -81,6 +81,7 @@
           <tr>
             <th class="products-table__photo"><span class="sr-only"><%= t("products.columns.photo") %></span></th>
             <th><%= t("products.columns.product") %></th>
+            <th class="products-table__reference"><%= t("products.columns.reference") %></th>
             <th><%= t("products.columns.category") %></th>
             <th class="products-table__price"><%= t("products.columns.price") %></th>
             <th class="products-table__vat"><%= t("products.columns.vat") %></th>
@@ -114,6 +115,14 @@
                     <span class="product-cell__meta"><%= product.description %></span>
                   <% end %>
                 </div>
+              </td>
+              <%# Monospace so codes like "ROY-3KG" line up and 0/O are easy to tell apart %>
+              <td class="products-table__reference">
+                <% if product.reference.present? %>
+                  <code class="products-table__code"><%= product.reference %></code>
+                <% else %>
+                  <span class="text-subtle">—</span>
+                <% end %>
               </td>
               <td>
                 <%= render "shared/category_badge", category: product.product_category %>

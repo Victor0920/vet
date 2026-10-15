@@ -52,7 +52,7 @@ class DataExport
       "product_categories" => [ e.product_categories, read(:id, :name, :color) ],
       "products" => [ e.products.includes(:product_category),
         read(:id, :product_category_id).merge("category" => ->(product) { product.product_category&.name })
-          .merge(read(:name, :description, :barcode, :price, :vat_rate, :stock, :show_warning_when_stock_under_x_items, :archived_at, :created_at)) ],
+          .merge(read(:name, :reference, :description, :barcode, :price, :vat_rate, :stock, :show_warning_when_stock_under_x_items, :archived_at, :created_at)) ],
       "service_categories" => [ e.service_categories, read(:id, :name, :color) ],
       "services" => [ e.services.includes(:service_category),
         read(:id, :service_category_id).merge("category" => ->(service) { service.service_category&.name })

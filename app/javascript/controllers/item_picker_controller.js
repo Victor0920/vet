@@ -2,6 +2,8 @@ import { Controller } from "@hotwired/stimulus"
 
 // Searchable dropdown for a long <select>: the invoice line's product/service picker and
 // the category filter on the products and services lists.
+// Options may carry data-price (shown on the right) and data-reference (shown after the name,
+// and matched by the search like the name).
 // The real <select> stays in the form, just hidden. It's still what gets submitted, and
 // picking an option here sets its value and fires "change", so whatever listens to the
 // select (invoice_lines_controller.js, search_controller.js) keeps working unchanged.
@@ -301,9 +303,12 @@ export default class extends Controller {
     item.setAttribute("role", "option")
     item.setAttribute("aria-selected", String(option.value === this.select.value))
     item.dataset.value = option.value
-    item.dataset.search = normalize(option.text)
+    // data-reference (a product's reference code) is shown after the name and searched too
+    const reference = option.dataset.reference
+    item.dataset.search = normalize([option.text, reference].filter(Boolean).join(" "))
 
     item.append(element("span", "item-picker__name", option.text))
+    if (reference) item.append(element("span", "item-picker__reference", reference))
     if (option.dataset.price) item.append(element("span", "item-picker__price", option.dataset.price))
 
     // mousedown would move focus off the search box (and close nothing); keep it there

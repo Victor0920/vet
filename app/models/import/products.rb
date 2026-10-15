@@ -1,7 +1,7 @@
 # products.csv: "category" is the category's name (created if it doesn't exist yet)
 class Import::Products < Import::Base
   REQUIRED_COLUMNS = %w[ name ].freeze
-  TEXT_COLUMNS = %w[ name description barcode ].freeze
+  TEXT_COLUMNS = %w[ name reference description barcode ].freeze
 
   private
 
@@ -21,8 +21,9 @@ class Import::Products < Import::Base
     end
   end
 
-  # The same product: same barcode, or same name (archived ones count too)
+  # The same product: same reference (any case), same barcode, or same name (archived ones count too)
   def keys(product)
-    [ tagged(:barcode, product.barcode.to_s.strip), tagged(:name, product.name.to_s.downcase) ].compact
+    [ tagged(:reference, product.reference.to_s.strip.downcase), tagged(:barcode, product.barcode.to_s.strip),
+      tagged(:name, product.name.to_s.downcase) ].compact
   end
 end

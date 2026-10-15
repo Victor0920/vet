@@ -67,7 +67,7 @@ export default class extends Controller {
     this.updateStock(line, custom ? null : select.selectedOptions[0])
   }
 
-  // Shows "· 5 available" and sets the quantity's max, or removes both when the line
+  // Shows "5 available" (in the Description column) and sets the quantity's max, or removes both when the line
   // is a custom item or a service (no data-stock).
   updateStock(line, option) {
     const quantity = line.querySelector("input[name$='[quantity]']")
@@ -84,7 +84,7 @@ export default class extends Controller {
     if (line.dataset.savedItem === option.value) available += Number(line.dataset.savedQuantity)
 
     quantity.max = available
-    label.textContent = `· ${this.availableValue.replace("%{count}", available)}`
+    label.textContent = this.availableValue.replace("%{count}", available)
     label.classList.toggle("invoice-line__stock--out", available < 1)
     label.hidden = false
   }

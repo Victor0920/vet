@@ -12,6 +12,8 @@ class Product < ApplicationRecord
   validates :name, presence: true
   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :stock, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  normalizes :reference, with: ->(reference) { reference.strip.presence }
+  validates :reference, uniqueness: { scope: :enterprise_id, case_sensitive: false }, allow_nil: true
   validate :photo_is_an_image
 
   validate :category_belongs_to_same_enterprise
@@ -19,7 +21,7 @@ class Product < ApplicationRecord
   scope :search, ->(query) {
     query.to_s.split.reduce(all) do |products, word|
       pattern = "%#{sanitize_sql_like(word)}%"
-      products.where("products.name LIKE :pattern OR products.description LIKE :pattern", pattern: pattern)
+      products.where("products.name LIKE :pattern OR products.description LIKE :pattern OR products.reference LIKE :pattern", pattern: pattern)
     end
   }
 

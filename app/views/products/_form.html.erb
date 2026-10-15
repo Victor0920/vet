@@ -40,6 +40,15 @@
                   aria: { invalid: product.errors[:name].any? } %>
           </dd>
         </div>
+        <%# Optional, but unique in the clinic (any case): Product validates it %>
+        <div class="field-row">
+          <dt class="field-row__label"><%= f.label :reference %></dt>
+          <dd class="field-row__value">
+            <%= f.text_field :reference, class: "input input--short input--mono", autocomplete: "off",
+                  aria: { invalid: product.errors[:reference].any?, describedby: "reference_hint" } %>
+            <p class="form-hint" id="reference_hint"><%= t(".reference_hint") %></p>
+          </dd>
+        </div>
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :product_category_id %></dt>
           <dd class="field-row__value">

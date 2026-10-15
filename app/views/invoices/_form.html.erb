@@ -160,10 +160,13 @@
       <p class="form-hint invoice-lines__stock-hint"><%= t(".stock_hint") %></p>
 
       <div class="invoice-lines">
+        <%# One heading per column of the lines below (invoices.css) %>
         <div class="invoice-lines__head" aria-hidden="true">
-          <span><%= InvoiceProduct.human_attribute_name(:product) %></span>
-          <span><%= t(".line_detail") %></span>
-          <span><%= InvoiceProduct.human_attribute_name(:quantity) %></span>
+          <span class="invoice-line__product"><%= InvoiceProduct.human_attribute_name(:product) %></span>
+          <span class="invoice-line__description"><%= InvoiceProduct.human_attribute_name(:description) %></span>
+          <span class="invoice-line__price invoice-line__value"><%= t("invoices.columns.final_price") %></span>
+          <span class="invoice-line__vat invoice-line__value"><%= InvoiceProduct.human_attribute_name(:vat_rate) %></span>
+          <span class="invoice-line__quantity invoice-line__value"><%= InvoiceProduct.human_attribute_name(:quantity) %></span>
         </div>
 
         <div data-invoice-lines-target="list">

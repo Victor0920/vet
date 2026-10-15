@@ -26,13 +26,15 @@
     <%= line.label :item, InvoiceProduct.human_attribute_name(:item), class: "sr-only" %>
     <%# Grouped choices ([label, [options]]) render as <optgroup>s. Only products carry
         data-stock: services have none, so the JS shows no "available" count for them.
-        data-price is what the customer pays (with VAT); data-vat the rate, shown next to it. %>
+        data-price is what the customer pays (with VAT); data-vat the rate, shown next to it.
+        data-reference: the picker shows it after the name and finds the product by it. %>
     <%= line.select :item,
           [
             [t("invoices.line_fields.products_group"), @products.map { |product|
               [product.name.presence || t("products.unnamed"), "product-#{product.id}",
                { data: { price: product.price ? number_to_currency(product.price_with_vat, unit: "€", format: "%n %u") : "",
                          vat: number_to_percentage(product.vat_rate, precision: 2, strip_insignificant_zeros: true),
+                         reference: product.reference,
                          stock: product.stock } }]
             }],
             [t("invoices.line_fields.services_group"), @services.map { |service|
@@ -47,41 +49,45 @@
           aria: { invalid: item.errors[:product].any? || item.errors[:service].any? } %>
   </div>
 
-  <div class="invoice-line__detail">
-    <%# Shown when a product or service is picked: the price and VAT come from it %>
-    <p class="invoice-line__product-price" data-product-price hidden>
-      <span data-product-price-value></span>
-      <span class="text-subtle"><%= t("invoices.line_fields.per_unit") %></span>
-      <span class="text-subtle">· <%= InvoiceProduct.human_attribute_name(:vat_rate) %> <span data-product-vat></span></span>
-      <%# "· 5 available", filled in by the JS %>
-      <span class="invoice-line__stock" data-product-stock hidden></span>
-    </p>
+  <%# The line is a grid with one column per heading (invoices.css): Product · Description ·
+      Final price · VAT · Quantity · ✕. The two groups below are display: contents, so their children
+      sit straight in those columns; only one of them is shown at a time (invoice_lines_controller.js). %>
 
-    <%# Shown for custom items; disabled (so not submitted) when a product or service is picked.
-        You type what the customer pays and the VAT; vat_price_controller.js works out the price
-        without VAT (the hidden price field, which is what's saved). keep "final": changing the VAT
-        leaves the amount you typed alone. %>
-    <div class="invoice-line__manual" data-manual
-         data-controller="vat-price" data-vat-price-keep-value="final">
-      <%= line.label :description, InvoiceProduct.human_attribute_name(:description), class: "sr-only" %>
-      <%= line.text_field :description, class: "input", required: true,
-            placeholder: t("invoices.line_fields.description_placeholder"),
-            aria: { invalid: item.errors[:description].any? } %>
-      <%= line.hidden_field :price, data: { vat_price_target: "price" } %>
-      <label for="<%= line.field_id(:final_price) %>" class="sr-only"><%= t("invoices.line_fields.final_price") %></label>
-      <input type="number" id="<%= line.field_id(:final_price) %>" class="input invoice-line__price" required
-             step="0.01" min="0" placeholder="<%= t("invoices.line_fields.price_placeholder") %>"
-             data-vat-price-target="final" data-action="input->vat-price#finalChanged"
-             aria-invalid="<%= item.errors[:price].any? %>">
-      <%= line.label :vat_rate, InvoiceProduct.human_attribute_name(:vat_rate), class: "sr-only" %>
-      <div class="input-affix invoice-line__vat">
-        <%# "21", not the database's "21.0"; locale: :en keeps the dot a number input needs %>
-        <%= line.number_field :vat_rate, class: "input", required: true, step: "any", min: 0, max: 99.99,
-              value: number_with_precision(item.vat_rate, precision: 2, strip_insignificant_zeros: true, locale: :en),
-              data: { vat_price_target: "vat", action: "input->vat-price#vatChanged" },
-              aria: { invalid: item.errors[:vat_rate].any? } %>
-        <span class="input-affix__suffix" aria-hidden="true">%</span>
-      </div>
+  <%# Shown when a product or service is picked: its stock, price with VAT and VAT come from it.
+      The stock ("5 available") is filled in by the JS, and stays empty for services %>
+  <div class="invoice-line__catalog" data-product-price hidden>
+    <span class="invoice-line__description invoice-line__stock" data-product-stock hidden></span>
+    <span class="invoice-line__price invoice-line__value">
+      <span data-product-price-value></span>
+      <span class="text-subtle invoice-line__per-unit"><%= t("invoices.line_fields.per_unit") %></span>
+    </span>
+    <span class="invoice-line__vat invoice-line__value" data-product-vat></span>
+  </div>
+
+  <%# Shown for custom items; disabled (so not submitted) when a product or service is picked.
+      You type what the customer pays and the VAT; vat_price_controller.js works out the price
+      without VAT (the hidden price field, which is what's saved). keep "final": changing the VAT
+      leaves the amount you typed alone. %>
+  <div class="invoice-line__manual" data-manual
+       data-controller="vat-price" data-vat-price-keep-value="final">
+    <%= line.label :description, InvoiceProduct.human_attribute_name(:description), class: "sr-only" %>
+    <%= line.text_field :description, class: "input invoice-line__description", required: true,
+          placeholder: t("invoices.line_fields.description_placeholder"),
+          aria: { invalid: item.errors[:description].any? } %>
+    <%= line.hidden_field :price, data: { vat_price_target: "price" } %>
+    <label for="<%= line.field_id(:final_price) %>" class="sr-only"><%= t("invoices.line_fields.final_price") %></label>
+    <input type="number" id="<%= line.field_id(:final_price) %>" class="input invoice-line__price" required
+           step="0.01" min="0" placeholder="<%= t("invoices.line_fields.price_placeholder") %>"
+           data-vat-price-target="final" data-action="input->vat-price#finalChanged"
+           aria-invalid="<%= item.errors[:price].any? %>">
+    <%= line.label :vat_rate, InvoiceProduct.human_attribute_name(:vat_rate), class: "sr-only" %>
+    <div class="input-affix invoice-line__vat">
+      <%# "21", not the database's "21.0"; locale: :en keeps the dot a number input needs %>
+      <%= line.number_field :vat_rate, class: "input", required: true, step: "any", min: 0, max: 99.99,
+            value: number_with_precision(item.vat_rate, precision: 2, strip_insignificant_zeros: true, locale: :en),
+            data: { vat_price_target: "vat", action: "input->vat-price#vatChanged" },
+            aria: { invalid: item.errors[:vat_rate].any? } %>
+      <span class="input-affix__suffix" aria-hidden="true">%</span>
     </div>
   </div>
 
@@ -91,7 +97,7 @@
           aria: { invalid: item.errors[:quantity].any? } %>
   </div>
 
-  <button type="button" class="btn btn--ghost btn--icon btn--sm"
+  <button type="button" class="btn btn--ghost btn--icon btn--sm invoice-line__remove"
           data-action="invoice-lines#remove"
           aria-label="<%= t("invoices.line_fields.remove") %>">
     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>

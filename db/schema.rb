@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_14_183250) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_15_151654) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -302,6 +302,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_183250) do
     t.string "barcode"
     t.datetime "archived_at"
     t.decimal "vat_rate", precision: 5, scale: 2, default: "21.0", null: false
+    t.string "reference"
+    t.index ["enterprise_id", "reference"], name: "index_products_on_enterprise_id_and_reference", unique: true
     t.index ["enterprise_id"], name: "index_products_on_enterprise_id"
     t.index ["product_category_id"], name: "index_products_on_product_category_id"
     t.index ["updated_by_id"], name: "index_products_on_updated_by_id"

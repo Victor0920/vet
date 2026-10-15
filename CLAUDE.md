@@ -24,7 +24,8 @@ The user is learning Ruby on Rails and wants to understand how to build features
 
 ### The user writes all Ruby logic
 
-Never edit or create Ruby files (`.rb`: models, controllers, helpers, routes, migrations, config, tests),
+Except for the areas listed under "Exceptions" below,
+never edit or create Ruby files (`.rb`: models, controllers, helpers, routes, migrations, config, tests),
 and never add business logic to views (queries, calculations, new instance variables the controller doesn't set).
 If a view or style change needs Ruby changes:
 
@@ -33,6 +34,16 @@ If a view or style change needs Ruby changes:
 3. Explain what needs to change and why
 4. Show the exact code to add/modify, with file path and line numbers
 5. Let the user make the change (don't use Edit/Write tools)
+
+### Exceptions: Claude may also edit Ruby here
+
+- **Import / export**: everything related to data import and export can be handled by Claude directly,
+  Ruby included (`app/models/data_export.rb`, `app/models/import.rb`, `app/models/import/**`,
+  `DataExportsController`, `ImportsController`, `Imports::*`, their views, the CSV templates in
+  `public/import-templates/` and their tests). E.g. when a model gets a new column, Claude adds it
+  to the export and the import itself
+- **Fixtures**: Claude may create and edit test fixtures (`test/fixtures/**`, including `test/fixtures/files/**`)
+- After such a change, still summarize what changed and why, so the user can learn from it
 
 ### Anything else (JavaScript, Stimulus controllers, other files)
 

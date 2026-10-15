@@ -55,6 +55,16 @@
 
     <dl class="details details--grid">
       <div>
+        <dt><%= Product.human_attribute_name(:reference) %></dt>
+        <dd>
+          <% if @product.reference.present? %>
+            <code class="products-table__code"><%= @product.reference %></code>
+          <% else %>
+            —
+          <% end %>
+        </dd>
+      </div>
+      <div>
         <dt><%= Product.human_attribute_name(:product_category) %></dt>
         <dd>
           <%= render "shared/category_badge", category: @product.product_category %>
