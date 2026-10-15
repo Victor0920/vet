@@ -55,6 +55,9 @@ es:
       opening_hour:
         one: "Horario de apertura"
         other: "Horarios de apertura"
+      feedback:
+        one: "Sugerencia"
+        other: "Sugerencias"
       appointment:
         one: "Cita"
         other: "Citas"
@@ -117,6 +120,16 @@ es:
         weekday: "Día"
         opens_at: "Abre"
         closes_at: "Cierra"
+      feedback:
+        kind: "Tipo"
+        message: "Mensaje"
+        images: "Imágenes"
+        status: "Estado"
+        response: "Respuesta"
+        page_url: "Página"
+        user_agent: "Navegador"
+        enterprise: "Empresa"
+        employee: "Empleado"
       appointment:
         title: "Título"
         starts_at: "Inicio"
@@ -234,6 +247,9 @@ es:
     errors:
       messages:
         must_be_after_start: "debe ser posterior a la hora de inicio"
+        too_many_images: "no pueden ser más de %{max}"
+        jpg_png_webp_or_gif_only: "deben ser JPG, PNG, WebP o GIF"
+        image_too_big: "no pueden pesar más de %{max} cada una"
         after_opening: "debe ser posterior a la hora de apertura"
         overlaps: "Se solapa con otro periodo del %{day}"
         no_weekdays: "Marca al menos un día"
@@ -291,6 +307,10 @@ es:
       updated: "Datos de la empresa actualizados"
     invoice_settings:
       updated: "Ajustes de facturación actualizados"
+    feedbacks:
+      created: "¡Gracias! Lo he recibido y te responderé lo antes posible"
+      rate_limited: "Has enviado muchas sugerencias seguidas. Espera un rato o escríbeme directamente"
+      updated: "Guardado"
     calendar_settings:
       updated: "Ajustes de citas y agenda actualizados"
     opening_hours:
@@ -435,6 +455,7 @@ es:
     conversation:
       empty: "Todavía no hay mensajes"
     top_nav:
+      help: "Ayuda y sugerencias"
       main: "Principal"
       home: "Inicio"
       messaging: "Mensajería"
@@ -573,6 +594,76 @@ es:
       hours_hint: "Las horas que muestra la agenda, en tramos de 15 minutos. No cambia el horario de apertura de los centros."
       minutes_unit: "minutos"
       duration_hint: "Al crear una cita, la hora de fin se rellena con la de inicio más esta duración."
+
+  # ---------- Ayuda y sugerencias (/help) ----------
+  feedbacks:
+    kinds:
+      problem: "Problema"
+      idea: "Sugerencia"
+      question: "Pregunta"
+      other: "Otro"
+    statuses:
+      received: "Recibido"
+      in_progress: "En curso"
+      resolved: "Resuelto"
+    index:
+      title: "Ayuda y sugerencias"
+      subtitle: "Vet es un producto joven: cuéntame qué falla o qué echas en falta y lo mejoraré."
+      contact:
+        title: "Contacta con el desarrollador"
+        intro: "Para algo urgente, escríbeme o llámame directamente."
+        email: "Correo"
+        phone: "Teléfono"
+        whatsapp: "WhatsApp"
+        availability: "L–V 9:00–18:00, respondo en menos de 24 h"
+      form:
+        title: "Enviar un problema o una idea"
+        intro: "Cuanto más detalle, mejor: qué hacías, qué esperabas y qué pasó."
+        kind: "Tipo"
+        message: "Mensaje"
+        message_placeholder: "Por ejemplo: al guardar una cita en la vista de salas, la página se queda en blanco…"
+        images: "Capturas de pantalla"
+        add_images: "Añadir imágenes"
+        remove_image: "Quitar imagen"
+        images_hint: "Hasta %{max} imágenes JPG, PNG, WebP o GIF de 10 MB como máximo. También puedes pegar una captura en el mensaje."
+        too_many_images: "Solo se pueden enviar %{max} imágenes: las demás no se han añadido."
+        privacy: "Intenta que las capturas no muestren datos personales de clientes (nombres, teléfonos, direcciones). Si no se puede evitar, tápalos antes de enviarlas."
+        submit: "Enviar"
+      mine:
+        title: "Tus envíos"
+        sent: "Enviado hace %{time}"
+        image_alt: "Captura adjunta"
+        reply: "Respuesta del desarrollador"
+        reply_time: "hace %{time}"
+        empty: "Todavía no has enviado nada"
+        empty_hint: "Lo que envíes aparecerá aquí, con su estado: Recibido, En curso o Resuelto."
+
+  # ---------- Bandeja del desarrollador (/developer/feedback) ----------
+  developer:
+    title: "Desarrollador"
+    feedbacks:
+      index:
+        title: "Bandeja de sugerencias"
+        subtitle: "Lo que han enviado los empleados de todas las empresas."
+        filter: "Filtrar por estado"
+        all: "Todas"
+        deleted_employee: "Empleado eliminado"
+        responded: "Respondida"
+        empty: "No hay nada aquí"
+      show:
+        title: "Sugerencia n.º %{id}"
+        response: "Respuesta"
+        response_hint: "El empleado la verá en su página de Ayuda y sugerencias. Puedes cambiarla cuando quieras; si la vacías, desaparece."
+        response_saved: "Guardada hace %{time}. El empleado la ve en Ayuda y sugerencias."
+        response_placeholder: "Por ejemplo: ¡Gracias! Ya está arreglado, recarga la página y vuelve a probar."
+        save_response: "Guardar respuesta"
+
+  feedback_mailer:
+    submitted:
+      subject: "[%{enterprise}] Nuevo envío: %{kind}"
+      heading: "Nuevo envío: %{kind}"
+      intro: "%{employee} (%{enterprise}) ha escrito desde Ayuda y sugerencias:"
+      view: "Ver en la bandeja"
 
   rooms:
     new:

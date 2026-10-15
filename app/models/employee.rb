@@ -5,6 +5,7 @@ class Employee < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :appointments
   has_many :messages, dependent: :nullify
+  has_many :feedbacks, dependent: :nullify
 
   belongs_to :enterprise
   belongs_to :default_store, class_name: "Store", optional: true

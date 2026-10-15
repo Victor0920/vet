@@ -1,0 +1,6 @@
+# The developer's contact details: shown on "Ayuda y sugerencias" (/help) and used by FeedbackMailer.
+# Loaded once in config/application.rb (config.x.support)
+shared:
+  email: "contacto@victorv.es"
+  phone: "+34 666 378 676"
+  whatsapp: "34666378676" # for wa.me links: country code + number, digits only

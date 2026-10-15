@@ -1,0 +1,59 @@
+<% content_for :title, t(".title") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+</div>
+
+<%# Status tabs with their counts (@counts: Feedback.group(:status).count) %>
+<nav class="developer-tabs" aria-label="<%= t(".filter") %>">
+  <%= link_to developer_feedbacks_path, class: "developer-tabs__tab", aria: { current: ("page" if @status.nil?) } do %>
+    <%= t(".all") %> <span class="developer-tabs__count"><%= @counts.values.sum %></span>
+  <% end %>
+  <% Feedback.statuses.each_key do |status| %>
+    <%= link_to developer_feedbacks_path(status: status), class: "developer-tabs__tab",
+          aria: { current: ("page" if @status == status) } do %>
+      <%= t(status, scope: "feedbacks.statuses") %> <span class="developer-tabs__count"><%= @counts[status].to_i %></span>
+    <% end %>
+  <% end %>
+</nav>
+
+<% if @feedbacks.any? %>
+  <%# The whole row opens the feedback: one inbox line each, like the conversations list %>
+  <ul class="card developer-inbox">
+    <% @feedbacks.each do |feedback| %>
+      <li>
+        <%= link_to developer_feedback_path(feedback), class: "developer-inbox__row" do %>
+          <span class="developer-inbox__main">
+            <span class="developer-inbox__top">
+              <span class="developer-inbox__who">
+                <%= feedback.enterprise.name %> · <%= feedback.employee&.display_name || t(".deleted_employee") %>
+              </span>
+              <time class="developer-inbox__time" datetime="<%= feedback.created_at.iso8601 %>">
+                <%= l(feedback.created_at, format: :short) %>
+              </time>
+            </span>
+            <span class="developer-inbox__message"><%= feedback.message %></span>
+          </span>
+          <span class="developer-inbox__badges">
+            <span class="badge"><%= t(feedback.kind, scope: "feedbacks.kinds") %></span>
+            <% if feedback.response %>
+              <span class="badge badge--primary"><%= t(".responded") %></span>
+            <% end %>
+            <% if feedback.images.attached? %>
+              <span class="badge"><%= render "shared/icons/photo" %><%= feedback.images.size %></span>
+            <% end %>
+            <%= render "feedbacks/status", feedback: feedback %>
+          </span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <div class="empty-state">
+    <%= render "shared/icons/question_mark_circle" %>
+    <p class="empty-state__title"><%= t(".empty") %></p>
+  </div>
+<% end %>

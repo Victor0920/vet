@@ -18,6 +18,20 @@
   gap: var(--space-1-5);
 }
 
+/* A group of radios/checkboxes as one field (<fieldset class="form-field"> + <legend class="label">):
+   no browser border, and the legend spaced like a label (a legend isn't a flex item, so no gap) */
+fieldset.form-field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  > legend {
+    margin-bottom: var(--space-1-5);
+    padding: 0;
+  }
+}
+
 .form-inline {
   display: flex;
   align-items: flex-end;

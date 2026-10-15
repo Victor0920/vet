@@ -1,0 +1,12 @@
+<% employee = @feedback.employee&.display_name || t("developer.feedbacks.index.deleted_employee") %>
+<%= t(".heading", kind: t(@feedback.kind, scope: "feedbacks.kinds")) %>
+===================
+
+<%= t(".intro", employee: employee, enterprise: @feedback.enterprise.name) %>
+
+<%= @feedback.message %>
+
+<%= Feedback.human_attribute_name(:page_url) %>: <%= @feedback.page_url.presence || "—" %>
+<%= Feedback.human_attribute_name(:images) %>: <%= @feedback.images.size %>
+
+<%= t(".view") %>: <%= developer_feedback_url(@feedback) %>

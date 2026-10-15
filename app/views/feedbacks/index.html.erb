@@ -1,0 +1,187 @@
+<% content_for :title, t(".title") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title"><%= t(".title") %></h1>
+    <p class="page-header__subtitle"><%= t(".subtitle") %></p>
+  </div>
+</div>
+
+<%# Form and your submissions on the left; how to reach the developer directly on the right
+    (stacked on narrow screens, contact first so it's never buried under a long list) %>
+<div class="help-page">
+  <aside class="card help-contact" aria-labelledby="help-contact-title">
+    <div class="card__body">
+      <h2 class="card__title" id="help-contact-title"><%= t(".contact.title") %></h2>
+      <p class="card__description"><%= t(".contact.intro") %></p>
+
+      <%# @support: config/support.yml (FeedbacksController#set_support) %>
+      <ul class="help-contact__list">
+        <li>
+          <%= link_to "mailto:#{@support.email}", class: "help-contact__item" do %>
+            <span class="help-contact__icon"><%= render "shared/icons/envelope" %></span>
+            <span class="help-contact__text">
+              <span class="help-contact__label"><%= t(".contact.email") %></span>
+              <span class="help-contact__value"><%= @support.email %></span>
+            </span>
+          <% end %>
+        </li>
+        <li>
+          <%# tel: without spaces, so every phone dials it %>
+          <%= link_to "tel:#{@support.phone.delete(" ")}", class: "help-contact__item" do %>
+            <span class="help-contact__icon"><%= render "shared/icons/phone" %></span>
+            <span class="help-contact__text">
+              <span class="help-contact__label"><%= t(".contact.phone") %></span>
+              <span class="help-contact__value"><%= @support.phone %></span>
+            </span>
+          <% end %>
+        </li>
+        <li>
+          <%# wa.me opens a WhatsApp chat (the app on phones, WhatsApp Web on computers) %>
+          <%= link_to "https://wa.me/#{@support.whatsapp}", class: "help-contact__item", target: "_blank", rel: "noopener" do %>
+            <span class="help-contact__icon"><%= render "shared/icons/messages" %></span>
+            <span class="help-contact__text">
+              <span class="help-contact__label"><%= t(".contact.whatsapp") %></span>
+              <span class="help-contact__value"><%= @support.phone %></span>
+            </span>
+          <% end %>
+        </li>
+      </ul>
+
+      <p class="help-contact__availability">
+        <%= render "shared/icons/clock" %>
+        <span><%= t(".contact.availability") %></span>
+      </p>
+    </div>
+  </aside>
+
+  <div class="help-page__main stack">
+    <%# images-preview (images_preview_controller.js): thumbnails before sending, and screenshots
+        pasted into the form are added too. multipart is automatic with a file_field %>
+    <%= form_with model: @feedback, url: feedbacks_path, class: "card",
+          data: { controller: "images-preview", images_preview_max_value: Feedback::MAX_IMAGES,
+                  action: "paste->images-preview#paste" } do |f| %>
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= t(".form.title") %></h2>
+          <p class="card__description"><%= t(".form.intro") %></p>
+        </div>
+      </header>
+
+      <div class="card__body form">
+        <% if @feedback.errors.any? %>
+          <div class="alert alert--danger" role="alert">
+            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+            <ul class="form-errors">
+              <% @feedback.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%# The page they were on when they opened this one (the sidebar link's ?return_to=) %>
+        <%= f.hidden_field :page_url %>
+
+        <%# Radio pills (pill_choice.css): one type per feedback %>
+        <fieldset class="form-field">
+          <legend class="label"><%= t(".form.kind") %></legend>
+          <div class="pill-choices">
+            <% Feedback.kinds.each_key do |kind| %>
+              <%= f.radio_button :kind, kind, class: "pill-choice__input" %>
+              <%= f.label :kind, t(kind, scope: "feedbacks.kinds"), value: kind, class: "pill-choice" %>
+            <% end %>
+          </div>
+        </fieldset>
+
+        <div class="form-field">
+          <%= f.label :message, t(".form.message"), class: "label" %>
+          <%= f.text_area :message, rows: 6, maxlength: 5000, required: true, class: "textarea",
+                placeholder: t(".form.message_placeholder"),
+                aria: { invalid: @feedback.errors[:message].any? } %>
+        </div>
+
+        <div class="form-field">
+          <span class="label"><%= t(".form.images") %></span>
+          <ul class="help-images" hidden data-images-preview-target="list"></ul>
+          <%# One thumbnail, copied by the controller for each picked image %>
+          <template data-images-preview-target="template">
+            <li class="help-images__item">
+              <img alt="">
+              <button type="button" class="help-images__remove" aria-label="<%= t(".form.remove_image") %>"
+                      data-action="images-preview#remove">
+                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+              </button>
+            </li>
+          </template>
+          <%# The real input, hidden: the button-looking <label> opens it %>
+          <label class="btn btn--secondary btn--sm help-images__add">
+            <%= render "shared/icons/photo" %>
+            <%= t(".form.add_images") %>
+            <%= f.file_field :images, multiple: true, accept: Feedback::IMAGE_TYPES.join(","), class: "sr-only",
+                  data: { images_preview_target: "input", action: "change->images-preview#add" } %>
+          </label>
+          <p class="form-hint"><%= t(".form.images_hint", max: Feedback::MAX_IMAGES) %></p>
+          <p class="form-hint form-hint--warning" hidden data-images-preview-target="limit">
+            <%= t(".form.too_many_images", max: Feedback::MAX_IMAGES) %>
+          </p>
+        </div>
+
+        <%# Screenshots of this app usually show customers' names and phones %>
+        <p class="help-privacy"><%= t(".form.privacy") %></p>
+      </div>
+
+      <footer class="card__footer help-form__footer">
+        <%= f.submit t(".form.submit"), class: "btn btn--primary" %>
+      </footer>
+    <% end %>
+
+    <section aria-labelledby="help-mine-title">
+      <h2 class="section__title" id="help-mine-title"><%= t(".mine.title") %></h2>
+
+      <% if @feedbacks.any? %>
+        <ul class="help-history">
+          <% @feedbacks.each do |feedback| %>
+            <li class="card help-history__item">
+              <div class="help-history__meta">
+                <span class="badge"><%= t(feedback.kind, scope: "feedbacks.kinds") %></span>
+                <%= render "feedbacks/status", feedback: feedback %>
+                <time class="help-history__time" datetime="<%= feedback.created_at.iso8601 %>"
+                      title="<%= l(feedback.created_at, format: :long) %>">
+                  <%= t(".mine.sent", time: time_ago_in_words(feedback.created_at)) %>
+                </time>
+              </div>
+              <%# simple_format keeps the line breaks typed in the message, and escapes the text %>
+              <div class="help-history__message"><%= simple_format(feedback.message) %></div>
+              <% if feedback.images.attached? %>
+                <div class="help-history__images">
+                  <% feedback.images.each do |image| %>
+                    <%= link_to rails_blob_path(image, disposition: "inline"), target: "_blank", rel: "noopener" do %>
+                      <%= image_tag image.variant(resize_to_fill: [128, 128]), alt: t(".mine.image_alt"), loading: "lazy" %>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+              <%# The developer's reply (one per feedback, set in /developer/feedback) %>
+              <% if feedback.response %>
+                <div class="help-reply">
+                  <p class="help-reply__title">
+                    <%= t(".mine.reply") %>
+                    <span class="help-reply__time">· <%= t(".mine.reply_time", time: time_ago_in_words(feedback.responded_at)) %></span>
+                  </p>
+                  <div class="help-reply__text"><%= simple_format(feedback.response) %></div>
+                </div>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="empty-state">
+          <%= render "shared/icons/question_mark_circle" %>
+          <p class="empty-state__title"><%= t(".mine.empty") %></p>
+          <p><%= t(".mine.empty_hint") %></p>
+        </div>
+      <% end %>
+    </section>
+  </div>
+</div>

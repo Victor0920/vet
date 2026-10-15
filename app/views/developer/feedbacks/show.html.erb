@@ -1,0 +1,104 @@
+<% content_for :title, t(".title", id: @feedback.id) %>
+
+<%= render "shared/back_link", path: developer_feedbacks_path, label: t("developer.feedbacks.index.title") %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-header__title">
+      <%= t(".title", id: @feedback.id) %>
+      <span class="badge"><%= t(@feedback.kind, scope: "feedbacks.kinds") %></span>
+      <%= render "feedbacks/status", feedback: @feedback %>
+    </h1>
+    <p class="page-header__subtitle"><%= l(@feedback.created_at, format: :long) %></p>
+  </div>
+
+  <%# What the employee sees on their help page %>
+  <%= form_with model: @feedback, url: developer_feedback_path(@feedback), method: :patch,
+        class: "developer-status", data: { controller: "auto-submit" } do |f| %>
+    <%= f.label :status, class: "sr-only" %>
+    <%= f.select :status, Feedback.statuses.keys.map { |status| [t(status, scope: "feedbacks.statuses"), status] }, {},
+          class: "select select--sm", data: { action: "change->auto-submit#submit" } %>
+  <% end %>
+</div>
+
+<div class="developer-feedback">
+  <div class="stack">
+    <section class="card">
+      <div class="card__body developer-feedback__message">
+        <%= simple_format(@feedback.message) %>
+      </div>
+    </section>
+
+    <% if @feedback.images.attached? %>
+      <section class="card">
+        <div class="card__body developer-feedback__images">
+          <% @feedback.images.each do |image| %>
+            <%= link_to rails_blob_path(image, disposition: "inline"), target: "_blank", rel: "noopener" do %>
+              <%= image_tag image.variant(resize_to_limit: [640, 640]), alt: image.filename.to_s, loading: "lazy" %>
+            <% end %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <%# Your one reply, shown to the employee on /help. Write, edit or empty it any time:
+        an empty box removes it (Feedback normalizes "" to nil) %>
+    <%= form_with model: @feedback, url: developer_feedback_path(@feedback), method: :patch, class: "card" do |f| %>
+      <header class="card__header">
+        <div>
+          <h2 class="card__title"><%= f.label :response, t(".response") %></h2>
+          <p class="card__description">
+            <% if @feedback.responded_at %>
+              <%= t(".response_saved", time: time_ago_in_words(@feedback.responded_at)) %>
+            <% else %>
+              <%= t(".response_hint") %>
+            <% end %>
+          </p>
+        </div>
+      </header>
+      <div class="card__body">
+        <%= f.text_area :response, rows: 5, maxlength: 5000, class: "textarea",
+              placeholder: t(".response_placeholder") %>
+      </div>
+      <footer class="card__footer developer-feedback__reply-footer">
+        <%= f.submit t(".save_response"), class: "btn btn--primary" %>
+      </footer>
+    <% end %>
+  </div>
+
+  <aside class="card">
+    <div class="card__body">
+      <dl class="details">
+        <div>
+          <dt><%= Feedback.human_attribute_name(:enterprise) %></dt>
+          <dd><%= @feedback.enterprise.name %></dd>
+        </div>
+        <div>
+          <dt><%= Feedback.human_attribute_name(:employee) %></dt>
+          <dd>
+            <% if @feedback.employee %>
+              <%= @feedback.employee.display_name %>
+              <% if @feedback.employee.email_address.present? %>
+                <br><%= mail_to @feedback.employee.email_address %>
+              <% end %>
+              <% if @feedback.employee.phone.present? %>
+                <br><%= @feedback.employee.phone %>
+              <% end %>
+            <% else %>
+              <span class="text-subtle"><%= t("developer.feedbacks.index.deleted_employee") %></span>
+            <% end %>
+          </dd>
+        </div>
+        <div>
+          <dt><%= Feedback.human_attribute_name(:page_url) %></dt>
+          <%# Shown as text, not a link: it's a page in the company's app, which you can't open from here %>
+          <dd><code class="developer-feedback__code"><%= @feedback.page_url.presence || "—" %></code></dd>
+        </div>
+        <div>
+          <dt><%= Feedback.human_attribute_name(:user_agent) %></dt>
+          <dd class="developer-feedback__agent"><%= @feedback.user_agent.presence || "—" %></dd>
+        </div>
+      </dl>
+    </div>
+  </aside>
+</div>

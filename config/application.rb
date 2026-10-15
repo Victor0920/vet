@@ -25,5 +25,7 @@ module Vet
     config.i18n.available_locales = [ :es, :en ]
     config.i18n.default_locale = :es
     # config.eager_load_paths << Rails.root.join("extras")
+    # The developer's contact details (config/support.yml), e.g. Rails.configuration.x.support.email
+    config.x.support = config_for(:support)
   end
 end

@@ -72,6 +72,16 @@
     <% end %>
   </nav>
 
+  <%# Help & feedback, for everyone, just above your profile. return_to: the page you're on, saved with
+      what you send, so the developer sees where a problem happened (not sent from /help itself) %>
+  <nav class="sidebar__nav sidebar__nav--bottom" aria-label="<%= t("components.top_nav.help") %>">
+    <%= link_to helpers.feedbacks_path(return_to: (request.fullpath unless request.path.start_with?("/help"))),
+          class: "sidebar__link", aria: { current: ("page" if request.path.start_with?("/help")) } do %>
+      <%= render "shared/icons/question_mark_circle" %>
+      <span><%= t("components.top_nav.help") %></span>
+    <% end %>
+  </nav>
+
   <%# You: photo (or initials) and name, linking to /profile, where you also sign out %>
   <div class="sidebar__footer">
     <%= link_to helpers.profile_path, class: "sidebar__profile",

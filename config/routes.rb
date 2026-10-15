@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   resources :pets, only: :index
 
   resource :profile, only: %i[ show update ]
+  resources :feedbacks, path: "help", only: %i[ index create ]
   resources :appointments
 
   scope "products" do
@@ -71,5 +72,9 @@ Rails.application.routes.draw do
   namespace :webhooks do
     get "whatsapp", to: "whatsapp#verify"
     post "whatsapp", to: "whatsapp#receive"
+  end
+
+  namespace :developer do
+    resources :feedbacks, path: "feedback", only: %i[ index show update ]
   end
 end
