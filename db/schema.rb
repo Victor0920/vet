@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_14_083337) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_14_183250) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -183,8 +183,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_083337) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "price", precision: 7, scale: 2
+    t.decimal "price", precision: 9, scale: 4
     t.integer "service_id"
+    t.decimal "vat_rate", precision: 5, scale: 2, default: "21.0", null: false
     t.index ["invoice_id"], name: "index_invoice_products_on_invoice_id"
     t.index ["product_id"], name: "index_invoice_products_on_product_id"
     t.index ["service_id"], name: "index_invoice_products_on_service_id"
@@ -288,7 +289,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_083337) do
   end
 
   create_table "products", force: :cascade do |t|
-    t.decimal "price", precision: 7, scale: 2
+    t.decimal "price", precision: 9, scale: 4
     t.integer "enterprise_id", null: false
     t.string "name"
     t.string "description"
@@ -300,6 +301,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_083337) do
     t.integer "updated_by_id"
     t.string "barcode"
     t.datetime "archived_at"
+    t.decimal "vat_rate", precision: 5, scale: 2, default: "21.0", null: false
     t.index ["enterprise_id"], name: "index_products_on_enterprise_id"
     t.index ["product_category_id"], name: "index_products_on_product_category_id"
     t.index ["updated_by_id"], name: "index_products_on_updated_by_id"
@@ -326,7 +328,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_083337) do
   end
 
   create_table "services", force: :cascade do |t|
-    t.decimal "price", precision: 7, scale: 2
+    t.decimal "price", precision: 9, scale: 4
     t.integer "enterprise_id", null: false
     t.string "name"
     t.string "description"
@@ -335,6 +337,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_14_083337) do
     t.integer "service_category_id"
     t.integer "updated_by_id"
     t.datetime "archived_at"
+    t.decimal "vat_rate", precision: 5, scale: 2, default: "21.0", null: false
     t.index ["enterprise_id"], name: "index_services_on_enterprise_id"
     t.index ["service_category_id"], name: "index_services_on_service_category_id"
     t.index ["updated_by_id"], name: "index_services_on_updated_by_id"

@@ -83,6 +83,7 @@
             <th><%= t("products.columns.product") %></th>
             <th><%= t("products.columns.category") %></th>
             <th class="products-table__price"><%= t("products.columns.price") %></th>
+            <th class="products-table__vat"><%= t("products.columns.vat") %></th>
             <th class="products-table__stock"><%= t("products.columns.stock") %></th>
           </tr>
         </thead>
@@ -117,8 +118,12 @@
               <td>
                 <%= render "shared/category_badge", category: product.product_category %>
               </td>
+              <%# What the customer pays (price without VAT + VAT, Taxable#price_with_vat) %>
               <td class="table__numeric products-table__price">
-                <%= product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "—" %>
+                <%= product.price ? number_to_currency(product.price_with_vat, unit: "€", format: "%n %u") : "—" %>
+              </td>
+              <td class="table__numeric products-table__vat">
+                <%= number_to_percentage(product.vat_rate, precision: 2, strip_insignificant_zeros: true) %>
               </td>
               <td class="table__numeric products-table__stock">
                 <%# Out of stock → red, under the product's warning threshold → orange %>

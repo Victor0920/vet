@@ -203,7 +203,8 @@ es:
       product:
         name: "Nombre"
         description: "Descripción"
-        price: "Precio"
+        price: "Precio sin IVA"
+        vat_rate: "IVA"
         product_category: "Categoría"
         product_category_id: "Categoría"
         stock: "Stock"
@@ -216,7 +217,8 @@ es:
       service:
         name: "Nombre"
         description: "Descripción"
-        price: "Precio"
+        price: "Precio sin IVA"
+        vat_rate: "IVA"
         service_category: "Categoría"
         service_category_id: "Categoría"
       service_category:
@@ -241,6 +243,7 @@ es:
         product_id: "Producto"
         description: "Descripción"
         price: "Precio"
+        vat_rate: "IVA"
         quantity: "Cantidad"
         service: "Servicio"
         service_id: "Servicio"
@@ -250,6 +253,7 @@ es:
         product: "Producto de la línea"
         description: "Descripción de la línea"
         price: "Precio de la línea"
+        vat_rate: "IVA de la línea"
         quantity: "Cantidad de la línea"
         service: "Servicio de la línea"
     errors:
@@ -412,6 +416,12 @@ es:
 
   # ---------- Palabras compartidas ----------
   shared:
+    # El precio de productos y servicios (shared/_vat_price_fields)
+    vat_price:
+      price: "Precio sin IVA (€)"
+      vat_hint: "21 % general, 10 % reducido, 4 % superreducido, 0 % exento."
+      final: "Precio final (€)"
+      final_hint: "Lo que paga el cliente, IVA incluido. Si lo cambias, se recalcula el precio sin IVA."
     # Paleta de colores de las categorías (ver Colorable::COLORS)
     no_color: "Sin color"
     preview: "Vista previa"
@@ -654,8 +664,8 @@ es:
       columns:
         customers: "Obligatoria: first_name. También: first_surname, second_surname, document_type, document_number, sex, born_on, address, post_code, province, first_phone, second_phone, email."
         pets: "Obligatoria: name, y el dueño con customer_document_number, customer_email o customer_phone. También: species, breed, sex, born_on, color, sterilized, transponder_number, transponder_location, notes."
-        products: "Obligatoria: name. También: category, description, barcode, price, stock, show_warning_when_stock_under_x_items."
-        services: "Obligatoria: name. También: category, description, price."
+        products: "Obligatoria: name. También: category, description, barcode, price (sin IVA), vat_rate (21 si falta), stock, show_warning_when_stock_under_x_items."
+        services: "Obligatoria: name. También: category, description, price (sin IVA), vat_rate (21 si falta)."
       duplicates:
         customers: "Ya existe si coincide el documento, el email, o el nombre con el teléfono."
         pets: "Ya existe si coincide el microchip, o el nombre con el mismo dueño."
@@ -1435,7 +1445,8 @@ es:
       photo: "Foto"
       product: "Producto"
       category: "Categoría"
-      price: "Precio"
+      price: "Precio final"
+      vat: "IVA"
       stock: "Stock"
     index:
       title: "Todos los productos"
@@ -1480,7 +1491,6 @@ es:
       no_categories_match: "Ninguna categoría coincide"
       no_categories_html: "Todavía no hay categorías: %{link}."
       create_category_first: "crea una primero"
-      price_label: "Precio (€)"
       stock: "Stock"
       stock_hint: "Unidades que hay ahora mismo en la clínica"
       warning_hint: "El stock se resalta en naranja cuando baja de este número"
@@ -1537,7 +1547,8 @@ es:
       id: "ID"
       service: "Servicio"
       category: "Categoría"
-      price: "Precio"
+      price: "Precio final"
+      vat: "IVA"
     index:
       title: "Todos los servicios"
       heading: "Servicios"
@@ -1579,7 +1590,6 @@ es:
       no_categories_match: "Ninguna categoría coincide"
       no_categories_html: "Todavía no hay categorías: %{link}."
       create_category_first: "crea una primero"
-      price_label: "Precio (€)"
 
   service_categories:
     all_categories: "Todas las categorías"
@@ -1640,8 +1650,12 @@ es:
       total: "Total"
       product: "Concepto"
       quantity: "Cantidad"
-      unit_price: "Precio unitario"
+      unit_price: "Precio (IVA incl.)"
       subtotal: "Subtotal"
+      vat: "IVA"
+      line_total: "Total"
+      base: "Base imponible"
+      vat_on_base: "IVA %{rate} sobre %{base}"
     index:
       title: "Todas las facturas"
       heading: "Facturas"
@@ -1693,7 +1707,7 @@ es:
       no_appointments_match: "Ninguna cita coincide"
       appointment_hint: "Opcional. Vincula esta factura a la visita que cobra y rellena el cliente de esa visita."
       lines: "Líneas"
-      line_detail: "Descripción · Precio"
+      line_detail: "Descripción · Precio final · IVA"
       add_line: "Añadir línea"
       lines_hint: "Elige un producto o servicio, o «Artículo personalizado» para escribir una descripción y un precio."
       available: "%{count} disponibles"
@@ -1734,7 +1748,8 @@ es:
       no_matches: "Ningún producto o servicio coincide"
       per_unit: "por unidad"
       description_placeholder: "p. ej. Premios, producto temporal…"
-      price_placeholder: "Precio €"
+      price_placeholder: "Precio final €"
+      final_price: "Precio final, IVA incluido"
       remove: "Quitar línea"
 
   # ---------- Reports ----------

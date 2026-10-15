@@ -60,6 +60,14 @@ turbo-frame#invoices {
   text-wrap: nowrap;
 }
 
+/* The VAT % only needs a few characters: width 1% makes the column as narrow as its content
+   and leaves the spare width to the others */
+.table .invoices-table__vat {
+  width: 1%;
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+
 .invoices-table__footer {
   th,
   td {
@@ -70,6 +78,33 @@ turbo-frame#invoices {
 
   th {
     text-align: right;
+  }
+}
+
+/* Base imponible and VAT per rate, above the total: plain text (not the grey uppercase
+   of a table header) and no lines between them */
+.table .invoices-table__summary {
+  th,
+  td {
+    background: none;
+    border-top: none;
+    border-bottom: none;
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-regular);
+    text-transform: none;
+    color: var(--color-text-muted);
+  }
+
+  th {
+    text-align: right;
+  }
+
+  &:first-child th,
+  &:first-child td {
+    border-top: var(--border);
+    padding-top: var(--space-3);
   }
 }
 
@@ -189,6 +224,11 @@ turbo-frame#invoices {
   text-align: right;
 }
 
+/* Custom line: description · final price · VAT % */
+.invoice-line .invoice-line__vat {
+  flex: 0 0 5.5rem;
+}
+
 .invoice-line__product-price {
   font-variant-numeric: tabular-nums;
 }
@@ -232,6 +272,15 @@ turbo-frame#invoices {
   .invoice-line__detail {
     grid-column: 1 / -1;
     grid-row: 2;
+  }
+
+  /* Leave the description most of the row: final price and VAT only need a few digits */
+  .invoice-line .invoice-line__price {
+    flex-basis: 5.5rem;
+  }
+
+  .invoice-line .invoice-line__vat {
+    flex-basis: 4.5rem;
   }
 }
 

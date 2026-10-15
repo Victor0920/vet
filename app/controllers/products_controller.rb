@@ -56,6 +56,6 @@
    end
 
    def product_params
-     params.expect(product: [ :name, :description, :price, :product_category_id, :photo ])
+     params.expect(product: [ :name, :description, :price, :vat_rate, :product_category_id, :photo ])
    end
  end

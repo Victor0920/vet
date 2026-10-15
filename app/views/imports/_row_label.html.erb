@@ -13,7 +13,7 @@
   <% end %>
 <% else %>
   <%= record.name %>
-  <% if record.price %>
-    <span class="text-muted">· <%= number_to_currency(record.price) %></span>
+  <% if record.price && record.vat_rate %>
+    <span class="text-muted">· <%= number_to_currency(record.price_with_vat, unit: "€", format: "%n %u") %></span>
   <% end %>
 <% end %>

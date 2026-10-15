@@ -12,6 +12,9 @@ class Import::Products < Import::Base
       product.enterprise = @enterprise
       product.product_category = category(ProductCategory, values["category"])
       product.price = decimal(values, "price", problems)
+      # Missing or empty keeps the default (21 %)
+      vat_rate = decimal(values, "vat_rate", problems)
+      product.vat_rate = vat_rate if vat_rate
       product.stock = integer(values, "stock", problems) || 0
       warning = integer(values, "show_warning_when_stock_under_x_items", problems)
       product.show_warning_when_stock_under_x_items = warning if warning

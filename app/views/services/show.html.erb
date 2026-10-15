@@ -50,13 +50,18 @@
           <%= render "shared/category_badge", category: @service.service_category %>
         </dd>
       </div>
+      <%# What the customer pays first, then how it splits: price without VAT + VAT % %>
+      <div>
+        <dt><%= t("services.columns.price") %></dt>
+        <dd><%= @service.price ? number_to_currency(@service.price_with_vat, unit: "€", format: "%n %u") : "—" %></dd>
+      </div>
       <div>
         <dt><%= Service.human_attribute_name(:price) %></dt>
-        <dd><%= if @service.price
-            number_to_currency(@service.price, unit: "€", format: "%n %u")
-          else
-            "—"
-          end %></dd>
+        <dd>
+          <%= @service.price ? number_to_currency(@service.price, unit: "€", format: "%n %u") : "—" %>
+          <span class="text-muted">· <%= Service.human_attribute_name(:vat_rate) %>
+            <%= number_to_percentage(@service.vat_rate, precision: 2, strip_insignificant_zeros: true) %></span>
+        </dd>
       </div>
       <div>
         <dt><%= t(".created") %></dt>

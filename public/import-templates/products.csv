@@ -1,2 +1,2 @@
-﻿category,name,description,barcode,price,stock,show_warning_when_stock_under_x_items
-Alimentación,Pienso 3 kg,Para perros adultos,8410000000011,24.50,10,3
+﻿category,name,description,barcode,price,vat_rate,stock,show_warning_when_stock_under_x_items
+Alimentación,Pienso 3 kg,Para perros adultos,8410000000011,20.25,21,10,3

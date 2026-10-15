@@ -44,6 +44,7 @@
         <tr>
           <th><%= t("services.columns.service") %></th>
           <th class="products-table__price"><%= t("services.columns.price") %></th>
+          <th class="products-table__vat"><%= t("services.columns.vat") %></th>
         </tr>
       </thead>
       <tbody>
@@ -62,7 +63,10 @@
               </div>
             </td>
             <td class="table__numeric products-table__price">
-              <%= service.price ? number_to_currency(service.price, unit: "€", format: "%n %u") : "—" %>
+              <%= service.price ? number_to_currency(service.price_with_vat, unit: "€", format: "%n %u") : "—" %>
+            </td>
+            <td class="table__numeric products-table__vat">
+              <%= number_to_percentage(service.vat_rate, precision: 2, strip_insignificant_zeros: true) %>
             </td>
           </tr>
         <% end %>

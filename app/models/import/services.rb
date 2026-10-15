@@ -12,6 +12,9 @@ class Import::Services < Import::Base
       service.enterprise = @enterprise
       service.service_category = category(ServiceCategory, values["category"])
       service.price = decimal(values, "price", problems)
+      # Missing or empty keeps the default (21 %)
+      vat_rate = decimal(values, "vat_rate", problems)
+      service.vat_rate = vat_rate if vat_rate
     end
   end
 

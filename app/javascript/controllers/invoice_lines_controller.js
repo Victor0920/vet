@@ -47,7 +47,7 @@ export default class extends Controller {
     this.update(event.target.closest("[data-invoice-lines-target='line']"))
   }
 
-  // Product or service picked → show its price, hide and disable description/price.
+  // Product or service picked → show its price and VAT, hide and disable description/price/VAT.
   // "Custom item" picked → the other way round. Disabled inputs aren't submitted.
   update(line) {
     const select = line.querySelector("[data-item-select]")
@@ -61,6 +61,8 @@ export default class extends Controller {
     productPrice.hidden = custom
     productPrice.querySelector("[data-product-price-value]").textContent =
       select.selectedOptions[0]?.dataset.price || "—"
+    productPrice.querySelector("[data-product-vat]").textContent =
+      select.selectedOptions[0]?.dataset.vat || "—"
 
     this.updateStock(line, custom ? null : select.selectedOptions[0])
   }

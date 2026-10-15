@@ -1,74 +1,89 @@
- class InvoiceProduct < ApplicationRecord
-   belongs_to :invoice
-   belongs_to :product, optional: true # nil means a service or a custom item (description + price)
-   belongs_to :service, optional: true
+class InvoiceProduct < ApplicationRecord
+  include Taxable
 
-   before_validation :use_catalog_details
+  belongs_to :invoice
+  belongs_to :product, optional: true # nil means a service or a custom item (description + price)
+  belongs_to :service, optional: true
 
-   validates :quantity, numericality: { only_integer: true, greater_than: 0 }, unless: -> { invoice&.corrective? }
-   validates :quantity, numericality: { only_integer: true, less_than: 0 }, if: -> { invoice&.corrective? }
-   validates :description, :price, presence: true, unless: :catalog_item
-   validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
-   validate :product_or_service
-   validate :catalog_item_in_same_enterprise
-   validate :catalog_item_not_archived, unless: -> { invoice&.corrective? }
+  before_validation :use_catalog_details
 
-   # Product lines (not services or custom items) from invoices in a date range.
-   # Either end may be nil, like Invoice.dated_between.
-   scope :products_sold_between, ->(from, to) {
-     where.not(product_id: nil).joins(:invoice).merge(Invoice.dated_between(from, to))
-   }
+  validates :quantity, numericality: { only_integer: true, greater_than: 0 }, unless: -> { invoice&.corrective? }
+  validates :quantity, numericality: { only_integer: true, less_than: 0 }, if: -> { invoice&.corrective? }
+  validates :description, :price, presence: true, unless: :catalog_item
+  validates :price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validate :product_or_service
+  validate :catalog_item_in_same_enterprise
+  validate :catalog_item_not_archived, unless: -> { invoice&.corrective? }
 
-   def subtotal
-     quantity.to_i * (price || 0)
-   end
+  # Product lines (not services or custom items) from invoices in a date range.
+  # Either end may be nil, like Invoice.dated_between.
+  scope :products_sold_between, ->(from, to) {
+    where.not(product_id: nil).joins(:invoice).merge(Invoice.dated_between(from, to))
+  }
 
-   # The product or service this line sells, or nil for a custom item
-   def catalog_item
-     product || service
-   end
+  # Calculated line by line. The total with VAT is rounded first, so a final price typed as
+  # 10,00 € stays 10,00 € (8,2645 × 1,21); the VAT is whatever that adds on top of the base.
+  def total
+    (quantity.to_i * (price || 0) * (1 + (vat_rate || 0) / 100)).round(2)
+  end
 
-   # The form uses one select for both: "product-5", "service-3", or "" for a custom item
-   def item
-     if product_id then "product-#{product_id}"
-     elsif service_id then "service-#{service_id}"
-     end
-   end
+  # The base, without VAT
+  def subtotal
+    (quantity.to_i * (price || 0)).round(2)
+  end
 
-   def item=(value)
-     type, id = value.to_s.split("-", 2)
-     self.product_id = (id if type == "product")
-     self.service_id = (id if type == "service")
-   end
+  def vat_amount
+    total - subtotal
+  end
+
+  # The product or service this line sells, or nil for a custom item
+  def catalog_item
+    product || service
+  end
+
+  # The form uses one select for both: "product-5", "service-3", or "" for a custom item
+  def item
+    if product_id then "product-#{product_id}"
+    elsif service_id then "service-#{service_id}"
+    end
+  end
+
+  def item=(value)
+    type, id = value.to_s.split("-", 2)
+    self.product_id = (id if type == "product")
+    self.service_id = (id if type == "service")
+  end
 
    private
 
-   # A product/service line copies its price when it's picked (or changed).
-   # Saved on the line, so later price changes don't rewrite old invoices.
-   def use_catalog_details
-     return if catalog_item.nil?
-     self.description = nil
-     # A rectificativa refunds at the original invoice's price, not today's catalog price
-     return if invoice&.corrective? && price.present?
-     self.price = catalog_item.price if price.nil? || product_id_changed? || service_id_changed?
-   end
+  # A product/service line copies its price when it's picked (or changed).
+  # Saved on the line, so later price changes don't rewrite old invoices.
+  def use_catalog_details
+    return if catalog_item.nil?
+    self.description = nil
+    # A rectificativa refunds at the original invoice's price and VAT, not today's catalog ones
+    return if invoice&.corrective? && price.present?
+    if price.nil? || product_id_changed? || service_id_changed?
+      self.price = catalog_item.price
+      self.vat_rate = catalog_item.vat_rate
+    end
+  end
 
+  def product_or_service
+    errors.add(:base, :product_and_service) if product_id && service_id
+  end
 
-   def product_or_service
-     errors.add(:base, :product_and_service) if product_id && service_id
-   end
+  def catalog_item_in_same_enterprise
+    if catalog_item && catalog_item.enterprise_id != invoice&.enterprise_id
+      errors.add(product ? :product : :service, :invalid)
+    end
+  end
 
-   def catalog_item_in_same_enterprise
-     if catalog_item && catalog_item.enterprise_id != invoice&.enterprise_id
-       errors.add(product ? :product : :service, :invalid)
-     end
-   end
-
-   # Only checked when the item is picked or changed, so old lines stay valid.
-   # (Corrective invoices are skipped above: they must be able to refund an archived product.)
-   def catalog_item_not_archived
-     if catalog_item&.archived? && (product_id_changed? || service_id_changed?)
-       errors.add(product ? :product : :service, :archived)
-     end
-   end
- end
+  # Only checked when the item is picked or changed, so old lines stay valid.
+  # (Corrective invoices are skipped above: they must be able to refund an archived product.)
+  def catalog_item_not_archived
+    if catalog_item&.archived? && (product_id_changed? || service_id_changed?)
+      errors.add(product ? :product : :service, :archived)
+    end
+  end
+end

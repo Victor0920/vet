@@ -7,7 +7,7 @@ class Invoices::RectificationsController < ApplicationController
     @invoice = new_rectification(store: @original.store, employee: Current.employee, date: Time.current)
     @original.invoice_products.each do |line|
       @invoice.invoice_products.build(product: line.product, service: line.service,
-        description: line.description, price: line.price, quantity: -line.quantity)
+        description: line.description, price: line.price, vat_rate: line.vat_rate, quantity: -line.quantity)
     end
   end
 
@@ -48,6 +48,6 @@ class Invoices::RectificationsController < ApplicationController
 
   def rectification_params
     params.expect(invoice: [ :date, :store_id, :employee_id,
-      invoice_products_attributes: [ [ :product_id, :service_id, :description, :price, :quantity, :_destroy ] ] ])
+      invoice_products_attributes: [ [ :product_id, :service_id, :description, :price, :vat_rate, :quantity, :_destroy ] ] ])
   end
 end
