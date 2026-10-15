@@ -45,6 +45,7 @@
           <th class="products-table__photo"><span class="sr-only"><%= t("products.columns.photo") %></span></th>
           <th><%= t("products.columns.product") %></th>
           <th class="products-table__price"><%= t("products.columns.price") %></th>
+          <th class="products-table__vat"><%= t("products.columns.vat") %></th>
         </tr>
       </thead>
       <tbody>
@@ -76,7 +77,10 @@
               </div>
             </td>
             <td class="table__numeric products-table__price">
-              <%= product.price ? number_to_currency(product.price, unit: "€", format: "%n %u") : "—" %>
+              <%= product.price ? number_to_currency(product.price_with_vat, unit: "€", format: "%n %u") : "—" %>
+            </td>
+            <td class="table__numeric products-table__vat">
+              <%= number_to_percentage(product.vat_rate, precision: 2, strip_insignificant_zeros: true) %>
             </td>
           </tr>
         <% end %>

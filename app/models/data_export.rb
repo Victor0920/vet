@@ -52,18 +52,18 @@ class DataExport
       "product_categories" => [ e.product_categories, read(:id, :name, :color) ],
       "products" => [ e.products.includes(:product_category),
         read(:id, :product_category_id).merge("category" => ->(product) { product.product_category&.name })
-          .merge(read(:name, :description, :barcode, :price, :stock, :show_warning_when_stock_under_x_items, :archived_at, :created_at)) ],
+          .merge(read(:name, :description, :barcode, :price, :vat_rate, :stock, :show_warning_when_stock_under_x_items, :archived_at, :created_at)) ],
       "service_categories" => [ e.service_categories, read(:id, :name, :color) ],
-      "services" => [ e.services,
-        read(:id, :service_category_id).merge("category" => ->(product) { service.service_category&.name })
-          .merge(read(:id, :service_category_id, :name, :description, :price, :archived_at, :created_at)) ],
+      "services" => [ e.services.includes(:service_category),
+        read(:id, :service_category_id).merge("category" => ->(service) { service.service_category&.name })
+          .merge(read(:name, :description, :price, :vat_rate, :archived_at, :created_at)) ],
       "appointments" => [ e.appointments.with_rich_text_description,
         read(:id, :store_id, :room_id, :employee_id, :customer_id, :pet_id, :title, :starts_at, :ends_at).merge(
           "description" => ->(appointment) { appointment.description&.to_plain_text }
         ) ],
       "invoices" => [ e.invoices, read(:id, :number, :series, :sequence_number, :date, :store_id, :employee_id,
         :customer_id, :appointment_id, :original_invoice_id) ],
-      "invoice_lines" => [ e.invoice_products, read(:id, :invoice_id, :product_id, :service_id, :description, :quantity, :price) ],
+      "invoice_lines" => [ e.invoice_products, read(:id, :invoice_id, :product_id, :service_id, :description, :quantity, :price, :vat_rate) ],
       "messages" => [ Message.where(conversation: e.conversations).includes(:conversation),
         read(:id).merge("customer_id" => ->(message) { message.conversation.customer_id })
           .merge(read(:sender, :employee_id, :text, :created_at)) ]

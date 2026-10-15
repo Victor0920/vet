@@ -27,6 +27,7 @@ class InvoicePdf
     side_by_side(:billed_to, :store_details, :staff_details)
     move_down 20
     lines_table
+    vat_summary
     total
     footer
   end
@@ -141,19 +142,37 @@ class InvoicePdf
       return
     end
 
-    rows = [ [ t(:description), column(:quantity), column(:unit_price), column(:subtotal) ] ]
+    rows = [ [ t(:description), column(:quantity), column(:unit_price), column(:vat), column(:line_total) ] ]
     @invoice.invoice_products.each do |line|
       name = line.catalog_item ? (line.catalog_item.name.presence || I18n.t("shared.unnamed")) : line.description
-      rows << [ name.to_s, line.quantity.to_s, money(line.price), money(line.subtotal) ]
+      rows << [ name.to_s, line.quantity.to_s, money(line.price_with_vat), percentage(line.vat_rate), money(line.total) ]
     end
 
     # header: true repeats the first row at the top of every page
-    table(rows, header: true, width: bounds.width, column_widths: { 1 => 60, 2 => 85, 3 => 85 }) do |grid|
+    # The total column is just wide enough for "12.345,67 €", so the description gets the room
+    table(rows, header: true, width: bounds.width, column_widths: { 1 => 50, 2 => 80, 3 => 45, 4 => 50 }) do |grid|
       grid.cells.borders = [ :bottom ]
       grid.cells.border_color = BORDER
       grid.cells.padding = table_padding
-      grid.columns(1..3).align = :right
+      grid.columns(1..4).align = :right
       style_header_row(grid.row(0))
+    end
+  end
+
+  # Base imponible and the VAT of each rate, right-aligned under the lines
+  def vat_summary
+    return if @invoice.invoice_products.empty?
+
+    move_down 10
+    rows = [ [ column(:base), money(@invoice.subtotal) ] ]
+    @invoice.vat_breakdown.each do |rate, amounts|
+      rows << [ column(:vat_on_base, rate: percentage(rate), base: money(amounts[:base])), money(amounts[:vat]) ]
+    end
+    table(rows, position: :right, column_widths: [ 160, 80 ]) do |grid|
+      grid.cells.borders = []
+      grid.cells.padding = [ 2, 8 ]
+      grid.cells.text_color = MUTED
+      grid.columns(1).align = :right
     end
   end
 
@@ -205,6 +224,8 @@ class InvoicePdf
     amount ? ActiveSupport::NumberHelper.number_to_currency(amount, unit: "€", format: "%n %u") : "—"
   end
 
+  def percentage(rate) = ActiveSupport::NumberHelper.number_to_percentage(rate, precision: 2, strip_insignificant_zeros: true)
+
   def t(key, **options) = I18n.t(key, scope: "invoices.pdf", **options)
-  def column(key) = I18n.t(key, scope: "invoices.columns")
+  def column(key, **options) = I18n.t(key, scope: "invoices.columns", **options)
 end

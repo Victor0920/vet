@@ -320,3 +320,29 @@ fieldset.form-field {
 .input--short {
   max-width: 12rem;
 }
+
+/*
+ * An input with a unit inside it, on the right: <div class="input-affix"><input class="input">
+ * <span class="input-affix__suffix">%</span></div>. The unit is decoration (aria-hidden);
+ * the label says what it is.
+ */
+.input-affix {
+  position: relative;
+  display: block;
+  width: 100%;
+
+  & .input {
+    padding-right: calc(var(--space-3) + 1.25rem);
+    text-align: right;
+  }
+}
+
+.input-affix__suffix {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  pointer-events: none;
+}

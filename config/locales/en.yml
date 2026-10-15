@@ -213,7 +213,8 @@ en:
       product:
         name: "Name"
         description: "Description"
-        price: "Price"
+        price: "Price before VAT"
+        vat_rate: "VAT"
         product_category: "Category"
         product_category_id: "Category"
         stock: "Stock"
@@ -226,7 +227,8 @@ en:
       service:
         name: "Name"
         description: "Description"
-        price: "Price"
+        price: "Price before VAT"
+        vat_rate: "VAT"
         service_category: "Category"
         service_category_id: "Category"
       service_category:
@@ -251,6 +253,7 @@ en:
         product_id: "Product"
         description: "Description"
         price: "Price"
+        vat_rate: "VAT"
         quantity: "Quantity"
         service: "Service"
         service_id: "Service"
@@ -260,6 +263,7 @@ en:
         product: "Line product"
         description: "Line description"
         price: "Line price"
+        vat_rate: "Line VAT"
         quantity: "Line quantity"
         service: "Line service"
     # Custom validation messages: errors.add(:ends_at, :must_be_after_start)
@@ -423,6 +427,12 @@ en:
 
   # ---------- Shared words ----------
   shared:
+    # Product and service prices (shared/_vat_price_fields)
+    vat_price:
+      price: "Price before VAT (€)"
+      vat_hint: "21 % standard, 10 % reduced, 4 % super-reduced, 0 % exempt."
+      final: "Final price (€)"
+      final_hint: "What the customer pays, VAT included. Changing it recalculates the price before VAT."
     # Category colour palette (see Colorable::COLORS)
     no_color: "No colour"
     preview: "Preview"
@@ -665,8 +675,8 @@ en:
       columns:
         customers: "Required: first_name. Also: first_surname, second_surname, document_type, document_number, sex, born_on, address, post_code, province, first_phone, second_phone, email."
         pets: "Required: name, and the owner as customer_document_number, customer_email or customer_phone. Also: species, breed, sex, born_on, color, sterilized, transponder_number, transponder_location, notes."
-        products: "Required: name. Also: category, description, barcode, price, stock, show_warning_when_stock_under_x_items."
-        services: "Required: name. Also: category, description, price."
+        products: "Required: name. Also: category, description, barcode, price (before VAT), vat_rate (21 if missing), stock, show_warning_when_stock_under_x_items."
+        services: "Required: name. Also: category, description, price (before VAT), vat_rate (21 if missing)."
       duplicates:
         customers: "Already exists if the document, the email, or the name with the phone match."
         pets: "Already exists if the microchip, or the name with the same owner, match."
@@ -1448,7 +1458,8 @@ en:
       photo: "Photo"
       product: "Product"
       category: "Category"
-      price: "Price"
+      price: "Final price"
+      vat: "VAT"
       stock: "Stock"
     index:
       title: "All products"
@@ -1493,7 +1504,6 @@ en:
       no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
       create_category_first: "create one first"
-      price_label: "Price (€)"
       stock: "Stock"
       stock_hint: "Units in the clinic right now"
       warning_hint: "The stock is highlighted in orange when it drops below this number"
@@ -1550,7 +1560,8 @@ en:
       id: "ID"
       service: "Service"
       category: "Category"
-      price: "Price"
+      price: "Final price"
+      vat: "VAT"
     index:
       title: "All services"
       heading: "Services"
@@ -1592,7 +1603,6 @@ en:
       no_categories_match: "No categories match"
       no_categories_html: "No categories yet — %{link}."
       create_category_first: "create one first"
-      price_label: "Price (€)"
 
   service_categories:
     all_categories: "All categories"
@@ -1653,8 +1663,12 @@ en:
       total: "Total"
       product: "Item"
       quantity: "Quantity"
-      unit_price: "Unit price"
+      unit_price: "Price (incl. VAT)"
       subtotal: "Subtotal"
+      vat: "VAT"
+      line_total: "Total"
+      base: "Taxable base"
+      vat_on_base: "VAT %{rate} on %{base}"
     index:
       title: "All invoices"
       heading: "Invoices"
@@ -1706,7 +1720,7 @@ en:
       no_appointments_match: "No appointments match"
       appointment_hint: "Optional. Links this invoice to the visit it bills, and fills in that visit's customer."
       lines: "Lines"
-      line_detail: "Description · Price"
+      line_detail: "Description · Final price · VAT"
       add_line: "Add line"
       lines_hint: "Pick a product or service, or choose “Custom item” to type a description and price."
       available: "%{count} available"
@@ -1747,7 +1761,8 @@ en:
       no_matches: "No products or services match"
       per_unit: "per unit"
       description_placeholder: "e.g. Treats, temporary product…"
-      price_placeholder: "Price €"
+      price_placeholder: "Final price €"
+      final_price: "Final price, VAT included"
       remove: "Remove line"
 
   # ---------- Reports ----------

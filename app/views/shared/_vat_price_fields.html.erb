@@ -1,0 +1,39 @@
+<%# The price rows of products/_form and services/_form: price without VAT, VAT % and the final price.
+    Only price and vat_rate are saved. The final price has no name (so it isn't submitted): it's there
+    to type what the customer pays, and vat_price_controller.js works out the price without VAT from it.
+    step: "any" because the price without VAT keeps 4 decimals (10,00 € at 21 % is 8,2645).
+    The <dl> around these rows carries data-controller="vat-price" %>
+<% record = f.object %>
+<div class="field-row">
+  <dt class="field-row__label"><%= f.label :price, t("shared.vat_price.price") %></dt>
+  <dd class="field-row__value">
+    <%= f.number_field :price, class: "input input--short", step: "any", min: 0,
+          data: { vat_price_target: "price", action: "input->vat-price#priceChanged" },
+          aria: { invalid: record.errors[:price].any? } %>
+  </dd>
+</div>
+<div class="field-row">
+  <dt class="field-row__label"><%= f.label :vat_rate %></dt>
+  <dd class="field-row__value">
+    <div class="input-affix input--short">
+      <%# "21", not the database's "21.0"; locale: :en keeps the dot a number input needs %>
+      <%= f.number_field :vat_rate, class: "input", step: "any", min: 0, max: 99.99, required: true,
+            value: number_with_precision(record.vat_rate, precision: 2, strip_insignificant_zeros: true, locale: :en),
+            data: { vat_price_target: "vat", action: "input->vat-price#vatChanged" },
+            aria: { invalid: record.errors[:vat_rate].any?, describedby: "#{f.object_name}_vat_rate_hint" } %>
+      <span class="input-affix__suffix" aria-hidden="true">%</span>
+    </div>
+    <p class="form-hint" id="<%= f.object_name %>_vat_rate_hint"><%= t("shared.vat_price.vat_hint") %></p>
+  </dd>
+</div>
+<div class="field-row">
+  <dt class="field-row__label">
+    <label for="<%= f.object_name %>_final_price"><%= t("shared.vat_price.final") %></label>
+  </dt>
+  <dd class="field-row__value">
+    <input type="number" id="<%= f.object_name %>_final_price" class="input input--short" step="0.01" min="0"
+           data-vat-price-target="final" data-action="input->vat-price#finalChanged"
+           aria-describedby="<%= f.object_name %>_final_price_hint">
+    <p class="form-hint" id="<%= f.object_name %>_final_price_hint"><%= t("shared.vat_price.final_hint") %></p>
+  </dd>
+</div>

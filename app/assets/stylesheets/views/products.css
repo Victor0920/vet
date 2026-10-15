@@ -311,3 +311,11 @@ turbo-frame#services {
 .archived-notice {
   margin-bottom: var(--space-4);
 }
+
+/* VAT column (products, services and their category pages): narrow, right-aligned like the price */
+.table .products-table__vat {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--color-text-muted);
+}

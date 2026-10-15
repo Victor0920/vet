@@ -54,6 +54,6 @@ class ServicesController < ApplicationController
   end
 
   def service_params
-    params.expect(service: [ :name, :description, :price, :service_category_id ])
+    params.expect(service: [ :name, :description, :price, :vat_rate, :service_category_id ])
   end
 end

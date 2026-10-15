@@ -36,8 +36,21 @@ class Invoice < ApplicationRecord
     scope
   }
 
-  def total
+  # Without VAT (base imponible)
+  def subtotal
     invoice_products.sum(&:subtotal)
+  end
+
+  def total
+    invoice_products.sum(&:total)
+  end
+
+  # Spanish invoices show the base and the VAT for each rate, highest rate first:
+  # { 21.0 => { base: 41.32, vat: 8.68 }, 10.0 => { … } }
+  def vat_breakdown
+    invoice_products.group_by(&:vat_rate).sort_by { |rate, _lines| -rate }.to_h do |rate, lines|
+      [ rate, { base: lines.sum(&:subtotal), vat: lines.sum(&:vat_amount) } ]
+    end
   end
 
   def corrective?
@@ -95,10 +108,10 @@ class Invoice < ApplicationRecord
     end
   end
 
-  # { [product_id, service_id, description, price] => total quantity }
+  # { [product_id, service_id, description, price, vat_rate] => total quantity }.
   def units_by_line(lines)
     lines.each_with_object(Hash.new(0)) do |line, totals|
-      totals[[ line.product_id, line.service_id, line.description, line.price ]] += line.quantity.to_i
+      totals[[ line.product_id, line.service_id, line.description, line.price, line.vat_rate ]] += line.quantity.to_i
     end
   end
 

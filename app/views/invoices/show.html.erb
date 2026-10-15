@@ -111,7 +111,8 @@
               <th><%= t("invoices.columns.product") %></th>
               <th class="invoices-table__total"><%= t("invoices.columns.quantity") %></th>
               <th class="invoices-table__total"><%= t("invoices.columns.unit_price") %></th>
-              <th class="invoices-table__total"><%= t("invoices.columns.subtotal") %></th>
+              <th class="invoices-table__total invoices-table__vat"><%= t("invoices.columns.vat") %></th>
+              <th class="invoices-table__total"><%= t("invoices.columns.line_total") %></th>
             </tr>
           </thead>
           <tbody>
@@ -137,18 +138,42 @@
                 </td>
                 <td class="table__numeric invoices-table__total"><%= line.quantity %></td>
                 <td class="table__numeric invoices-table__total">
-                  <%# The price saved on the line, so later product/service price changes don't alter old invoices %>
-                  <%= line.price ? number_to_currency(line.price, unit: "€", format: "%n %u") : "—" %>
+                  <%# The price and VAT saved on the line, so later product/service changes don't alter old invoices.
+                      Shown with VAT: what the customer pays per unit %>
+                  <%= line.price ? number_to_currency(line.price_with_vat, unit: "€", format: "%n %u") : "—" %>
+                </td>
+                <td class="table__numeric invoices-table__total invoices-table__vat">
+                  <%= number_to_percentage(line.vat_rate, precision: 2, strip_insignificant_zeros: true) %>
                 </td>
                 <td class="table__numeric invoices-table__total">
-                  <%= number_to_currency(line.subtotal, unit: "€", format: "%n %u") %>
+                  <%# VAT calculated line by line (InvoiceProduct#total) %>
+                  <%= number_to_currency(line.total, unit: "€", format: "%n %u") %>
                 </td>
               </tr>
             <% end %>
           </tbody>
+          <%# Spanish invoices show the base (without VAT) and the VAT of each rate before the total %>
           <tfoot>
+            <tr class="invoices-table__summary">
+              <th colspan="4" scope="row"><%= t("invoices.columns.base") %></th>
+              <td class="table__numeric invoices-table__total">
+                <%= number_to_currency(@invoice.subtotal, unit: "€", format: "%n %u") %>
+              </td>
+            </tr>
+            <% @invoice.vat_breakdown.each do |rate, amounts| %>
+              <tr class="invoices-table__summary">
+                <th colspan="4" scope="row">
+                  <%= t("invoices.columns.vat_on_base",
+                        rate: number_to_percentage(rate, precision: 2, strip_insignificant_zeros: true),
+                        base: number_to_currency(amounts[:base], unit: "€", format: "%n %u")) %>
+                </th>
+                <td class="table__numeric invoices-table__total">
+                  <%= number_to_currency(amounts[:vat], unit: "€", format: "%n %u") %>
+                </td>
+              </tr>
+            <% end %>
             <tr class="invoices-table__footer">
-              <th colspan="3" scope="row"><%= t("invoices.columns.total") %></th>
+              <th colspan="4" scope="row"><%= t("invoices.columns.total") %></th>
               <td class="table__numeric invoices-table__total">
                 <%= number_to_currency(@invoice.total, unit: "€", format: "%n %u") %>
               </td>

@@ -60,13 +60,18 @@
           <%= render "shared/category_badge", category: @product.product_category %>
         </dd>
       </div>
+      <%# What the customer pays first, then how it splits: price without VAT + VAT % %>
+      <div>
+        <dt><%= t("products.columns.price") %></dt>
+        <dd><%= @product.price ? number_to_currency(@product.price_with_vat, unit: "€", format: "%n %u") : "—" %></dd>
+      </div>
       <div>
         <dt><%= Product.human_attribute_name(:price) %></dt>
-        <dd><%= if @product.price
-            number_to_currency(@product.price, unit: "€", format: "%n %u")
-          else
-            "—"
-          end %></dd>
+        <dd>
+          <%= @product.price ? number_to_currency(@product.price, unit: "€", format: "%n %u") : "—" %>
+          <span class="text-muted">· <%= Product.human_attribute_name(:vat_rate) %>
+            <%= number_to_percentage(@product.vat_rate, precision: 2, strip_insignificant_zeros: true) %></span>
+        </dd>
       </div>
       <div>
         <dt><%= t(".created") %></dt>

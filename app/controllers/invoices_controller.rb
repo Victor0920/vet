@@ -85,7 +85,7 @@ class InvoicesController < ApplicationController
 
   def invoice_params
     params.expect(invoice: [ :date, :store_id, :employee_id, :customer_id, :appointment_id,
-      invoice_products_attributes: [ [ :id, :item, :description, :price, :quantity, :_destroy ] ] ])
+      invoice_products_attributes: [ [ :id, :item, :description, :price, :vat_rate, :quantity, :_destroy ] ] ])
   end
 
   def forbid_editing_locked_invoices

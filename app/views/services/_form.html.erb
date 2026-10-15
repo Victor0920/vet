@@ -33,7 +33,7 @@
       <header class="card__header">
         <h2 class="card__title"><%= t(".details") %></h2>
       </header>
-      <dl class="field-list">
+      <dl class="field-list" data-controller="vat-price">
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :name %></dt>
           <dd class="field-row__value">
@@ -63,13 +63,8 @@
             <% end %>
           </dd>
         </div>
-        <div class="field-row">
-          <dt class="field-row__label"><%= f.label :price, t(".price_label") %></dt>
-          <dd class="field-row__value">
-            <%= f.number_field :price, class: "input", step: 0.01, min: 0,
-                  aria: { invalid: service.errors[:price].any? } %>
-          </dd>
-        </div>
+        <%# Price without VAT, VAT % and final price, kept in step by vat_price_controller.js %>
+        <%= render "shared/vat_price_fields", f: f %>
         <div class="field-row">
           <dt class="field-row__label"><%= f.label :description %></dt>
           <dd class="field-row__value"><%= f.text_area :description, class: "textarea", rows: 4 %></dd>

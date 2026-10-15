@@ -1,6 +1,7 @@
 class Product < ApplicationRecord
   include TracksUpdatedBy
   include Archivable
+  include Taxable
 
   belongs_to :enterprise
   belongs_to :product_category, optional: true # nil = uncategorized
